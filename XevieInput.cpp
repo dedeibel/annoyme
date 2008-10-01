@@ -25,6 +25,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <string>
+
+using namespace std;
+
+#include "Event.h"
 #include "XevieInput.h"
 
 XevieInput::XevieInput()
@@ -35,5 +40,22 @@ XevieInput::XevieInput()
 XevieInput::~XevieInput()
 {
 
+}
+
+void XevieInput::open()
+{
+	
+}
+
+
+void XevieInput::close()
+{
+	
+}
+
+
+bool XevieInput::getNextEvent(Event &event)
+{
+	
 }
 

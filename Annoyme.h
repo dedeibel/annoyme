@@ -46,10 +46,10 @@ public:
   void close();
 
 private:
-  Configuration     *config;
-  InputEventReader  *input;
-  SoundLoader       *soundLoader;
-  SoundOutput       *soundOutput;
+  Configuration     *m_config;
+  InputEventReader  *m_input;
+  SoundLoader       *m_soundLoader;
+  SoundOutput       *m_soundOutput;
 };
 
 #endif // ANNOYME_H

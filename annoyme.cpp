@@ -25,14 +25,25 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SOUNDLOADER_H
-#define SOUNDLOADER_H
+#include <string>
+#include <cstdlib>
 
-class SoundLoader
+using namespace std;
+
+#include "Event.h"
+#include "XevieInput.h"
+#include "StaticConfiguration.h"
+#include "Sample.h"
+#include "SimpleWaveFileLoader.h"
+#include "AlsaOutput.h"
+
+#include "Annoyme.h"
+
+int main(int argc, char **argv)
 {
-public:
-  virtual void loadFiles() = 0;
-  virtual void getSample(SampleType type, Sample &sample) = 0;
-};
+  Annoyme annoyme;
+  annoyme.init();
 
-#endif // SOUNDLOADER_H
+  return EXIT_SUCCESS;
+}
+

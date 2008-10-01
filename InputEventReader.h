@@ -31,9 +31,9 @@
 class InputEventReader
 {
 public:
-  virtual void open();
-  virtual void close();
-  virtual void getNextEvent();
+  virtual void open() = 0;
+  virtual void close() = 0;
+  virtual bool getNextEvent(Event &event) = 0;
 };
 
 #endif // INPUTEVENTREADER_H

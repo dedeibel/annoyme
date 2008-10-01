@@ -25,14 +25,26 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SOUNDLOADER_H
-#define SOUNDLOADER_H
+#include <string>
+#include <iostream>
 
-class SoundLoader
+using namespace std;
+
+#include "Sample.h"
+#include "AlsaOutput.h"
+
+
+AlsaOutput::AlsaOutput()
 {
-public:
-  virtual void loadFiles() = 0;
-  virtual void getSample(SampleType type, Sample &sample) = 0;
-};
 
-#endif // SOUNDLOADER_H
+}
+
+AlsaOutput::~AlsaOutput()
+{
+
+}
+
+void AlsaOutput::playSound(Sample sound)
+{
+   std::cout << "Playing sound " << sound.getName() << std::endl;
+}

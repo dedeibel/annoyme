@@ -25,9 +25,16 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <string>
+
+using namespace std;
+
+#include "Sample.h"
+
 #include "SimpleWaveFileLoader.h"
 
-SimpleWaveFileLoader::SimpleWaveFileLoader()
+SimpleWaveFileLoader::SimpleWaveFileLoader(const string &path)
+: m_path(path)
 {
 
 }
@@ -37,4 +44,14 @@ SimpleWaveFileLoader::~SimpleWaveFileLoader()
 
 }
 
+void SimpleWaveFileLoader::loadFiles()
+{
+	
+}
+
+
+void SimpleWaveFileLoader::getSample(SampleType type, Sample &sample)
+{
+	
+}
 

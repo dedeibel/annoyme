@@ -27,13 +27,19 @@
 
 #ifndef SIMPLEWAVEFILELOADER_H
 #define SIMPLEWAVEFILELOADER_H
+
 #include "SoundLoader.h"
 
 class SimpleWaveFileLoader : virtual public SoundLoader
 {
 public:
-  SimpleWaveFileLoader();
+  SimpleWaveFileLoader(const string &path);
   virtual ~SimpleWaveFileLoader();
+
+  virtual void loadFiles();
+  virtual void getSample(SampleType type, Sample &sample);
+private:
+  string m_path;
 };
 
 #endif // SIMPLEWAVEFILELOADER_H

@@ -30,29 +30,38 @@
 class AnnoymeException : public exception
 {
   public:
+  AnnoymeException(string msg = "") throw()
+  : m_message(msg)
+  {
+
+  };
+
+  virtual ~AnnoymeException() throw() {};
 
   virtual const char* what() const throw()
   {
-    return message.c_str();
+    return m_message.c_str();
   }
-
 
   private:
 
-  string message;
+  string m_message;
 };
 
-class UnknownOptionException :: public exception
+class UnknownOptionException : public AnnoymeException
 {
   public:
 
-  UnknownOptionException(string name)
-  : name(name)
-  , message(string("Unknown option requested: ") + name)
+  UnknownOptionException(string name) throw()
+  : AnnoymeException(string("Unknown option requested: ") + name)
+  , m_name(name)
   {
+
   }
+
+  virtual ~UnknownOptionException() throw() {};
 
   private:
 
-  string name;
+  string m_name;
 };

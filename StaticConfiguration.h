@@ -25,22 +25,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CONFIGURATION_H
-#define CONFIGURATION_H
+#ifndef STATICCONFIGURATION_H
+#define STATICCONFIGURATION_H
+
+#include "Configuration.h"
 
 using namespace std;
 
-class Configuration
+class StaticConfiguration : virtual public Configuration
 {
 public:
-  virtual string getValue(string name);
+  virtual string get(string name);
   virtual void init();
-
-  string operator[](string name)
-  {
-    return getValue(name);
-  }
-
 };
 
-#endif // CONFIGURATION_H
+#endif // STATICCONFIGURATION_H

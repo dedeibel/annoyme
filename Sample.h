@@ -28,18 +28,33 @@
 #ifndef SAMPLE_H
 #define SAMPLE_H
 
+enum SampleType
+{
+  normalKeyPressed,
+  normalKeyReleased,
+  enterPressed,
+  enterReleased,
+  backspacePressed,
+  backspaceReleased,
+};
+
+enum SampleFormat
+{
+  PCM,
+};
+
 class Sample
 {
 public:
   Sample();
   virtual ~Sample();
 public:
-  void setType (SampleType new_var)
+  void setType (SampleFormat new_var)
   {
     m_type = new_var;
   }
 
-  SampleType getType()
+  SampleFormat getType()
   {
     return m_type;
   }
@@ -64,21 +79,32 @@ public:
     return m_data;
   }
 
-  void setName(SoundSample new_var)
+  void setName(SampleType new_var)
   {
     m_name = new_var;
   }
 
-  SoundSample getName()
+  SampleType getName()
   {
     return m_name;
   }
 
+  void setFilepath(const string &new_var)
+  {
+    m_filepath = new_var;
+  }
+
+  string getFilePath()
+  {
+    return m_filepath;
+  }
+
 private:
-  SampleType  m_type;
-  int         m_rate;
-  char*       m_data;
-  SoundSample m_name;
+  SampleFormat  m_type;
+  int           m_rate;
+  char*         m_data;
+  SampleType    m_name;
+  string        m_filepath;
 };
 
 #endif // SAMPLE_H

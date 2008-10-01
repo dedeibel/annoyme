@@ -28,6 +28,13 @@
 #ifndef EVENT_H
 #define EVENT_H
 
+enum EventType {
+  keyPressed,
+  keyReleased,
+  mousePressed,
+  mouseReleased,
+};
+
 class Event
 {
 public:

@@ -25,6 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <string>
+
+using namespace std;
+
 #include "Sample.h"
 
 Sample::Sample()

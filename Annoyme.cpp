@@ -25,18 +25,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "Annoyme.h"
+#include <string>
 
-#include "InputEventReader.h"
+using namespace std;
+
+#include "Event.h"
 #include "XevieInput.h"
-#include "Configuration.h"
 #include "StaticConfiguration.h"
-#include "Configuration.h"
-#include "StaticConfiguration.h"
-#include "SoundLoader.h"
-#include "SimpleWaveLoader.h"
-#include "SoundOutput.h"
-#include "AlsaOuput.h"
+#include "Sample.h"
+#include "SimpleWaveFileLoader.h"
+#include "AlsaOutput.h"
+
+#include "Annoyme.h"
 
 Annoyme::Annoyme()
 {
@@ -92,11 +92,11 @@ void Annoyme::backspaceReleased()
 
 void Annoyme::init()
 {
-  config        = new StaticConfiguration();
-  input         = new XevieInput();
-  soundLoader   = new SimpleWaveFileLoader(config["Sample directory"]);
-  soundOutput   = new AlsaOutput(config["ALSA output device"]);
-  config["fail"];
+  m_config        = new StaticConfiguration;
+  m_input         = new XevieInput;
+  m_soundLoader   = new SimpleWaveFileLoader(m_config->get("Sample directory"));
+  //m_soundOutput   = new AlsaOutput(m_config->get("ALSA output device"));
+  m_config->get("fail");
 }
 
 

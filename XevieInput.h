@@ -27,6 +27,7 @@
 
 #ifndef XEVIEINPUT_H
 #define XEVIEINPUT_H
+
 #include "InputEventReader.h"
 
 class XevieInput : virtual public InputEventReader
@@ -34,6 +35,9 @@ class XevieInput : virtual public InputEventReader
 public:
   XevieInput();
   virtual ~XevieInput();
+  virtual void open();
+  virtual void close();
+  virtual bool getNextEvent(Event &event);
 };
 
 #endif // XEVIEINPUT_H

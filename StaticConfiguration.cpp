@@ -27,10 +27,11 @@
 #include <string>
 #include <exception>
 #include <cctype>
-#include "Configuration.h"
+#include <algorithm>
+#include "StaticConfiguration.h"
 #include "exceptions.h"
 
-string Configuration::getValue(string name)
+string StaticConfiguration::get(string name)
 {
   std::transform(name.begin(), name.end(), name.begin(), ::tolower);
   if (name.compare("sample directory")   == 0) { return string("."); };
@@ -39,7 +40,7 @@ string Configuration::getValue(string name)
   throw UnknownOptionException(name);
 }
 
-void Configuration::init()
+void StaticConfiguration::init()
 {
 
 }

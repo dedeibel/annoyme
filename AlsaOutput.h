@@ -25,14 +25,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SOUNDLOADER_H
-#define SOUNDLOADER_H
+#ifndef ALSAOUTPUT_H
+#define ALSAOUTPUT_H
 
-class SoundLoader
+#include "SoundOutput.h"
+
+class AlsaOutput : public virtual SoundOutput
 {
 public:
-  virtual void loadFiles() = 0;
-  virtual void getSample(SampleType type, Sample &sample) = 0;
+  AlsaOutput();
+  virtual ~AlsaOutput();
+  virtual void playSound(Sample sound);
 };
 
-#endif // SOUNDLOADER_H
+#endif // ALSAOUTPUT_H

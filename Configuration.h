@@ -33,14 +33,8 @@ using namespace std;
 class Configuration
 {
 public:
-  virtual string getValue(string name);
-  virtual void init();
-
-  string operator[](string name)
-  {
-    return getValue(name);
-  }
-
+  virtual string get(string name) = 0;
+  virtual void init() = 0;
 };
 
 #endif // CONFIGURATION_H
