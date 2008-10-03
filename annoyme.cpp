@@ -28,6 +28,14 @@
 #include <string>
 #include <cstdlib>
 
+// OS specific headers
+#include <unistd.h>
+#include <X11/Xlib.h>
+#include <X11/Xproto.h>
+#include <X11/X.h>
+#include <X11/extensions/Xevie.h>
+#include <X11/Xutil.h>
+
 using namespace std;
 
 #include "Event.h"
@@ -43,6 +51,8 @@ int main(int argc, char **argv)
 {
   Annoyme annoyme;
   annoyme.init();
+  annoyme.run();
+  annoyme.close();
 
   return EXIT_SUCCESS;
 }

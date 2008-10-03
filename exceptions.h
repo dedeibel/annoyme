@@ -65,3 +65,29 @@ class UnknownOptionException : public AnnoymeException
 
   string m_name;
 };
+
+class XevieExtensionNotInstalledException : public AnnoymeException
+{
+  public:
+
+  XevieExtensionNotInstalledException() throw()
+  : AnnoymeException(string("Xevie Extension is not installed or enabled."))
+  {
+
+  }
+
+  virtual ~XevieExtensionNotInstalledException() throw() {};
+};
+
+class UnknownEventReceived : public AnnoymeException
+{
+  public:
+
+  UnknownEventReceived() throw()
+  : AnnoymeException(string("Xevie Extension is not installed or enabled."))
+  {
+
+  }
+
+  virtual ~UnknownEventReceived() throw() {};
+};

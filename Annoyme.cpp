@@ -26,6 +26,16 @@
  */
 
 #include <string>
+#include <iostream>
+#include <cctype>
+
+// OS specific headers
+#include <unistd.h>
+#include <X11/Xlib.h>
+#include <X11/Xproto.h>
+#include <X11/X.h>
+#include <X11/extensions/Xevie.h>
+#include <X11/Xutil.h>
 
 using namespace std;
 
@@ -45,6 +55,10 @@ Annoyme::Annoyme()
 
 Annoyme::~Annoyme()
 {
+  delete m_soundOutput;
+  delete m_soundLoader;
+  delete m_input;
+  delete m_config;
 }
 
 
@@ -95,22 +109,32 @@ void Annoyme::init()
   m_config        = new StaticConfiguration;
   m_input         = new XevieInput;
   m_soundLoader   = new SimpleWaveFileLoader(m_config->get("Sample directory"));
-  //m_soundOutput   = new AlsaOutput(m_config->get("ALSA output device"));
-  m_config->get("fail");
+  m_soundOutput   = new AlsaOutput(m_config->get("ALSA output device"));
+
+  m_input->open();
 }
 
 
 void Annoyme::run()
 {
-
-
+  Event event;
+  while (1)
+  {
+    m_input->getNextEvent(event);
+    cout << "Key " << event.getType() << " '" << event.getSymbol() << "'";
+    if (isprint(event.getValue().c_str()[0]))
+    {
+      cout << " '" << event.getValue() << "' ";
+    }
+    cout << endl;
+    usleep(10000);
+  }
 }
 
 
 void Annoyme::close()
 {
-
-
+  m_input->close();
 }
 
 

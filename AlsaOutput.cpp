@@ -34,7 +34,8 @@ using namespace std;
 #include "AlsaOutput.h"
 
 
-AlsaOutput::AlsaOutput()
+AlsaOutput::AlsaOutput(const std::string &device)
+: m_device(device)
 {
 
 }
@@ -47,4 +48,14 @@ AlsaOutput::~AlsaOutput()
 void AlsaOutput::playSound(Sample sound)
 {
    std::cout << "Playing sound " << sound.getName() << std::endl;
+}
+
+void AlsaOutput::open()
+{
+
+}
+
+void AlsaOutput::close()
+{
+
 }

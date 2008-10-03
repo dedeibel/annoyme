@@ -61,10 +61,20 @@ public:
     return m_value;
   }
 
-private:
-  EventType m_type;
-  string m_value;
+  void setSymbol(unsigned int new_var)
+  {
+    m_symbol = new_var;
+  }
 
+  unsigned int getSymbol()
+  {
+    return m_symbol;
+  }
+
+private:
+  EventType     m_type;
+  string        m_value;
+  unsigned int  m_symbol;
 };
 
 #endif // EVENT_H

@@ -33,11 +33,22 @@
 class XevieInput : virtual public InputEventReader
 {
 public:
-  XevieInput();
+  XevieInput(int delay = 10);
   virtual ~XevieInput();
   virtual void open();
   virtual void close();
   virtual bool getNextEvent(Event &event);
+private:
+  void fillEventFromXEvent(Event &event, XEvent &xevent);
+  void fillEventFromXKeyEvent(Event &event, XEvent &xevent);
+
+private:
+  Display             *m_display;
+  int                  m_xevieVersionMinor;
+  int                  m_xevieVersionMajor;
+  XEvent               m_event;
+  XClientMessageEvent *m_xcme;
+  int                  m_delay;
 };
 
 #endif // XEVIEINPUT_H
