@@ -25,18 +25,37 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <string>
+#include <stdheaders.h>
+#include <glob.h>
 
-using namespace std;
-
+#include "exceptions.h"
 #include "Sample.h"
 
 #include "SimpleWaveFileLoader.h"
 
+bool isDirectory(const string &path)
+{
+  struct stat buf;
+  int retval = stat(path.c_str(), &buf);
+  if (retval == -1)
+  {
+    throw AnnoyErrnoException("Could not stat directory", path, errno);
+  }
+
+  if (S_ISDIR(buf.st_mode))
+  {
+    return true;
+  }
+  else
+  {
+    return false;
+  }
+}
+
 SimpleWaveFileLoader::SimpleWaveFileLoader(const string &path)
 : m_path(path)
 {
-
+  
 }
 
 SimpleWaveFileLoader::~SimpleWaveFileLoader()
@@ -46,12 +65,30 @@ SimpleWaveFileLoader::~SimpleWaveFileLoader()
 
 void SimpleWaveFileLoader::loadFiles()
 {
-	
+  if (! isDirectory(m_path)) return;
+  string path = m_path;
+  path += "/*.wav";
+
+  glob_t globbuf;
+  glob(path.c_str(), NULL, NULL, &globbuf);
+  for (int i = 0; i < globbuf.gl_pathc; ++i)
+  {
+    cout << "found " << globbuf.gl_pathv[i] << endl;
+  }
+  cout << "done.\n";
+  globfree(&globbuf);
 }
 
 
-void SimpleWaveFileLoader::getSample(SampleType type, Sample &sample)
+void SimpleWaveFileLoader::getSample(Sample::SampleType type, Sample *&sample)
 {
-	
+  static Sample s;
+  s.setName("Testsample");
+  s.setFilePath(m_path + "Testsample");
+  sample = &s;
 }
 
+void SimpleWaveFileLoader::loadFile(const char *path)
+{
+
+}

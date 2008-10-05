@@ -45,6 +45,8 @@ public:
   void run();
   void close();
 
+  void play(Sample::SampleType type);
+
 private:
   Configuration     *m_config;
   InputEventReader  *m_input;

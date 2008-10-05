@@ -43,7 +43,7 @@ class AnnoymeException : public exception
     return m_message.c_str();
   }
 
-  private:
+  protected:
 
   string m_message;
 };
@@ -61,7 +61,7 @@ class UnknownOptionException : public AnnoymeException
 
   virtual ~UnknownOptionException() throw() {};
 
-  private:
+  protected:
 
   string m_name;
 };
@@ -90,4 +90,25 @@ class UnknownEventReceived : public AnnoymeException
   }
 
   virtual ~UnknownEventReceived() throw() {};
+};
+
+class AnnoyErrnoException : public AnnoymeException
+{
+  public:
+
+  AnnoyErrnoException(string msg, string subject, int errnum) throw()
+  : errnum(errnum)
+  {
+    msg += ": ";
+    msg += subject;
+    msg += ": ";
+    msg += string(strerror(errnum));
+    m_message = msg;
+  }
+
+  virtual ~AnnoyErrnoException() throw() {};
+
+  private:
+
+  int errnum;
 };

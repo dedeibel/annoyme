@@ -26,6 +26,8 @@
  */
 
 #include <string>
+#include <cerrno>
+#include <cstring>
 
 // OS specific headers
 #include <unistd.h>
@@ -44,8 +46,7 @@ using namespace std;
 /*
  * @param delay Delay in milliseconds
  */
-XevieInput::XevieInput(int delay)
-: m_delay(delay * 1000)
+XevieInput::XevieInput()
 {
 
 }

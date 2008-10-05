@@ -35,7 +35,7 @@ class AlsaOutput : public virtual SoundOutput
 public:
   AlsaOutput(const std::string &device);
   virtual ~AlsaOutput();
-  virtual void playSound(Sample sound);
+  virtual void playSound(Sample *sound);
   virtual void open();
   virtual void close();
 private:

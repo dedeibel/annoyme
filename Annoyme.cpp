@@ -25,19 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <string>
-#include <iostream>
-#include <cctype>
-
-// OS specific headers
-#include <unistd.h>
-#include <X11/Xlib.h>
-#include <X11/Xproto.h>
-#include <X11/X.h>
-#include <X11/extensions/Xevie.h>
-#include <X11/Xutil.h>
-
-using namespace std;
+#include "stdheaders.h"
 
 #include "Event.h"
 #include "XevieInput.h"
@@ -61,46 +49,46 @@ Annoyme::~Annoyme()
   delete m_config;
 }
 
+void Annoyme::play(Sample::SampleType type)
+{
+  Sample *sample;
+  m_soundLoader->getSample(type, sample);
+  m_soundOutput->playSound(sample);
+}
 
 void Annoyme::normalKeyPressed()
 {
-
-
+  play(Sample::normalKeyPressed);
 }
 
 
 void Annoyme::normalKeyReleased()
 {
-
-
+  play(Sample::normalKeyReleased);
 }
 
 
 void Annoyme::enterPressed()
 {
-
-
+  play(Sample::enterPressed);
 }
 
 
 void Annoyme::enterReleased()
 {
-
-
+  play(Sample::enterReleased);
 }
 
 
 void Annoyme::backspacePressed()
 {
-
-
+  play(Sample::backspacePressed);
 }
 
 
 void Annoyme::backspaceReleased()
 {
-
-
+  play(Sample::backspaceReleased);
 }
 
 
@@ -111,6 +99,8 @@ void Annoyme::init()
   m_soundLoader   = new SimpleWaveFileLoader(m_config->get("Sample directory"));
   m_soundOutput   = new AlsaOutput(m_config->get("ALSA output device"));
 
+  m_soundLoader->loadFiles();
+  m_soundOutput->open();
   m_input->open();
 }
 
@@ -121,13 +111,43 @@ void Annoyme::run()
   while (1)
   {
     m_input->getNextEvent(event);
+    switch (event.getSymbol()) {
+      // Make key mapping universal, elsewhere
+      case XK_BackSpace:
+      case XK_Tab:
+      case XK_Escape:
+      case XK_Delete:
+        if (event.getType() == keyPressed) {
+          backspacePressed();
+        }
+        else if (event.getType() == keyReleased) {
+          backspaceReleased();
+        }
+      break;
+      case XK_Return:
+        if (event.getType() == keyPressed) {
+          enterPressed();
+        }
+        else if (event.getType() == keyReleased) {
+          enterReleased();
+        }
+      break;
+      default:
+        if (event.getType() == keyPressed) {
+          normalKeyPressed();
+        }
+        else if (event.getType() == keyReleased) {
+          normalKeyReleased();
+        }
+      break;
+    }
+
     cout << "Key " << event.getType() << " '" << event.getSymbol() << "'";
     if (isprint(event.getValue().c_str()[0]))
     {
       cout << " '" << event.getValue() << "' ";
     }
     cout << endl;
-    usleep(10000);
   }
 }
 
@@ -135,6 +155,7 @@ void Annoyme::run()
 void Annoyme::close()
 {
   m_input->close();
+  m_soundOutput->close();
 }
 
 

@@ -28,35 +28,36 @@
 #ifndef SAMPLE_H
 #define SAMPLE_H
 
-enum SampleType
-{
-  normalKeyPressed,
-  normalKeyReleased,
-  enterPressed,
-  enterReleased,
-  backspacePressed,
-  backspaceReleased,
-};
-
-enum SampleFormat
-{
-  PCM,
-};
-
 class Sample
 {
+public:
+  enum SampleType
+  {
+    normalKeyPressed,
+    normalKeyReleased,
+    enterPressed,
+    enterReleased,
+    backspacePressed,
+    backspaceReleased,
+  };
+  
+  enum SampleFormat
+  {
+    PCM,
+  };
+
 public:
   Sample();
   virtual ~Sample();
 public:
-  void setType (SampleFormat new_var)
+  void setFormat(SampleFormat new_var)
   {
-    m_type = new_var;
+    m_format = new_var;
   }
 
-  SampleFormat getType()
+  SampleFormat getFormat()
   {
-    return m_type;
+    return m_format;
   }
 
   void setRate(int new_var)
@@ -79,32 +80,45 @@ public:
     return m_data;
   }
 
-  void setName(SampleType new_var)
+  void setFilePath(const string &new_var)
   {
-    m_name = new_var;
-  }
-
-  SampleType getName()
-  {
-    return m_name;
-  }
-
-  void setFilepath(const string &new_var)
-  {
-    m_filepath = new_var;
+    m_filePath = new_var;
   }
 
   string getFilePath()
   {
-    return m_filepath;
+    return m_filePath;
   }
 
+  void setName(const string &new_var)
+  {
+    m_name = new_var;
+  }
+
+  string getName()
+  {
+    return m_name;
+  }
+
+  void setType(SampleType &new_var)
+  {
+    m_type = new_var;
+  }
+
+  SampleType getType()
+  {
+    return m_type;
+  }
+
+
 private:
-  SampleFormat  m_type;
+  SampleFormat  m_format;
   int           m_rate;
   char*         m_data;
-  SampleType    m_name;
-  string        m_filepath;
+  unsigned long m_size;
+  SampleType    m_type;
+  string        m_name;
+  string        m_filePath;
 };
 
 #endif // SAMPLE_H

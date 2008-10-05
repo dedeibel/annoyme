@@ -45,9 +45,9 @@ AlsaOutput::~AlsaOutput()
 
 }
 
-void AlsaOutput::playSound(Sample sound)
+void AlsaOutput::playSound(Sample *sound)
 {
-   std::cout << "Playing sound " << sound.getName() << std::endl;
+   std::cout << "Playing sound " << sound->getName() << std::endl;
 }
 
 void AlsaOutput::open()

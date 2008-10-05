@@ -33,7 +33,7 @@
 class XevieInput : virtual public InputEventReader
 {
 public:
-  XevieInput(int delay = 10);
+  XevieInput();
   virtual ~XevieInput();
   virtual void open();
   virtual void close();
@@ -48,7 +48,6 @@ private:
   int                  m_xevieVersionMajor;
   XEvent               m_event;
   XClientMessageEvent *m_xcme;
-  int                  m_delay;
 };
 
 #endif // XEVIEINPUT_H

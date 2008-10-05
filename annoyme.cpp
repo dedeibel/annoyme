@@ -27,6 +27,8 @@
 
 #include <string>
 #include <cstdlib>
+#include <cerrno>
+#include <cstring>
 
 // OS specific headers
 #include <unistd.h>

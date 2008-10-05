@@ -24,17 +24,16 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-#include <string>
-#include <exception>
-#include <cctype>
-#include <algorithm>
+
+#include "stdheaders.h"
+
 #include "StaticConfiguration.h"
 #include "exceptions.h"
 
 string StaticConfiguration::get(string name)
 {
   std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-  if (name.compare("sample directory")   == 0) { return string("."); };
+  if (name.compare("sample directory")   == 0) { return string("pcm/modern"); };
   if (name.compare("alsa output device") == 0) { return string("plughw:0,0"); };
 
   throw UnknownOptionException(name);
