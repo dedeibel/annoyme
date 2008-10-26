@@ -49,7 +49,7 @@ Annoyme::~Annoyme()
   delete m_config;
 }
 
-void Annoyme::play(Sample::SampleType type)
+void Annoyme::play(enum Sample::SampleType type)
 {
   const Sample *sample;
   m_soundLoader->getSample(type, sample);

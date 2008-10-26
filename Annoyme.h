@@ -45,7 +45,7 @@ public:
   void run();
   void close();
 
-  void play(Sample::SampleType type);
+  void play(enum Sample::SampleType type);
 
 private:
   Configuration     *m_config;

@@ -32,7 +32,7 @@ class SoundLoader
 {
 public:
   virtual void loadFiles() = 0;
-  virtual void getSample(Sample::SampleType type, const Sample *&sample) = 0;
+  virtual void getSample(enum Sample::SampleType type, const Sample *&sample) = 0;
 };
 
 #endif // SOUNDLOADER_H

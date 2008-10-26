@@ -80,7 +80,7 @@ void SimpleWaveFileLoader::loadFiles()
 }
 
 
-void SimpleWaveFileLoader::getSample(Sample::SampleType type, const Sample *&sample)
+void SimpleWaveFileLoader::getSample(enum Sample::SampleType type, const Sample *&sample)
 {
   static Sample s;
   s.setName("Testsample");
