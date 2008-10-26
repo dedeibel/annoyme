@@ -73,7 +73,8 @@ void SimpleWaveFileLoader::loadFiles()
   glob(path.c_str(), NULL, NULL, &globbuf);
   for (int i = 0; i < globbuf.gl_pathc; ++i)
   {
-    cout << "found " << globbuf.gl_pathv[i] << endl;
+    char * fileBasename = basename(globbuf.gl_pathv[i]);
+    cout << "found " << globbuf.gl_pathv[i] << " name: " << getName(fileBasename) << endl;
   }
   cout << "done.\n";
   globfree(&globbuf);

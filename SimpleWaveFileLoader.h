@@ -40,6 +40,21 @@ public:
   virtual void getSample(enum Sample::SampleType type, const Sample *&sample);
 private:
   void loadFile(const char *path);
+  void loadData(const char *path, char *&data, unsigned int &size);
+
+  inline string getName(const char *path)
+  {
+    const char *fileBasename = basename(path);
+    const unsigned int lastDot = lastOccurance(fileBasename, '.');
+    return string(fileBasename, lastDot);
+  }
+
+  inline unsigned int lastOccurance(const char *path, char c)
+  {
+    unsigned int length = strlen(path);
+    while (path[--length] != c);
+    return length;
+  }
 
 private:
   string m_path;
