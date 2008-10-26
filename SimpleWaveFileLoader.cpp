@@ -25,7 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <stdheaders.h>
+#include "stdheaders.h"
 #include <glob.h>
 
 #include "exceptions.h"
@@ -80,7 +80,7 @@ void SimpleWaveFileLoader::loadFiles()
 }
 
 
-void SimpleWaveFileLoader::getSample(Sample::SampleType type, Sample *&sample)
+void SimpleWaveFileLoader::getSample(Sample::SampleType type, const Sample *&sample)
 {
   static Sample s;
   s.setName("Testsample");

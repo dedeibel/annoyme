@@ -51,7 +51,7 @@ Annoyme::~Annoyme()
 
 void Annoyme::play(Sample::SampleType type)
 {
-  Sample *sample;
+  const Sample *sample;
   m_soundLoader->getSample(type, sample);
   m_soundOutput->playSound(sample);
 }
@@ -96,11 +96,16 @@ void Annoyme::init()
 {
   m_config        = new StaticConfiguration;
   m_input         = new XevieInput;
+  cout << "Creating sound file loader.\n";
   m_soundLoader   = new SimpleWaveFileLoader(m_config->get("Sample directory"));
+  cout << "Creating sound output.\n";
   m_soundOutput   = new AlsaOutput(m_config->get("ALSA output device"));
 
+  cout << "Loading sound files.\n";
   m_soundLoader->loadFiles();
+  cout << "Opening sound output.\n";
   m_soundOutput->open();
+  cout << "Opening event input.\n";
   m_input->open();
 }
 
@@ -110,6 +115,7 @@ void Annoyme::run()
   Event event;
   while (1)
   {
+    // TODO create dynamic mapping table, event, key ,sound
     m_input->getNextEvent(event);
     switch (event.getSymbol()) {
       // Make key mapping universal, elsewhere

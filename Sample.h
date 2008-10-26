@@ -55,7 +55,7 @@ public:
     m_format = new_var;
   }
 
-  SampleFormat getFormat()
+  SampleFormat getFormat() const
   {
     return m_format;
   }
@@ -65,7 +65,7 @@ public:
     m_rate = new_var;
   }
 
-  int getRate()
+  int getRate() const
   {
     return m_rate;
   }
@@ -75,7 +75,7 @@ public:
     m_data = new_var;
   }
 
-  char* getData()
+  char* getData() const
   {
     return m_data;
   }
@@ -85,7 +85,7 @@ public:
     m_filePath = new_var;
   }
 
-  string getFilePath()
+  string getFilePath() const
   {
     return m_filePath;
   }
@@ -95,7 +95,7 @@ public:
     m_name = new_var;
   }
 
-  string getName()
+  string getName() const
   {
     return m_name;
   }
@@ -105,7 +105,7 @@ public:
     m_type = new_var;
   }
 
-  SampleType getType()
+  SampleType getType() const
   {
     return m_type;
   }

@@ -37,7 +37,7 @@ public:
   virtual ~SimpleWaveFileLoader();
 
   virtual void loadFiles();
-  virtual void getSample(Sample::SampleType type, Sample *&sample);
+  virtual void getSample(Sample::SampleType type, const Sample *&sample);
 private:
   void loadFile(const char *path);
 
