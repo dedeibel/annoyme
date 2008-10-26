@@ -56,37 +56,37 @@ void Annoyme::play(Sample::SampleType type)
   m_soundOutput->playSound(sample);
 }
 
-void Annoyme::normalKeyPressed()
+void Annoyme::handleNormalKeyPressed()
 {
   play(Sample::normalKeyPressed);
 }
 
 
-void Annoyme::normalKeyReleased()
+void Annoyme::handleNormalKeyReleased()
 {
   play(Sample::normalKeyReleased);
 }
 
 
-void Annoyme::enterPressed()
+void Annoyme::handleEnterPressed()
 {
   play(Sample::enterPressed);
 }
 
 
-void Annoyme::enterReleased()
+void Annoyme::handleEnterReleased()
 {
   play(Sample::enterReleased);
 }
 
 
-void Annoyme::backspacePressed()
+void Annoyme::handleBackspacePressed()
 {
   play(Sample::backspacePressed);
 }
 
 
-void Annoyme::backspaceReleased()
+void Annoyme::handleBackspaceReleased()
 {
   play(Sample::backspaceReleased);
 }
@@ -124,26 +124,26 @@ void Annoyme::run()
       case XK_Escape:
       case XK_Delete:
         if (event.getType() == keyPressed) {
-          backspacePressed();
+          handleBackspacePressed();
         }
         else if (event.getType() == keyReleased) {
-          backspaceReleased();
+          handleBackspaceReleased();
         }
       break;
       case XK_Return:
         if (event.getType() == keyPressed) {
-          enterPressed();
+          handleEnterPressed();
         }
         else if (event.getType() == keyReleased) {
-          enterReleased();
+          handleEnterReleased();
         }
       break;
       default:
         if (event.getType() == keyPressed) {
-          normalKeyPressed();
+          handleNormalKeyPressed();
         }
         else if (event.getType() == keyReleased) {
-          normalKeyReleased();
+          handleNormalKeyReleased();
         }
       break;
     }

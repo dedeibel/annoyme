@@ -35,12 +35,12 @@ public:
 
   virtual ~Annoyme();
 
-  void normalKeyPressed();
-  void normalKeyReleased();
-  void enterPressed();
-  void enterReleased();
-  void backspacePressed();
-  void backspaceReleased();
+  void handleNormalKeyPressed();
+  void handleNormalKeyReleased();
+  void handleEnterPressed();
+  void handleEnterReleased();
+  void handleBackspacePressed();
+  void handleBackspaceReleased();
   void init();
   void run();
   void close();
