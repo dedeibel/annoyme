@@ -33,6 +33,8 @@ class Sample
 public:
   enum SampleType
   {
+    invalidType,
+    defaultType,
     normalKeyPressed,
     normalKeyReleased,
     enterPressed,
@@ -43,12 +45,52 @@ public:
   
   enum SampleFormat
   {
+    invalidFormat,
     PCM,
   };
 
 public:
-  Sample();
-  virtual ~Sample();
+  static const enum SampleType getSampleType(const string name)
+  {
+    if (name == "normalKeyPressed") {
+      return normalKeyPressed;
+    }
+    else if (name == "normalKeyReleased") {
+      return normalKeyReleased;
+    }
+    else if (name == "enterPressed") {
+      return enterPressed;
+    }
+    else if (name == "enterReleased") {
+      return enterReleased;
+    }
+    else if (name == "backspacePressed") {
+      return backspacePressed;
+    }
+    else if (name == "backspaceReleased") {
+      return backspaceReleased;
+    }
+    else {
+      return invalidType;
+    }
+  }
+
+public:
+  Sample()
+  : m_format(invalidFormat)
+  , m_rate(0)
+  , m_data(0)
+  , m_size(0)
+  , m_type(invalidType)
+  {
+
+  }
+
+  virtual ~Sample()
+  {
+
+  }
+
 public:
   void setFormat(SampleFormat new_var)
   {
@@ -90,17 +132,17 @@ public:
     return m_filePath;
   }
 
-  void setName(const string &new_var)
+  inline void setName(const string &new_var)
   {
     m_name = new_var;
   }
-
-  string getName() const
+  
+  inline const string getName() const
   {
     return m_name;
   }
 
-  void setType(SampleType &new_var)
+  void setType(const enum SampleType &new_var)
   {
     m_type = new_var;
   }

@@ -36,17 +36,20 @@ public:
   SimpleWaveFileLoader(const string &path);
   virtual ~SimpleWaveFileLoader();
 
+  virtual void clear();
   virtual void loadFiles();
-  virtual void getSample(enum Sample::SampleType type, const Sample *&sample);
+  virtual void getSample(enum Sample::SampleType type, const Sample **sample);
 private:
-  void loadFile(const char *path);
-  void loadData(const char *path, char *&data, unsigned int &size);
+  void insertDefault();
+  void loadSampleFromFile(const char *path);
+  void loadDataFromFile(const char *path, char *&data, unsigned int &size);
 
-  inline string getName(const char *path)
+  inline const string getName(const char *path)
   {
     const char *fileBasename = basename(path);
     const unsigned int lastDot = lastOccurance(fileBasename, '.');
-    return string(fileBasename, lastDot);
+    string s = string(fileBasename, lastDot);
+    return s;
   }
 
   inline unsigned int lastOccurance(const char *path, char c)
@@ -58,6 +61,7 @@ private:
 
 private:
   string m_path;
+  map<const enum Sample::SampleType, Sample*> samples;
 };
 
 #endif // SIMPLEWAVEFILELOADER_H

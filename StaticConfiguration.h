@@ -35,6 +35,7 @@ using namespace std;
 class StaticConfiguration : virtual public Configuration
 {
 public:
+  virtual ~StaticConfiguration() {};
   virtual string get(string name);
   virtual void init();
 };

@@ -33,6 +33,7 @@ using namespace std;
 class Configuration
 {
 public:
+  virtual ~Configuration() {};
   virtual string get(string name) = 0;
   virtual void init() = 0;
 };

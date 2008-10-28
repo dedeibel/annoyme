@@ -52,7 +52,7 @@ Annoyme::~Annoyme()
 void Annoyme::play(enum Sample::SampleType type)
 {
   const Sample *sample;
-  m_soundLoader->getSample(type, sample);
+  m_soundLoader->getSample(type, &sample);
   m_soundOutput->playSound(sample);
 }
 
@@ -117,6 +117,14 @@ void Annoyme::run()
   {
     // TODO create dynamic mapping table, event, key ,sound
     m_input->getNextEvent(event);
+
+    cout << "Key " << event.getType() << " '" << event.getSymbol() << "'";
+    if (isprint(event.getValue().c_str()[0]))
+    {
+      cout << " '" << event.getValue() << "' ";
+    }
+    cout << endl;
+
     switch (event.getSymbol()) {
       // Make key mapping universal, elsewhere
       case XK_BackSpace:
@@ -148,12 +156,6 @@ void Annoyme::run()
       break;
     }
 
-    cout << "Key " << event.getType() << " '" << event.getSymbol() << "'";
-    if (isprint(event.getValue().c_str()[0]))
-    {
-      cout << " '" << event.getValue() << "' ";
-    }
-    cout << endl;
   }
 }
 

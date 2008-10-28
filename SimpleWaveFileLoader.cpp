@@ -32,6 +32,7 @@
 #include "Sample.h"
 
 #include "SimpleWaveFileLoader.h"
+#include "stdutil.h"
 
 bool isDirectory(const string &path)
 {
@@ -55,41 +56,84 @@ bool isDirectory(const string &path)
 SimpleWaveFileLoader::SimpleWaveFileLoader(const string &path)
 : m_path(path)
 {
-  
+  insertDefault();
 }
 
 SimpleWaveFileLoader::~SimpleWaveFileLoader()
 {
+  this->clear();
+}
 
+void SimpleWaveFileLoader::clear()
+{
+  for (map<const enum Sample::SampleType, Sample*>::const_iterator p = samples.begin();
+       p != samples.end();
+       p++
+  ) {
+    delete p->second;
+  }
+  samples.clear();
+}
+
+void SimpleWaveFileLoader::insertDefault()
+{
+  Sample *sample = new Sample();
+  sample->setName("default");
+  sample->setFilePath("default");
+  sample->setType(Sample::defaultType);
+  samples.insert(make_pair(sample->getType(), sample));
 }
 
 void SimpleWaveFileLoader::loadFiles()
 {
+  this->clear();
+  insertDefault();
+
   if (! isDirectory(m_path)) return;
   string path = m_path;
   path += "/*.wav";
 
   glob_t globbuf;
-  glob(path.c_str(), NULL, NULL, &globbuf);
-  for (int i = 0; i < globbuf.gl_pathc; ++i)
+  glob(path.c_str(), 0, 0, &globbuf);
+  for (unsigned int i = 0; i < globbuf.gl_pathc; ++i)
   {
-    char * fileBasename = basename(globbuf.gl_pathv[i]);
-    cout << "found " << globbuf.gl_pathv[i] << " name: " << getName(fileBasename) << endl;
+    loadSampleFromFile(globbuf.gl_pathv[i]);
   }
   cout << "done.\n";
   globfree(&globbuf);
 }
 
 
-void SimpleWaveFileLoader::getSample(enum Sample::SampleType type, const Sample *&sample)
+void SimpleWaveFileLoader::getSample(enum Sample::SampleType type, const Sample **sample)
 {
-  static Sample s;
-  s.setName("Testsample");
-  s.setFilePath(m_path + "Testsample");
-  sample = &s;
+  Sample *foundSample = samples.find(type)->second;
+  if (foundSample == 0)
+  {
+    *sample = samples.find(Sample::defaultType)->second;
+  }
+  else {
+    *sample = foundSample;
+  }
 }
 
-void SimpleWaveFileLoader::loadFile(const char *path)
+void SimpleWaveFileLoader::loadSampleFromFile(const char *path)
+{
+    const string name(this->getName(path));
+    const enum Sample::SampleType type = Sample::getSampleType(name);
+    if (type != Sample::invalidType)
+    {
+      Sample *sample = new Sample();
+      sample->setName(name);
+      sample->setFilePath(path);
+      sample->setType(Sample::getSampleType(name));
+      samples.insert(make_pair(sample->getType(), sample));
+    }
+    else {
+      cout << "Invalid sample: " << name << endl;
+    }
+}
+
+void loadDataFromFile(const char *path, char *&data, unsigned int &size)
 {
 
 }

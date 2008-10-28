@@ -5,7 +5,7 @@ LDFLAGS=-lX11 -lXevie
 SOURCES=$(wildcard *.cpp)
 DEPS=$(patsubst %.o,%.d,$(MAINFILES))
 
-CXXFLAGS=-I.
+CXXFLAGS=-Wall -I. -ggdb
 
 all: annoyme
 

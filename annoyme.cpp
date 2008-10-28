@@ -25,20 +25,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <string>
-#include <cstdlib>
-#include <cerrno>
-#include <cstring>
-
-// OS specific headers
-#include <unistd.h>
-#include <X11/Xlib.h>
-#include <X11/Xproto.h>
-#include <X11/X.h>
-#include <X11/extensions/Xevie.h>
-#include <X11/Xutil.h>
-
-using namespace std;
+#include "stdheaders.h"
 
 #include "Event.h"
 #include "XevieInput.h"

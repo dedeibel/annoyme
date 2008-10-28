@@ -31,6 +31,7 @@
 class SoundOutput
 {
 public:
+  virtual ~SoundOutput() {};
   virtual void playSound(const Sample *sound) = 0;
   virtual void open() = 0;
   virtual void close() = 0;

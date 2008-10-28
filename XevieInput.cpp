@@ -91,6 +91,7 @@ bool XevieInput::getNextEvent(Event &event)
 
   m_xcme = reinterpret_cast<XClientMessageEvent *>(&m_event);
   fillEventFromXEvent(event, m_event);
+  return true;
 }
 
 void XevieInput::fillEventFromXEvent(Event &event, XEvent &xevent)

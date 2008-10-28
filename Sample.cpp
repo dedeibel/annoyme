@@ -25,19 +25,10 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <string>
+#include "stdheaders.h"
 
 using namespace std;
 
 #include "Sample.h"
 
-Sample::Sample()
-{
-
-}
-
-Sample::~Sample()
-{
-
-}
 
