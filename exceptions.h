@@ -96,7 +96,7 @@ class AnnoyErrnoException : public AnnoymeException
 {
   public:
 
-  AnnoyErrnoException(string msg, string subject, int errnum) throw()
+  AnnoyErrnoException(string msg, const string &subject, int errnum) throw()
   : errnum(errnum)
   {
     msg += ": ";
@@ -111,4 +111,30 @@ class AnnoyErrnoException : public AnnoymeException
   private:
 
   int errnum;
+};
+
+class SoundOutputException : public AnnoymeException
+{
+  public:
+
+  SoundOutputException(const string &msg) throw()
+  : AnnoymeException(msg)
+  {
+
+  }
+
+  virtual ~SoundOutputException() throw() {};
+};
+
+class AlsaOutputException : public SoundOutputException
+{
+  public:
+
+  AlsaOutputException(const string &msg) throw()
+  : SoundOutputException(msg)
+  {
+
+  }
+
+  virtual ~AlsaOutputException() throw() {};
 };

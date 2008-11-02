@@ -28,11 +28,11 @@
 #include "stdheaders.h"
 
 #include "Event.h"
-#include "XevieInput.h"
+#include "XevieInput.h" // TODO create factory, clean headers
 #include "StaticConfiguration.h"
 #include "Sample.h"
 #include "SimpleWaveFileLoader.h"
-#include "AlsaOutput.h"
+#include "AlsaOutput.h" // TODO create factory
 
 #include "Annoyme.h"
 

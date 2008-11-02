@@ -3,9 +3,10 @@ MAINFILES=Annoyme.o Event.o XevieInput.o StaticConfiguration.o AlsaOutput.o Samp
 EXECUTABLES=annoyme
 LDFLAGS=-lX11 -lXevie
 SOURCES=$(wildcard *.cpp)
+LIBS=-lasound
 DEPS=$(patsubst %.o,%.d,$(MAINFILES))
 
-CXXFLAGS=-Wall -I. -ggdb
+CXXFLAGS=-Wall -I. -ggdb $(LIBS)
 
 all: annoyme
 

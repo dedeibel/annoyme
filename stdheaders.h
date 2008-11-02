@@ -18,4 +18,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include <alsa/asoundlib.h>
+
 using namespace std;

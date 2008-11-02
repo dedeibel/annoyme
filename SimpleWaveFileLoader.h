@@ -42,7 +42,7 @@ public:
 private:
   void insertDefault();
   void loadSampleFromFile(const char *path);
-  void loadDataFromFile(const char *path, char *&data, unsigned int &size);
+  void loadDataFromFile(Sample *sample);
 
   inline const string getName(const char *path)
   {

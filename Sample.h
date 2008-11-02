@@ -152,6 +152,15 @@ public:
     return m_type;
   }
 
+  void setSize(unsigned int new_var)
+  {
+    m_size = new_var;
+  }
+
+  unsigned int getSize() const
+  {
+    return m_size;
+  }
 
 private:
   SampleFormat  m_format;

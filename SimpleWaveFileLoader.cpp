@@ -25,8 +25,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "stdheaders.h"
+#include "stdheaders.h" // TODO cleanup headers
 #include <glob.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 #include "exceptions.h"
 #include "Sample.h"
@@ -118,22 +121,68 @@ void SimpleWaveFileLoader::getSample(enum Sample::SampleType type, const Sample 
 
 void SimpleWaveFileLoader::loadSampleFromFile(const char *path)
 {
-    const string name(this->getName(path));
-    const enum Sample::SampleType type = Sample::getSampleType(name);
-    if (type != Sample::invalidType)
-    {
-      Sample *sample = new Sample();
-      sample->setName(name);
-      sample->setFilePath(path);
-      sample->setType(Sample::getSampleType(name));
-      samples.insert(make_pair(sample->getType(), sample));
-    }
-    else {
-      cout << "Invalid sample: " << name << endl;
-    }
+  const string name(this->getName(path));
+  const enum Sample::SampleType type = Sample::getSampleType(name);
+  if (type == Sample::invalidType)
+  {
+    cerr << "Invalid sample: " << name << endl;
+    return;
+  }
+  
+  Sample *sample = new Sample();
+  
+  try
+  {
+    sample->setName(name);
+    sample->setFilePath(path);
+    sample->setType(type);
+
+    loadDataFromFile(sample);
+   }
+   catch (...)
+   {
+     delete sample;
+     throw;
+   }
+
+   samples.insert(make_pair(sample->getType(), sample));
 }
 
-void loadDataFromFile(const char *path, char *&data, unsigned int &size)
+void SimpleWaveFileLoader::loadDataFromFile(Sample *sample)
 {
+  sample->setFormat(Sample::PCM);
+  sample->setRate(11025);
 
+  unsigned int size = 0;
+  char* data = 0;
+
+  unsigned int allocated = 32000 * sizeof(char);
+  unsigned int bytesRead = 0;
+
+  int file = open(sample->getFilePath().c_str(), O_RDONLY);
+  if (file == 0) return;
+  
+  data = (char*)malloc(allocated);
+  // TODO add error messages
+  while ((bytesRead = read(file, data, allocated - size)))
+  {
+    size += bytesRead;
+    if (size >= allocated) {
+      allocated *= 2;
+      data = (char*)realloc(data, allocated);
+    }
+    if (data == 0)
+    {
+      cerr << "allocation of more memory to read sample file '"
+           << sample->getFilePath() << "' failed.\n";
+      break;
+    }
+  }
+
+  sample->setSize(size);
+  sample->setData(data);
+  cout << "   read sample '" << sample->getName() << "' with "
+       << sample->getSize() << " Bytes.\n";
+  
+  close(file);
 }
