@@ -49,6 +49,8 @@ private:
   /* the hardware and can be used to specify the  */      
   /* configuration to be used for the PCM stream. */
   snd_pcm_hw_params_t  *m_hwparams;
+
+  snd_pcm_sw_params_t  *m_swparams;
 };
 
 #endif // ALSAOUTPUT_H

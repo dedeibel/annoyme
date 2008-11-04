@@ -53,11 +53,11 @@ void AlsaOutput::playSound(const Sample *sample)
   std::cout << "Playing sound " << sample->getName() << std::endl;
   int pcmreturn;
   unsigned int frames = sample->getSize() >> 2;
-  int i = 0;
-  while ((pcmreturn = snd_pcm_writei(m_pcm_handle, sample->getData(), frames)) < 0) {
+  while ((pcmreturn = snd_pcm_writei(m_pcm_handle, sample->getData(), frames)) < 0)
+  {
+    cerr << "pcmreturn: " << pcmreturn << " msg: " <<  snd_strerror(pcmreturn) << endl;
+    snd_pcm_drop(m_pcm_handle);
     snd_pcm_prepare(m_pcm_handle);
-    fprintf(stderr, "<<<<<<<<<<<<<<< Buffer Underrun >>>>>>>>>>>>>>>\n");
-    if (++i > 100) break;
   }
 }
 
@@ -73,7 +73,7 @@ void AlsaOutput::open()
   /* PCM device will return immediately. If SND_PCM_ASYNC is    */
   /* specified, SIGIO will be emitted whenever a period has     */
   /* been completely processed by the soundcard.                */
-  if (snd_pcm_open(&m_pcm_handle, m_device.c_str(), m_stream, 0) < 0)
+  if (snd_pcm_open(&m_pcm_handle, m_device.c_str(), m_stream, SND_PCM_NONBLOCK) < 0)
   {
     throw AlsaOutputException(
             string("ALSA output: could not open output device: ") + m_device);
@@ -150,6 +150,38 @@ void AlsaOutput::open()
   if (snd_pcm_hw_params(m_pcm_handle, m_hwparams) < 0)
   {
     throw AlsaOutputException("ALSA output: Error setting HW params.");
+  }
+
+  snd_pcm_sw_params_alloca(&m_swparams);
+
+  int err;
+  /* get the current swparams */
+  err = snd_pcm_sw_params_current(m_pcm_handle, m_swparams);
+  if (err < 0)
+  {
+    throw AlsaOutputException(string("ALSA output: Unable to determine current swparams for playback: ") + snd_strerror(err));
+  }
+
+
+  /* start the transfer when the buffer is almost full: */
+  /* (buffer_size / avail_min) * avail_min */
+  err = snd_pcm_sw_params_set_start_threshold(m_pcm_handle, m_swparams, 1);
+  if (err < 0)
+  {
+    throw AlsaOutputException(string("Unable to set start threshold mode for playback: ") + snd_strerror(err));
+  }
+
+  err = snd_pcm_sw_params_set_stop_threshold(m_pcm_handle, m_swparams, 0);
+  if (err < 0)
+  {
+    throw AlsaOutputException(string("Unable to set stop threshold mode for playback: ") + snd_strerror(err));
+  }
+
+  /* write the parameters to the playback device */
+  err = snd_pcm_sw_params(m_pcm_handle, m_swparams);
+  if (err < 0)
+  {
+    throw AlsaOutputException(string("Unable to set sw params for playback: ") + snd_strerror(err));
   }
 }
 
