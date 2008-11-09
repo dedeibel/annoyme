@@ -52,12 +52,31 @@ void AlsaOutput::playSound(const Sample *sample)
 {
   std::cout << "Playing sound " << sample->getName() << std::endl;
   int pcmreturn;
+  snd_pcm_state_t state = snd_pcm_state(m_pcm_handle);
+  string state_s = "";
+  switch (state)
+  {
+    case SND_PCM_STATE_OPEN: state_s = "Open"; break;
+    case SND_PCM_STATE_SETUP:	state_s = "Setup installed"; break;
+    case SND_PCM_STATE_PREPARED: state_s = "Ready to start"; break;
+    case SND_PCM_STATE_RUNNING: state_s = "Running"; break;
+    case SND_PCM_STATE_XRUN: state_s = "Stopped: underrun (playback) or overrun (capture) detected"; break;
+    case SND_PCM_STATE_DRAINING: state_s = "Draining: running (playback) or stopped (capture)"; break;
+    default: state_s = "bla"; break;
+
+  }
   unsigned int frames = sample->getSize() >> 2;
+  cerr << "pcmstate: " << state  << " - " << state_s<< endl;
   while ((pcmreturn = snd_pcm_writei(m_pcm_handle, sample->getData(), frames)) < 0)
   {
     cerr << "pcmreturn: " << pcmreturn << " msg: " <<  snd_strerror(pcmreturn) << endl;
     snd_pcm_drop(m_pcm_handle);
     snd_pcm_prepare(m_pcm_handle);
+  }
+
+  if (! snd_pcm_drain(m_pcm_handle))
+  {
+    cerr << "could not drain the pcm output stream" << endl;
   }
 }
 

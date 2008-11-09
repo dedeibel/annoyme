@@ -25,7 +25,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "stdheaders.h" // TODO cleanup headers
+#include <string>
+#include <iostream>
+#include <map>
+#include <cerrno>
+#include <cstring>
+#include <cstdlib>
+
+using namespace std;
+
 #include <glob.h>
 #include <sys/types.h>
 #include <sys/stat.h>

@@ -1,5 +1,5 @@
 
-MAINFILES=Annoyme.o Event.o XevieInput.o StaticConfiguration.o AlsaOutput.o Sample.o SimpleWaveFileLoader.o
+MAINFILES=Annoyme.o Event.o XevieInput.o StaticConfiguration.o AlsaOutput.o Sample.o SimpleWaveFileLoader.o SoundLoaderFactory.o
 EXECUTABLES=annoyme
 LDFLAGS=-lX11 -lXevie
 SOURCES=$(wildcard *.cpp)

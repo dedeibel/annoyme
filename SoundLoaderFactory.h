@@ -25,24 +25,32 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "stdheaders.h"
+#ifndef SOUNDLOADERFACTORY_H
+#define SOUNDLOADERFACTORY_H
 
-#include "Event.h"
-#include "XevieInput.h"
-#include "StaticConfiguration.h"
-#include "Sample.h"
-#include "SoundLoader.h"
-#include "AlsaOutput.h"
-
-#include "Annoyme.h"
-
-int main(int argc, char **argv)
+class SoundLoaderFactory
 {
-  Annoyme annoyme;
-  annoyme.init();
-  annoyme.run();
-  annoyme.close();
+public:
+  static inline SoundLoaderFactory *getInstance()
+  {
+    if (m_instance == 0)
+    {
+      m_instance = new SoundLoaderFactory();
+    }
+    return m_instance;
+  }
 
-  return EXIT_SUCCESS;
-}
+  SoundLoader *getSoundLoader(const string &name, const string &param);
 
+private:
+  SoundLoaderFactory()
+  {
+  }
+
+  SoundLoaderFactory(const SoundLoaderFactory&);
+  SoundLoaderFactory& operator=(const SoundLoaderFactory&);
+
+  static SoundLoaderFactory *m_instance;
+};
+
+#endif // SOUNDLOADERFACTORY_H

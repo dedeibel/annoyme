@@ -31,8 +31,9 @@
 #include "XevieInput.h" // TODO create factory, clean headers
 #include "StaticConfiguration.h"
 #include "Sample.h"
-#include "SimpleWaveFileLoader.h"
 #include "AlsaOutput.h" // TODO create factory
+#include "SoundLoader.h"
+#include "SoundLoaderFactory.h"
 
 #include "Annoyme.h"
 
@@ -97,7 +98,8 @@ void Annoyme::init()
   m_config        = new StaticConfiguration;
   m_input         = new XevieInput;
   cout << "Creating sound file loader.\n";
-  m_soundLoader   = new SimpleWaveFileLoader(m_config->get("Sample directory"));
+  m_soundLoader   = SoundLoaderFactory::getInstance()->getSoundLoader(
+                         m_config->get("Sound loader"), m_config->get("Sample directory"));
   cout << "Creating sound output.\n";
   m_soundOutput   = new AlsaOutput(m_config->get("ALSA output device"));
 

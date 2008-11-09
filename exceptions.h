@@ -138,3 +138,16 @@ class AlsaOutputException : public SoundOutputException
 
   virtual ~AlsaOutputException() throw() {};
 };
+
+class InvalidNameException : public AnnoymeException
+{
+  public:
+
+  InvalidNameException(const string &msg, const string &name) throw()
+  : AnnoymeException(msg +": "+ name)
+  {
+
+  }
+
+  virtual ~InvalidNameException() throw() {};
+};
