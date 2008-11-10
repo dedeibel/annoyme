@@ -25,60 +25,32 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EVENT_H
-#define EVENT_H
+#ifndef SOUNDOUTPUTFACTORY_H
+#define SOUNDOUTPUTFACTORY_H
 
-enum EventType {
-  eventNormalKeyPressed,
-  eventNormalKeyReleased,
-  eventEnterKeyPressed,
-  eventEnterKeyReleased,
-  eventBackspaceKeyPressed,
-  eventBackspaceKeyReleased,
-  eventMousePressed,
-  eventMouseReleased,
-};
-
-class Event
+class SoundOutputFactory
 {
 public:
-  Event();
-  virtual ~Event();
-
-public:
-  void setType(EventType new_var)
+  static inline SoundOutputFactory *getInstance()
   {
-    m_type = new_var;
+    if (m_instance == 0)
+    {
+      m_instance = new SoundOutputFactory();
+    }
+    return m_instance;
   }
 
-  EventType getType() {
-    return m_type;
-  }
-
-  void setValue(string new_var)
-  {
-    m_value = new_var;
-  }
-
-  string getValue()
-  {
-    return m_value;
-  }
-
-  void setSymbol(unsigned int new_var)
-  {
-    m_symbol = new_var;
-  }
-
-  unsigned int getSymbol()
-  {
-    return m_symbol;
-  }
+  SoundOutput *getSoundOutput(const string &name, const string &param = string());
 
 private:
-  EventType     m_type;
-  string        m_value;
-  unsigned int  m_symbol;
+  SoundOutputFactory()
+  {
+  }
+
+  SoundOutputFactory(const SoundOutputFactory&);
+  SoundOutputFactory& operator=(const SoundOutputFactory&);
+
+  static SoundOutputFactory *m_instance;
 };
 
-#endif // EVENT_H
+#endif // SOUNDOUTPUTFACTORY_H

@@ -25,15 +25,20 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "stdheaders.h"
+#include <cstdlib>
+#include <string>
+
+using namespace std;
 
 #include "Event.h"
-#include "XevieInput.h"
-#include "StaticConfiguration.h"
 #include "Sample.h"
+#include "StaticConfiguration.h"
+#include "InputEventReader.h"
+#include "InputEventReaderFactory.h"
+#include "SoundOutput.h"
+#include "SoundOutputFactory.h"
 #include "SoundLoader.h"
-#include "AlsaOutput.h"
-
+#include "SoundLoaderFactory.h"
 #include "Annoyme.h"
 
 int main(int argc, char **argv)

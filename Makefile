@@ -1,12 +1,12 @@
 
-MAINFILES=Annoyme.o Event.o XevieInput.o StaticConfiguration.o AlsaOutput.o Sample.o SimpleWaveFileLoader.o SoundLoaderFactory.o
+MAINFILES=Annoyme.o Event.o XevieInput.o InputEventReaderFactory.o StaticConfiguration.o AlsaOutput.o SoundOutputFactory.o Sample.o SimpleWaveFileLoader.o SoundLoaderFactory.o
 EXECUTABLES=annoyme
-LDFLAGS=-lX11 -lXevie
+LIBS=-lasound -lX11 -lXevie
+LDFLAGS=$(LIBS)
 SOURCES=$(wildcard *.cpp)
-LIBS=-lasound
 DEPS=$(patsubst %.o,%.d,$(MAINFILES))
 
-CXXFLAGS=-Wall -I. -ggdb $(LIBS)
+CXXFLAGS=-Wall -I. -ggdb
 
 all: annoyme
 

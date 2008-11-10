@@ -25,60 +25,32 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef EVENT_H
-#define EVENT_H
+#ifndef INPUTEVENTREADERFACTORY_H
+#define INPUTEVENTREADERFACTORY_H
 
-enum EventType {
-  eventNormalKeyPressed,
-  eventNormalKeyReleased,
-  eventEnterKeyPressed,
-  eventEnterKeyReleased,
-  eventBackspaceKeyPressed,
-  eventBackspaceKeyReleased,
-  eventMousePressed,
-  eventMouseReleased,
-};
-
-class Event
+class InputEventReaderFactory
 {
 public:
-  Event();
-  virtual ~Event();
-
-public:
-  void setType(EventType new_var)
+  static inline InputEventReaderFactory *getInstance()
   {
-    m_type = new_var;
+    if (m_instance == 0)
+    {
+      m_instance = new InputEventReaderFactory();
+    }
+    return m_instance;
   }
 
-  EventType getType() {
-    return m_type;
-  }
-
-  void setValue(string new_var)
-  {
-    m_value = new_var;
-  }
-
-  string getValue()
-  {
-    return m_value;
-  }
-
-  void setSymbol(unsigned int new_var)
-  {
-    m_symbol = new_var;
-  }
-
-  unsigned int getSymbol()
-  {
-    return m_symbol;
-  }
+  InputEventReader *getInputEventReader(const string &name, const string &param = string());
 
 private:
-  EventType     m_type;
-  string        m_value;
-  unsigned int  m_symbol;
+  InputEventReaderFactory()
+  {
+  }
+
+  InputEventReaderFactory(const InputEventReaderFactory&);
+  InputEventReaderFactory& operator=(const InputEventReaderFactory&);
+
+  static InputEventReaderFactory *m_instance;
 };
 
-#endif // EVENT_H
+#endif // INPUTEVENTREADERFACTORY_H

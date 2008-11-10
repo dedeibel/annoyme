@@ -171,7 +171,6 @@ void SimpleWaveFileLoader::loadDataFromFile(Sample *sample)
   if (file == 0) return;
   
   data = (char*)malloc(allocated);
-  // TODO add error messages
   while ((bytesRead = read(file, data, allocated - size)))
   {
     size += bytesRead;

@@ -40,7 +40,7 @@ public:
     return m_instance;
   }
 
-  SoundLoader *getSoundLoader(const string &name, const string &param);
+  SoundLoader *getSoundLoader(const string &name, const string &param = string());
 
 private:
   SoundLoaderFactory()

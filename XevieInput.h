@@ -40,7 +40,7 @@ public:
   virtual bool getNextEvent(Event &event);
 private:
   void fillEventFromXEvent(Event &event, XEvent &xevent);
-  void fillEventFromXKeyEvent(Event &event, XEvent &xevent);
+  void fillEventFromXKeyEvent(Event &event, XEvent &xevent, bool pressed);
 
 private:
   Display             *m_display;

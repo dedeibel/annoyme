@@ -25,13 +25,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "stdheaders.h"
+#include <string>
+#include <iostream>
+
+using namespace std;
 
 #include "Event.h"
-#include "XevieInput.h" // TODO create factory, clean headers
-#include "StaticConfiguration.h"
 #include "Sample.h"
-#include "AlsaOutput.h" // TODO create factory
+#include "StaticConfiguration.h"
+#include "InputEventReader.h"
+#include "InputEventReaderFactory.h"
+#include "SoundOutput.h"
+#include "SoundOutputFactory.h"
 #include "SoundLoader.h"
 #include "SoundLoaderFactory.h"
 
@@ -96,12 +101,14 @@ void Annoyme::handleBackspaceReleased()
 void Annoyme::init()
 {
   m_config        = new StaticConfiguration;
-  m_input         = new XevieInput;
+  m_input         = InputEventReaderFactory::getInstance()->getInputEventReader(
+                         m_config->get("Input event reader"));
   cout << "Creating sound file loader.\n";
   m_soundLoader   = SoundLoaderFactory::getInstance()->getSoundLoader(
                          m_config->get("Sound loader"), m_config->get("Sample directory"));
   cout << "Creating sound output.\n";
-  m_soundOutput   = new AlsaOutput(m_config->get("ALSA output device"));
+  m_soundOutput   = SoundOutputFactory::getInstance()->getSoundOutput(
+                         m_config->get("Sound output"), m_config->get("alsa output device"));
 
   cout << "Loading sound files.\n";
   m_soundLoader->loadFiles();
@@ -117,7 +124,7 @@ void Annoyme::run()
   Event event;
   while (1)
   {
-    // TODO create dynamic mapping table, event, key ,sound
+    // TODO create dynamic mapping table, event, (key) ,sound
     m_input->getNextEvent(event);
 
     cout << "Key " << event.getType() << " '" << event.getSymbol() << "'";
@@ -127,37 +134,30 @@ void Annoyme::run()
     }
     cout << endl;
 
-    switch (event.getSymbol()) {
-      // Make key mapping universal, elsewhere
-      case XK_BackSpace:
-      case XK_Tab:
-      case XK_Escape:
-      case XK_Delete:
-        if (event.getType() == keyPressed) {
-          handleBackspacePressed();
-        }
-        else if (event.getType() == keyReleased) {
-          handleBackspaceReleased();
-        }
+    switch (event.getType())
+    {
+      case eventNormalKeyPressed:
+        handleNormalKeyPressed();
       break;
-      case XK_Return:
-        if (event.getType() == keyPressed) {
-          handleEnterPressed();
-        }
-        else if (event.getType() == keyReleased) {
-          handleEnterReleased();
-        }
+      case eventNormalKeyReleased:
+        handleNormalKeyReleased();
+      break;
+      case eventEnterKeyPressed:
+        handleEnterPressed();
+      break;
+      case eventEnterKeyReleased:
+        handleEnterReleased();
+      break;
+      case eventBackspaceKeyPressed:
+        handleBackspacePressed();
+      break;
+      case eventBackspaceKeyReleased:
+        handleBackspaceReleased();
       break;
       default:
-        if (event.getType() == keyPressed) {
-          handleNormalKeyPressed();
-        }
-        else if (event.getType() == keyReleased) {
-          handleNormalKeyReleased();
-        }
+        cerr << "Event '"<< event.getType() << "' currently not supported.\n";
       break;
     }
-
   }
 }
 

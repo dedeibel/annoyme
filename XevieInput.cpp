@@ -99,12 +99,10 @@ void XevieInput::fillEventFromXEvent(Event &event, XEvent &xevent)
   switch (xevent.type)
   {
     case KeyPress:
-      fillEventFromXKeyEvent(event, xevent);
-      event.setType(keyPressed);
+      fillEventFromXKeyEvent(event, xevent, true);
     break;
     case KeyRelease:
-      fillEventFromXKeyEvent(event, xevent);
-      event.setType(keyReleased);
+      fillEventFromXKeyEvent(event, xevent, false);
     break;
     case ButtonPress:
     case ButtonRelease:
@@ -116,7 +114,7 @@ void XevieInput::fillEventFromXEvent(Event &event, XEvent &xevent)
   }
 }
 
-void XevieInput::fillEventFromXKeyEvent(Event &event, XEvent &xevent)
+void XevieInput::fillEventFromXKeyEvent(Event &event, XEvent &xevent, bool pressed)
 {
   XKeyEvent      *keyEvent;
   KeySym          key;
@@ -131,5 +129,36 @@ void XevieInput::fillEventFromXKeyEvent(Event &event, XEvent &xevent)
 
   event.setValue(buffer);
   event.setSymbol(key);
+
+  switch (key) {
+    // Make key mapping universal, elsewhere
+    case XK_BackSpace:
+    case XK_Tab:
+    case XK_Escape:
+    case XK_Delete:
+      if (pressed) {
+        event.setType(eventBackspaceKeyPressed);
+      }
+      else {
+        event.setType(eventBackspaceKeyReleased);
+      }
+    break;
+    case XK_Return:
+      if (pressed) {
+        event.setType(eventEnterKeyPressed);
+      }
+      else {
+        event.setType(eventEnterKeyReleased);
+      }
+    break;
+    default:
+      if (pressed) {
+        event.setType(eventNormalKeyPressed);
+      }
+      else {
+        event.setType(eventNormalKeyReleased);
+      }
+    break;
+  }
 }
 
