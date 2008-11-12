@@ -25,28 +25,21 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <string>
-#include <cstring>
-#include <algorithm>
+#ifndef AOUTPUT_H
+#define AOUTPUT_H
 
-using namespace std;
+#include "SoundOutput.h"
 
-#include "StaticConfiguration.h"
-#include "exceptions.h"
-
-string StaticConfiguration::get(string name)
+class AOutput : public virtual SoundOutput
 {
-  std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-  if (name.compare("sample directory")   == 0) { return string("pcm/default"); };
-  if (name.compare("alsa output device") == 0) { return string("plughw:0,0"); };
-  if (name.compare("sound loader") == 0) { return string("wav"); };
-  if (name.compare("sound output") == 0) { return string("alsa"); };
-  if (name.compare("input event reader") == 0) { return string("xevie"); };
+public:
+  AOutput(const std::string &device);
+  virtual ~AOutput();
+  virtual void playSound(const Sample *sound);
+  virtual void open();
+  virtual void close();
+private:
+  ao_device *m_device;
+};
 
-  throw UnknownOptionException(name);
-}
-
-void StaticConfiguration::init()
-{
-
-}
+#endif // AOUTPUT_H

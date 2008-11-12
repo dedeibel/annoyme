@@ -1,14 +1,25 @@
 
 #include <string>
 #include <cstring>
-#include <alsa/asoundlib.h>
 
 using namespace std;
 
 #include "exceptions.h"
 #include "Sample.h"
 #include "SoundOutput.h"
-#include "AlsaOutput.h"
+
+#ifdef WITH_ALSA
+  extern "C" {
+    #include <alsa/asoundlib.h>
+  }
+  #include "AlsaOutput.h"
+#endif
+#ifdef WITH_AO
+  extern "C" {
+    #include <ao/ao.h>
+  }
+  #include "AOutput.h"
+#endif
 
 #include "SoundOutputFactory.h"
 
@@ -16,10 +27,22 @@ SoundOutputFactory *SoundOutputFactory::m_instance = 0;
 
 SoundOutput *SoundOutputFactory::getSoundOutput(const string &name, const string &param)
 {
-  if (name == "alsa")
+  if (name == "default")
+  {
+    throw InvalidNameException("Sound output unkown", name);
+  }
+#ifdef WITH_ALSA
+  else if (name == "alsa")
   {
     return new AlsaOutput(param);
   }
+#endif
+#ifdef WITH_AO
+  else if (name == "ao")
+  {
+    return new AOutput(param);
+  }
+#endif
   else
   {
     throw InvalidNameException("Sound output unkown", name);

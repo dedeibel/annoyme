@@ -26,27 +26,60 @@
  */
 
 #include <string>
+#include <iostream>
 #include <cstring>
-#include <algorithm>
+
+extern "C" {
+  #include <ao/ao.h>
+}
 
 using namespace std;
 
-#include "StaticConfiguration.h"
 #include "exceptions.h"
+#include "Sample.h"
 
-string StaticConfiguration::get(string name)
-{
-  std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-  if (name.compare("sample directory")   == 0) { return string("pcm/default"); };
-  if (name.compare("alsa output device") == 0) { return string("plughw:0,0"); };
-  if (name.compare("sound loader") == 0) { return string("wav"); };
-  if (name.compare("sound output") == 0) { return string("alsa"); };
-  if (name.compare("input event reader") == 0) { return string("xevie"); };
+#include "AOutput.h"
 
-  throw UnknownOptionException(name);
-}
 
-void StaticConfiguration::init()
+AOutput::AOutput(const std::string &)
 {
 
 }
+
+AOutput::~AOutput()
+{
+
+}
+
+void AOutput::playSound(const Sample *sample)
+{
+  std::cout << "Playing sound " << sample->getName() << std::endl;
+  ao_play(m_device, sample->getData(), sample->getSize());
+}
+
+void AOutput::open()
+{
+  ao_initialize();
+	
+  /* -- Setup for default driver -- */
+  int default_driver = ao_default_driver_id();
+  
+  ao_sample_format format;
+  format.bits = 16;
+  format.channels = 1;
+  //format.rate = 11025;
+  format.rate = 22050;
+  format.byte_format = AO_FMT_LITTLE;
+  
+  /* -- Open driver -- */
+  m_device = ao_open_live(default_driver, &format, NULL /* no options */);
+  if (m_device == 0) {
+  	throw SoundOutputException("AOutput: Error opening device.");
+  }
+}
+
+void AOutput::close()
+{
+  ao_shutdown();
+}
+

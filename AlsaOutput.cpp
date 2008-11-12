@@ -27,7 +27,10 @@
 
 #include <string>
 #include <iostream>
-#include <alsa/asoundlib.h>
+
+extern "C" {
+  #include <alsa/asoundlib.h>
+}
 
 using namespace std;
 
