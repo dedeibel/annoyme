@@ -40,7 +40,7 @@ string StaticConfiguration::get(string name)
   if (name.compare("sample directory")   == 0) { return string("pcm/default"); };
   if (name.compare("alsa output device") == 0) { return string("plughw:0,0"); };
   if (name.compare("sound loader") == 0) { return string("wav"); };
-  if (name.compare("sound output") == 0) { return string("alsa"); };
+  if (name.compare("sound output") == 0) { return string("ao"); };
   if (name.compare("input event reader") == 0) { return string("xevie"); };
 
   throw UnknownOptionException(name);

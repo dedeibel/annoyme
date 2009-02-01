@@ -25,32 +25,44 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AOUTPUT_H
-#define AOUTPUT_H
+#ifndef MIXEROUTPUT_H
+#define MIXEROUTPUT_H
 
 #include "SoundOutput.h"
 
-class MixerOutput;
-class AnnoymeException;
+typedef unsigned char byte;
 
-class AOutput : public virtual SoundOutput
+class MixerOutput : public virtual SoundOutput
 {
 public:
-  AOutput(const std::string &device);
-  virtual ~AOutput();
+  MixerOutput(const std::string &device);
+  virtual ~MixerOutput();
   virtual void playSound(const Sample *sound);
+  void getSound(byte *buffer, unsigned int size);
   virtual void open();
   virtual void close();
-private:
-  void startThread() throw(AnnoymeException);
-  void stopThread() throw(AnnoymeException);
-  void run();
-  static void* runObject(void *object);
 
-private:
-  ao_device   *m_device;
-  MixerOutput *m_mixer;
-  pthread_t    m_thread;
+  unsigned int getBufferUnderruns();
+  unsigned int getBufferOverflows();
+  unsigned int getBufferSize();
+  unsigned int getStoredBytes();
+
+public: // TODO PRIVATE
+  unsigned int add(byte *buffer, unsigned int size);
+  unsigned int fetch(byte *buffer, unsigned int size);
+  void mix(byte *dst, byte *src, unsigned int size);
+  void clean(unsigned int size);
+
+  unsigned int m_formatBits;
+
+  unsigned int m_bufferUnderruns;
+  unsigned int m_bufferOverflows;
+  unsigned int m_storedBytes;
+  unsigned int m_pointer;
+  unsigned int m_bufferSize;
+  byte *m_buffer;
+
+  pthread_mutex_t m_bufferMutex;
 };
 
-#endif // AOUTPUT_H
+#endif // MIXEROUTPUT_H

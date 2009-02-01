@@ -1,9 +1,9 @@
 
 AUDIOLIBS=alsa
-#AUDIOLIBS=alsa ao
+AUDIOLIBS=ao
 
 EXECUTABLES=annoyme
-LIBS=-lX11 -lXevie
+LIBS=-lX11 -lXevie -lpthread
 SOURCES=$(wildcard *.cpp)
 
 ADD_AUDIO_LIBS=
@@ -21,7 +21,7 @@ ifneq (,$(findstring ao,$(AUDIOLIBS)))
 	ADD_AUDIO_DEFINES+= -DWITH_AO
 endif
 
-MAINFILES=Annoyme.o Event.o Sample.o$(ADD_AUDIO_FILES) XevieInput.o InputEventReaderFactory.o StaticConfiguration.o SoundOutputFactory.o SimpleWaveFileLoader.o SoundLoaderFactory.o
+MAINFILES=Annoyme.o Event.o Sample.o$(ADD_AUDIO_FILES) XevieInput.o InputEventReaderFactory.o StaticConfiguration.o SoundOutputFactory.o SimpleWaveFileLoader.o SoundLoaderFactory.o MixerOutput.o
 DEPS=$(patsubst %.o,%.d,$(MAINFILES))
 
 LDFLAGS=$(LIBS)$(ADD_AUDIO_LIBS)

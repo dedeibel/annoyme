@@ -25,32 +25,61 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef AOUTPUT_H
-#define AOUTPUT_H
+#include <string>
+#include <iostream>
+#include <cstring>
 
-#include "SoundOutput.h"
+extern "C" {
+  #include <ao/ao.h>
+}
 
-class MixerOutput;
-class AnnoymeException;
+using namespace std;
 
-class AOutput : public virtual SoundOutput
+#include "exceptions.h"
+#include "Sample.h"
+
+#include "AOutput.h"
+
+
+AOutput::AOutput(const std::string &)
 {
-public:
-  AOutput(const std::string &device);
-  virtual ~AOutput();
-  virtual void playSound(const Sample *sound);
-  virtual void open();
-  virtual void close();
-private:
-  void startThread() throw(AnnoymeException);
-  void stopThread() throw(AnnoymeException);
-  void run();
-  static void* runObject(void *object);
 
-private:
-  ao_device   *m_device;
-  MixerOutput *m_mixer;
-  pthread_t    m_thread;
-};
+}
 
-#endif // AOUTPUT_H
+AOutput::~AOutput()
+{
+
+}
+
+void AOutput::playSound(const Sample *sample)
+{
+  std::cout << "Playing sound " << sample->getName() << std::endl;
+  ao_play(m_device, sample->getData(), sample->getSize());
+}
+
+void AOutput::open()
+{
+  ao_initialize();
+	
+  /* -- Setup for default driver -- */
+  int default_driver = ao_default_driver_id();
+  
+  ao_sample_format format;
+  format.bits = 16;
+  format.channels = 1;
+  //format.rate = 11025;
+  format.rate = 22050;
+  format.byte_format = AO_FMT_LITTLE;
+  
+  /* -- Open driver -- */
+  m_device = ao_open_live(default_driver, &format, NULL /* no options */);
+  if (m_device == 0) {
+  	throw SoundOutputException("AOutput: Error opening device.");
+  }
+}
+
+void AOutput::close()
+{
+  ao_shutdown();
+}
+

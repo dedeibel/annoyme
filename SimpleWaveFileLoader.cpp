@@ -159,7 +159,7 @@ void SimpleWaveFileLoader::loadSampleFromFile(const char *path)
 void SimpleWaveFileLoader::loadDataFromFile(Sample *sample)
 {
   sample->setFormat(Sample::PCM);
-  sample->setRate(11025);
+  sample->setRate(22050);
 
   unsigned int size = 0;
   char* data = 0;

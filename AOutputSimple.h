@@ -30,9 +30,6 @@
 
 #include "SoundOutput.h"
 
-class MixerOutput;
-class AnnoymeException;
-
 class AOutput : public virtual SoundOutput
 {
 public:
@@ -42,15 +39,7 @@ public:
   virtual void open();
   virtual void close();
 private:
-  void startThread() throw(AnnoymeException);
-  void stopThread() throw(AnnoymeException);
-  void run();
-  static void* runObject(void *object);
-
-private:
-  ao_device   *m_device;
-  MixerOutput *m_mixer;
-  pthread_t    m_thread;
+  ao_device *m_device;
 };
 
 #endif // AOUTPUT_H

@@ -31,6 +31,7 @@
 
 extern "C" {
   #include <ao/ao.h>
+  #include <pthread.h>
 }
 
 using namespace std;
@@ -38,12 +39,14 @@ using namespace std;
 #include "exceptions.h"
 #include "Sample.h"
 
+#include "MixerOutput.h"
+
 #include "AOutput.h"
 
 
 AOutput::AOutput(const std::string &)
 {
-
+  
 }
 
 AOutput::~AOutput()
@@ -54,11 +57,17 @@ AOutput::~AOutput()
 void AOutput::playSound(const Sample *sample)
 {
   std::cout << "Playing sound " << sample->getName() << std::endl;
-  ao_play(m_device, sample->getData(), sample->getSize());
+  m_mixer->add(reinterpret_cast<byte*>(sample->getData()), sample->getSize());
+  std::cout << "STATS: Size: "<< m_mixer->getStoredBytes() <<
+   " Overflows: " << m_mixer->getBufferOverflows() <<
+   " Underruns: " << m_mixer->getBufferUnderruns() <<
+   endl;
 }
 
 void AOutput::open()
 {
+  m_mixer = new MixerOutput("5242880 16");
+  m_mixer->open();
   ao_initialize();
 	
   /* -- Setup for default driver -- */
@@ -76,10 +85,52 @@ void AOutput::open()
   if (m_device == 0) {
   	throw SoundOutputException("AOutput: Error opening device.");
   }
+
+  startThread();
 }
 
 void AOutput::close()
 {
   ao_shutdown();
+  stopThread();
 }
 
+void AOutput::startThread() throw(AnnoymeException)
+{
+  int rc;
+  rc = pthread_create(&m_thread, NULL, runObject, reinterpret_cast<void*>(this));
+
+  if (rc != 0) {
+    throw SoundOutputException("AOutput: An error occured while starting the AOutput thread.");
+  }
+}
+
+void AOutput::stopThread() throw(AnnoymeException)
+{
+  pthread_exit(NULL);
+}
+
+void AOutput::run()
+{
+  byte buffer[1024];
+  unsigned int bytes_fetched;
+  unsigned int sample_ms = (1. / 22050.0 * 1000000.0); // well 1_000_000 should be right but isn't ... hmm
+  unsigned int byte_ms = (sample_ms >> 1) - 10; // 10ms for processing
+  int ret;
+  while (1) {
+    bytes_fetched = m_mixer->fetch(buffer, 128);
+    ret = ao_play(m_device, reinterpret_cast<char*>(buffer), bytes_fetched);
+    if (ret == 0) {
+      cerr << "AOutput: output device failure.\n";
+    }
+
+    usleep(bytes_fetched * byte_ms); // sleep or burn cpu power ...
+  }
+}
+
+void* AOutput::runObject(void *object)
+{
+  AOutput* out = reinterpret_cast<AOutput*>(object);
+  out->run();
+  return 0;
+}
