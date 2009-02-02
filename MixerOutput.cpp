@@ -32,6 +32,7 @@
 
 extern "C" {
   #include <pthread.h>
+  #include <limits.h>
 }
 
 using namespace std;
@@ -183,20 +184,20 @@ unsigned int MixerOutput::fetch(byte *buffer, unsigned int size)
 
 void MixerOutput::mix(byte *dst, byte *src, unsigned int size)
 {
-  unsigned long s1 = 0;
-  unsigned long s2 = 0;
+  int s1 = 0;
+  int s2 = 0;
   byte *dstt = dst;
   byte *srct = src;
   for (unsigned int i = 0; i < size; i += m_formatBits >> 3)
   {
     if (m_formatBits == 16) {
-      s1 = (unsigned long)*(uint16_t*)dstt;
-      s2 = (unsigned long)*(uint16_t*)srct;
+      s1 = (int)*(int16_t*)dstt;
+      s2 = (int)*(int16_t*)srct;
       s1 += s2;
       if (s1 >> m_formatBits) {
-        s1 = 1;
+        s1 = INT_MAX;
       }
-      *(uint16_t*)dstt = (uint16_t)s1;
+      *(uint16_t*)dstt = (int16_t)s1;
     }
     dstt += m_formatBits >> 3;
     srct += m_formatBits >> 3;
