@@ -7,7 +7,6 @@ using namespace std;
 #include "exceptions.h"
 #include "Sample.h"
 #include "SoundOutput.h"
-#include "MixerOutput.h"
 
 #ifdef WITH_ALSA
   extern "C" {

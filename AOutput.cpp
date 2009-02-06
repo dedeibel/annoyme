@@ -115,7 +115,7 @@ void AOutput::run()
   byte buffer[1024];
   unsigned int bytes_fetched;
   unsigned int sample_ms = (1. / 22050.0 * 1000000.0); // well 1_000_000 should be right but isn't ... hmm
-  unsigned int byte_ms = (sample_ms >> 1) - 10; // 10ms for processing
+  unsigned int byte_ms = (sample_ms >> 1) * 0.8; // 10ms for processing
   int ret;
   while (1) {
     bytes_fetched = m_mixer->fetch(buffer, 128);

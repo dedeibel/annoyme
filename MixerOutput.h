@@ -30,17 +30,19 @@
 
 #include "SoundOutput.h"
 
+#include <iostream>
+
 typedef unsigned char byte;
 
-class MixerOutput : public virtual SoundOutput
+class MixerOutput
 {
 public:
   MixerOutput(const std::string &device);
-  virtual ~MixerOutput();
-  virtual void playSound(const Sample *sound);
-  void getSound(byte *buffer, unsigned int size);
-  virtual void open();
-  virtual void close();
+  ~MixerOutput();
+  inline void playSound(const Sample *sound);
+  inline void getSound(byte *buffer, unsigned int size);
+  void open();
+  void close();
 
   unsigned int getBufferUnderruns();
   unsigned int getBufferOverflows();
@@ -48,10 +50,10 @@ public:
   unsigned int getStoredBytes();
 
 public: // TODO PRIVATE
-  unsigned int add(byte *buffer, unsigned int size);
-  unsigned int fetch(byte *buffer, unsigned int size);
-  void mix(byte *dst, byte *src, unsigned int size);
-  void clean(unsigned int size);
+  inline unsigned int add(byte *buffer, unsigned int size);
+  inline unsigned int fetch(byte *buffer, unsigned int size);
+  inline void mix(byte *dst, byte *src, unsigned int size);
+  inline void clean(unsigned int size);
 
   unsigned int m_formatBits;
 
@@ -64,5 +66,127 @@ public: // TODO PRIVATE
 
   pthread_mutex_t m_bufferMutex;
 };
+
+inline void MixerOutput::playSound(const Sample *sample)
+{
+  std::cout << "Playing sound " << sample->getName() << std::endl;
+  pthread_mutex_lock(&m_bufferMutex);
+  this->add(reinterpret_cast<byte*>(sample->getData()), sample->getSize());
+  pthread_mutex_unlock(&m_bufferMutex);
+}
+
+inline void MixerOutput::getSound(byte *buffer, unsigned int size)
+{
+  pthread_mutex_lock(&m_bufferMutex);
+  this->fetch(buffer, size);
+  pthread_mutex_unlock(&m_bufferMutex);
+}
+
+inline unsigned int MixerOutput::add(byte *buffer, unsigned int size)
+{
+  if (m_buffer == 0) {
+    throw AnnoymeException("MixerOutput has not been opened yet.");
+  }
+
+  if (size == 0) {
+    return size;
+  }
+
+  pthread_mutex_lock(&m_bufferMutex);
+
+  if (size > m_bufferSize) {
+    m_bufferOverflows++;
+    size = m_bufferSize;
+  }
+
+  if (size > m_storedBytes) {
+    this->clean(size);
+  }
+
+  // If it is bigger than the space left, wrap around
+  if (m_pointer + size > m_bufferSize) {
+    unsigned int fit = m_bufferSize - m_pointer;
+    mix(m_buffer + m_pointer, buffer,       fit);
+    mix(m_buffer            , buffer + fit, size - fit);
+  }
+  else {
+    mix(m_buffer + m_pointer, buffer, size);
+  }
+  if (size > m_storedBytes) m_storedBytes = size;
+
+  pthread_mutex_unlock(&m_bufferMutex);
+
+  return size;
+}
+
+inline unsigned int MixerOutput::fetch(byte *buffer, unsigned int size)
+{
+  if (m_buffer == 0) {
+    throw AnnoymeException("MixerOutput has not been opened yet.");
+  }
+
+  pthread_mutex_lock(&m_bufferMutex);
+
+  if (size > m_bufferSize) {
+    m_bufferUnderruns++;
+  }
+
+  if (size > m_storedBytes) {
+    memset(buffer + m_storedBytes, 0, size - m_storedBytes);
+    size = m_storedBytes;
+  }
+
+  // If the requested amount is bigger than the space left, wrap around
+  if (m_pointer + size >= m_bufferSize) {
+    unsigned int fit = m_bufferSize - m_pointer;
+    memcpy(buffer,        m_buffer + m_pointer, fit);
+    memcpy(buffer + fit,  m_buffer,             size - fit);
+    m_pointer = size - fit;
+  }
+  else {
+    memcpy(buffer, m_buffer + m_pointer, size);
+    m_pointer += size;
+  }
+
+  m_storedBytes -= size;
+
+  pthread_mutex_unlock(&m_bufferMutex);
+
+  return size;
+}
+
+inline void MixerOutput::mix(byte *dst, byte *src, unsigned int size)
+{
+  int s1 = 0;
+  int s2 = 0;
+  byte *dstt = dst;
+  byte *srct = src;
+  for (unsigned int i = 0; i < size; i += m_formatBits >> 3)
+  {
+    if (m_formatBits == 16) {
+      s1 = (int)*(int16_t*)dstt;
+      s2 = (int)*(int16_t*)srct;
+      s1 += s2;
+      *(int16_t*)dstt = (int16_t)s1;
+    }
+    dstt += m_formatBits >> 3;
+    srct += m_formatBits >> 3;
+  }
+}
+
+inline void MixerOutput::clean(unsigned int size)
+{
+  unsigned int from   = m_pointer + m_storedBytes;
+  unsigned int amount = size - m_storedBytes;
+  from %= m_bufferSize;
+  if (from + amount > m_bufferSize) {
+    unsigned int fit = m_bufferSize - from;
+    memset(m_buffer + from, 0, fit);
+    memset(m_buffer, 0, amount - fit);
+  }
+  else {
+    memset(m_buffer + from, 0, amount);
+  }
+}
 
 #endif // MIXEROUTPUT_H

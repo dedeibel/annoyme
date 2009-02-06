@@ -75,21 +75,6 @@ MixerOutput::~MixerOutput()
   pthread_mutex_destroy(&m_bufferMutex);
 }
 
-void MixerOutput::playSound(const Sample *sample)
-{
-  std::cout << "Playing sound " << sample->getName() << std::endl;
-  pthread_mutex_lock(&m_bufferMutex);
-  this->add(reinterpret_cast<byte*>(sample->getData()), sample->getSize());
-  pthread_mutex_unlock(&m_bufferMutex);
-}
-
-void MixerOutput::getSound(byte *buffer, unsigned int size)
-{
-  pthread_mutex_lock(&m_bufferMutex);
-  this->fetch(buffer, size);
-  pthread_mutex_unlock(&m_bufferMutex);
-}
-
 void MixerOutput::open()
 {
   pthread_mutex_lock(&m_bufferMutex);
@@ -107,116 +92,6 @@ void MixerOutput::close()
   delete[] m_buffer;
   m_buffer = 0;
   pthread_mutex_unlock(&m_bufferMutex);
-}
-
-unsigned int MixerOutput::add(byte *buffer, unsigned int size)
-{
-  if (m_buffer == 0) {
-    throw AnnoymeException("MixerOutput has not been opened yet.");
-  }
-
-  if (size == 0) {
-    return size;
-  }
-
-  pthread_mutex_lock(&m_bufferMutex);
-
-  if (size > m_bufferSize) {
-    m_bufferOverflows++;
-    size = m_bufferSize;
-  }
-
-  if (size > m_storedBytes) {
-    this->clean(size);
-  }
-
-  // If it is bigger than the space left, wrap around
-  if (m_pointer + size > m_bufferSize) {
-    unsigned int fit = m_bufferSize - m_pointer;
-    mix(m_buffer + m_pointer, buffer,       fit);
-    mix(m_buffer            , buffer + fit, size - fit);
-  }
-  else {
-    mix(m_buffer + m_pointer, buffer, size);
-  }
-  if (size > m_storedBytes) m_storedBytes = size;
-
-  pthread_mutex_unlock(&m_bufferMutex);
-
-  return size;
-}
-
-unsigned int MixerOutput::fetch(byte *buffer, unsigned int size)
-{
-  if (m_buffer == 0) {
-    throw AnnoymeException("MixerOutput has not been opened yet.");
-  }
-
-  pthread_mutex_lock(&m_bufferMutex);
-
-  if (size > m_bufferSize) {
-    m_bufferUnderruns++;
-  }
-
-  if (size > m_storedBytes) {
-    memset(buffer + m_storedBytes, 0, size - m_storedBytes);
-    size = m_storedBytes;
-  }
-
-  // If the requested amount is bigger than the space left, wrap around
-  if (m_pointer + size >= m_bufferSize) {
-    unsigned int fit = m_bufferSize - m_pointer;
-    memcpy(buffer,        m_buffer + m_pointer, fit);
-    memcpy(buffer + fit,  m_buffer,             size - fit);
-    m_pointer = size - fit;
-  }
-  else {
-    memcpy(buffer, m_buffer + m_pointer, size);
-    m_pointer += size;
-  }
-
-  m_storedBytes -= size;
-
-  pthread_mutex_unlock(&m_bufferMutex);
-
-  return size;
-}
-
-void MixerOutput::mix(byte *dst, byte *src, unsigned int size)
-{
-  int s1 = 0;
-  int s2 = 0;
-  byte *dstt = dst;
-  byte *srct = src;
-  for (unsigned int i = 0; i < size; i += m_formatBits >> 3)
-  {
-    if (m_formatBits == 16) {
-      s1 = (int)*(int16_t*)dstt;
-      s2 = (int)*(int16_t*)srct;
-      s1 += s2;
-      if (s1 >> m_formatBits) {
-        s1 = INT_MAX;
-      }
-      *(uint16_t*)dstt = (int16_t)s1;
-    }
-    dstt += m_formatBits >> 3;
-    srct += m_formatBits >> 3;
-  }
-}
-
-void MixerOutput::clean(unsigned int size)
-{
-  unsigned int from   = m_pointer + m_storedBytes;
-  unsigned int amount = size - m_storedBytes;
-  from %= m_bufferSize;
-  if (from + amount > m_bufferSize) {
-    unsigned int fit = m_bufferSize - from;
-    memset(m_buffer + from, 0, fit);
-    memset(m_buffer, 0, amount - fit);
-  }
-  else {
-    memset(m_buffer + from, 0, amount);
-  }
 }
 
 unsigned int MixerOutput::getBufferUnderruns()
