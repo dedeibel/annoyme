@@ -4,6 +4,7 @@
 
 using namespace std;
 
+#include "config.h"
 #include "exceptions.h"
 #include "Sample.h"
 #include "SoundOutput.h"

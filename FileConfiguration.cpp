@@ -25,6 +25,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <string>
+using namespace std;
+
+#include "Configuration.h"
+
 #include "FileConfiguration.h"
 
 FileConfiguration::FileConfiguration() 

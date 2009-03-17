@@ -1,0 +1,8 @@
+
+#cmakedefine HAVE_ALSA_H 1
+#cmakedefine HAVE_AO_H 1
+
+#cmakedefine WITH_ALSA 1
+#cmakedefine WITH_AO 1
+
+#cmakedefine ANNOYME_SAMPLE_DIRECTORY "@ANNOYME_SAMPLE_DIRECTORY@"

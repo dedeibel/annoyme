@@ -1,0 +1,33 @@
+
+README
+
+Annoyme
+
+WARNING
+
+This project is merely alpha, any comments,
+requests or suggestions are welcome.
+
+Feel free to contact me before writing patches.
+
+DESCRIPTION
+
+Adds beautiful typewriter sounds to your X
+
+DEPENDENCIES
+
+- CMake is required to build the project.
+- XEvIE
+- One of the following sound output libraries:
+ * alsa
+ * ao
+
+INSTALLATION
+
+cd build
+cmake ..
+make
+
+EXECUTION
+
+./annoyme

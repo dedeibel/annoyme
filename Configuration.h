@@ -28,13 +28,11 @@
 #ifndef CONFIGURATION_H
 #define CONFIGURATION_H
 
-using namespace std;
-
 class Configuration
 {
 public:
   virtual ~Configuration() {};
-  virtual string get(string name) = 0;
+  virtual std::string get(std::string name) = 0;
   virtual void init() = 0;
 };
 
