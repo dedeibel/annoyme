@@ -1,0 +1,41 @@
+
+#
+# Expects the following variables pre-set:
+#   ANNOYME_SRC_SOUNDOUTPUT   - source files for the selected
+#                               sound output types
+#   ANNOYME_SRC_KEYINPUT      - source files for the selected
+#                               key input types
+#   ANNOYME_LIBS_COMMON       - Detected common libraries, required for
+#                               the annoyme binary
+#   ANNOYME_LIBS_SOUNDOUTPUT  - Detected sound output libraries, required for
+#                               the annoyme binary
+#   ANNOYME_LIBS_KEYINPUT     - Detected key input libraries, required for
+#                               the annoyme binary
+
+SET(ANNOYME_SRC
+  annoyme.cpp
+  Annoyme.cpp
+  Event.cpp
+  FileConfiguration.cpp
+  InputEventReaderFactory.cpp
+  MixerOutput.cpp
+  Sample.cpp
+  SimpleWaveFileLoader.cpp
+  SoundLoaderFactory.cpp
+  SoundOutputFactory.cpp
+  StaticConfiguration.cpp
+  ${ANNOYME_SRC_SOUNDOUTPUT}
+  ${ANNOYME_SRC_KEYINPUT}
+)
+
+#
+# Set Libs and Executables
+#
+
+ADD_DEFINITIONS(-D_REENTRANT)
+
+ADD_EXECUTABLE(annoyme ${ANNOYME_SRC})
+TARGET_LINK_LIBRARIES(annoyme ${ANNOYME_LIBS_COMMON})
+TARGET_LINK_LIBRARIES(annoyme ${ANNOYME_LIBS_KEYINPUT})
+TARGET_LINK_LIBRARIES(annoyme ${ANNOYME_LIBS_SOUNDOUTPUT})
+
