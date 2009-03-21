@@ -1,0 +1,13 @@
+
+TODO
+
+- Get alsa output to work again
+    (I guess it broke after an update? Also the
+     file format changed a bit, kbps and stuff)
+- Add sound sample rotation for each key
+- Figure out the latency Problem, when pressing
+  keys pretty fast.
+- Make sound file format handling more robust
+- Enable loading of more audio file input formats
+- Add console only key input
+- Add more documentation *g*
