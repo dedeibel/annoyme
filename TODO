@@ -10,4 +10,7 @@ TODO
 - Make sound file format handling more robust
 - Enable loading of more audio file input formats
 - Add console only key input
+- Make input readers and sound output more robust,
+  e.g. make them reinitialize the sound library if
+  there is a problem.
 - Add more documentation *g*
