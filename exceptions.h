@@ -79,6 +79,19 @@ class XevieExtensionNotInstalledException : public AnnoymeException
   virtual ~XevieExtensionNotInstalledException() throw() {};
 };
 
+class XDisplayException : public AnnoymeException
+{
+  public:
+
+  XDisplayException() throw()
+  : AnnoymeException(string("Could not open X display."))
+  {
+
+  }
+
+  virtual ~XDisplayException() throw() {};
+};
+
 class UnknownEventReceived : public AnnoymeException
 {
   public:

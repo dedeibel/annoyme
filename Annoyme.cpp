@@ -101,6 +101,7 @@ void Annoyme::handleBackspaceReleased()
 void Annoyme::init()
 {
   m_config        = new StaticConfiguration;
+  cout << "Creating key input reader.\n";
   m_input         = InputEventReaderFactory::getInstance()->getInputEventReader(
                          m_config->get("Input event reader"));
   cout << "Creating sound file loader.\n";

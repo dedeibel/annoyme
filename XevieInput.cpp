@@ -62,6 +62,10 @@ XevieInput::~XevieInput()
 void XevieInput::open()
 {
 	m_display = XOpenDisplay(NULL);
+  if (! m_display)
+  {
+    throw XDisplayException();
+  }
   if (!XevieQueryVersion(m_display, &m_xevieVersionMinor, &m_xevieVersionMajor))
   {
     throw XevieExtensionNotInstalledException();
