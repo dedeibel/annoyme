@@ -25,43 +25,29 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SIMPLEWAVEFILELOADER_H
-#define SIMPLEWAVEFILELOADER_H
+#include <cstdlib>
+#include <string>
 
+using namespace std;
+
+#include "Event.h"
+#include "Sample.h"
+#include "StaticConfiguration.h"
+#include "InputEventReader.h"
+#include "InputEventReaderFactory.h"
+#include "SoundOutput.h"
+#include "SoundOutputFactory.h"
 #include "SoundLoader.h"
+#include "SoundLoaderFactory.h"
+#include "Annoyme.h"
 
-class SimpleWaveFileLoader : virtual public SoundLoader
+int main(int argc, char **argv)
 {
-public:
-  SimpleWaveFileLoader(const string &path);
-  virtual ~SimpleWaveFileLoader();
+  Annoyme annoyme;
+  annoyme.init();
+  annoyme.run();
+  annoyme.close();
 
-  virtual void clear();
-  virtual void loadFiles();
-  virtual void getSample(enum Sample::SampleType type, const Sample **sample);
-private:
-  void insertDefault();
-  void loadSampleFromFile(const char *path);
-  void loadDataFromFile(Sample *sample);
+  return EXIT_SUCCESS;
+}
 
-  inline const string getName(const char *path)
-  {
-    const char *fileBasename = basename(const_cast<char *>(path));
-    const unsigned int lastDot = lastOccurance(fileBasename, '.');
-    string s = string(fileBasename, lastDot);
-    return s;
-  }
-
-  inline unsigned int lastOccurance(const char *path, char c)
-  {
-    unsigned int length = strlen(path);
-    while (path[--length] != c);
-    return length;
-  }
-
-private:
-  string m_path;
-  map<const enum Sample::SampleType, Sample*> samples;
-};
-
-#endif // SIMPLEWAVEFILELOADER_H

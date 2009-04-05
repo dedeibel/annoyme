@@ -13,7 +13,7 @@
 #                               the annoyme binary
 
 SET(ANNOYME_SRC
-  annoyme.cpp
+  annoyme-run.cpp
   Annoyme.cpp
   Event.cpp
   FileConfiguration.cpp

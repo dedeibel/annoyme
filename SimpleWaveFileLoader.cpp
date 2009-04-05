@@ -34,10 +34,13 @@
 
 using namespace std;
 
-#include <glob.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+extern "C" {
+  #include <glob.h>
+  #include <sys/types.h>
+  #include <sys/stat.h>
+  #include <fcntl.h>
+  #include <libgen.h>
+}
 
 #include "exceptions.h"
 #include "Sample.h"

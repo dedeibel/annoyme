@@ -25,8 +25,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cstdlib>
 #include <string>
+#include <iostream>
 
 using namespace std;
 
@@ -39,15 +39,134 @@ using namespace std;
 #include "SoundOutputFactory.h"
 #include "SoundLoader.h"
 #include "SoundLoaderFactory.h"
+
 #include "Annoyme.h"
 
-int main(int argc, char **argv)
+Annoyme::Annoyme()
 {
-  Annoyme annoyme;
-  annoyme.init();
-  annoyme.run();
-  annoyme.close();
 
-  return EXIT_SUCCESS;
 }
+
+Annoyme::~Annoyme()
+{
+  delete m_soundOutput;
+  delete m_soundLoader;
+  delete m_input;
+  delete m_config;
+}
+
+void Annoyme::play(enum Sample::SampleType type)
+{
+  const Sample *sample;
+  m_soundLoader->getSample(type, &sample);
+  m_soundOutput->playSound(sample);
+}
+
+void Annoyme::handleNormalKeyPressed()
+{
+  play(Sample::normalKeyPressed);
+}
+
+
+void Annoyme::handleNormalKeyReleased()
+{
+  play(Sample::normalKeyReleased);
+}
+
+
+void Annoyme::handleEnterPressed()
+{
+  play(Sample::enterPressed);
+}
+
+
+void Annoyme::handleEnterReleased()
+{
+  play(Sample::enterReleased);
+}
+
+
+void Annoyme::handleBackspacePressed()
+{
+  play(Sample::backspacePressed);
+}
+
+
+void Annoyme::handleBackspaceReleased()
+{
+  play(Sample::backspaceReleased);
+}
+
+
+void Annoyme::init()
+{
+  m_config        = new StaticConfiguration;
+  cout << "Creating key input reader.\n";
+  m_input         = InputEventReaderFactory::getInstance()->getInputEventReader(
+                         m_config->get("Input event reader"));
+  cout << "Creating sound file loader.\n";
+  m_soundLoader   = SoundLoaderFactory::getInstance()->getSoundLoader(
+                         m_config->get("Sound loader"), m_config->get("Sample directory"));
+  cout << "Creating sound output.\n";
+  m_soundOutput   = SoundOutputFactory::getInstance()->getSoundOutput(
+                         m_config->get("Sound output"), m_config->get("alsa output device"));
+
+  cout << "Loading sound files.\n";
+  m_soundLoader->loadFiles();
+  cout << "Opening sound output.\n";
+  m_soundOutput->open();
+  cout << "Opening event input.\n";
+  m_input->open();
+}
+
+
+void Annoyme::run()
+{
+  Event event;
+  while (1)
+  {
+    // TODO create dynamic mapping table, event, (key) ,sound
+    m_input->getNextEvent(event);
+
+    cout << "Key " << event.getType() << " '" << event.getSymbol() << "'";
+    if (isprint(event.getValue().c_str()[0]))
+    {
+      cout << " '" << event.getValue() << "' ";
+    }
+    cout << endl;
+
+    switch (event.getType())
+    {
+      case eventNormalKeyPressed:
+        handleNormalKeyPressed();
+      break;
+      case eventNormalKeyReleased:
+        handleNormalKeyReleased();
+      break;
+      case eventEnterKeyPressed:
+        handleEnterPressed();
+      break;
+      case eventEnterKeyReleased:
+        handleEnterReleased();
+      break;
+      case eventBackspaceKeyPressed:
+        handleBackspacePressed();
+      break;
+      case eventBackspaceKeyReleased:
+        handleBackspaceReleased();
+      break;
+      default:
+        cerr << "Event '"<< event.getType() << "' currently not supported.\n";
+      break;
+    }
+  }
+}
+
+
+void Annoyme::close()
+{
+  m_input->close();
+  m_soundOutput->close();
+}
+
 
