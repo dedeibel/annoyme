@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Benjamin Peter <BenjaminPeter@arcor.de>
+ * Copyright (c) 2009, Benjamin Peter <BenjaminPeter@arcor.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,34 +25,71 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ANNOYME_H
-#define ANNOYME_H
+#include <iostream>
+#include <string>
 
-class Configuration;
-class InputEventReader;
-class SoundLoader;
-class SoundOutput;
-class SoundOutputAdapter;
-class InputEventHandler;
-class Dispatcher;
+using namespace std;
 
-class Annoyme
+#include "Event.h"
+#include "InputEventReader.h"
+#include "InputEventHandler.h"
+#include "Dispatcher.h"
+
+Dispatcher::Dispatcher(InputEventReader *reader, InputEventHandler *handler)
+: m_inputEventReader(reader)
+, m_inputEventHandler(handler)
 {
-public:
-  Annoyme();
-  ~Annoyme();
 	
-  void init();
-  void run();
-  void close();
-private:
-  Configuration      *m_config;
-  InputEventReader   *m_input;
-  SoundLoader        *m_soundLoader;
-  SoundOutput        *m_soundOutput;
-  SoundOutputAdapter *m_soundOutputAdapter;
-  InputEventHandler  *m_inputEventHandler;
-  Dispatcher         *m_dispatcher;
-};
+}
 
-#endif // ANNOYME_H
+Dispatcher::~Dispatcher() {
+	
+}
+
+void Dispatcher::init() {
+}
+
+void Dispatcher::run() {
+	Event event;
+	while (1)
+	{
+		// TODO create dynamic mapping table, event, (key) ,sound
+		m_inputEventReader->getNextEvent(event);
+		
+		cout << "Key " << event.getType() << " '" << event.getSymbol() << "'";
+		if (isprint(event.getValue().c_str()[0]))
+		{
+			cout << " '" << event.getValue() << "' ";
+		}
+		cout << endl;
+		
+		switch (event.getType())
+		{
+			case eventNormalKeyPressed:
+				m_inputEventHandler->handleNormalKeyPressed();
+				break;
+			case eventNormalKeyReleased:
+				m_inputEventHandler->handleNormalKeyReleased();
+				break;
+			case eventEnterKeyPressed:
+				m_inputEventHandler->handleEnterPressed();
+				break;
+			case eventEnterKeyReleased:
+				m_inputEventHandler->handleEnterReleased();
+				break;
+			case eventBackspaceKeyPressed:
+				m_inputEventHandler->handleBackspacePressed();
+				break;
+			case eventBackspaceKeyReleased:
+				m_inputEventHandler->handleBackspaceReleased();
+				break;
+			default:
+				cerr << "Event '"<< event.getType() << "' currently not supported.\n";
+				break;
+		}
+	}	
+}
+
+void Dispatcher::close() {
+	
+}

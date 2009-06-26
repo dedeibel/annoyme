@@ -30,15 +30,25 @@
 
 using namespace std;
 
-#include "Event.h"
-#include "Sample.h"
 #include "StaticConfiguration.h"
+
+// Input
+#include "Event.h"
 #include "InputEventReader.h"
 #include "InputEventReaderFactory.h"
+
+// Sound
+#include "Sample.h"
 #include "SoundOutput.h"
 #include "SoundOutputFactory.h"
 #include "SoundLoader.h"
 #include "SoundLoaderFactory.h"
+
+// Flow
+#include "SoundOutputAdapter.h"
+#include "InputEventHandler.h"
+#include "HandlerSoundOutput.h"
+#include "Dispatcher.h"
 
 #include "Annoyme.h"
 
@@ -49,54 +59,14 @@ Annoyme::Annoyme()
 
 Annoyme::~Annoyme()
 {
+  delete m_dispatcher;
+  delete m_inputEventHandler;
+  delete m_soundOutputAdapter;
   delete m_soundOutput;
   delete m_soundLoader;
   delete m_input;
   delete m_config;
 }
-
-void Annoyme::play(enum Sample::SampleType type)
-{
-  const Sample *sample;
-  m_soundLoader->getSample(type, &sample);
-  m_soundOutput->playSound(sample);
-}
-
-void Annoyme::handleNormalKeyPressed()
-{
-  play(Sample::normalKeyPressed);
-}
-
-
-void Annoyme::handleNormalKeyReleased()
-{
-  play(Sample::normalKeyReleased);
-}
-
-
-void Annoyme::handleEnterPressed()
-{
-  play(Sample::enterPressed);
-}
-
-
-void Annoyme::handleEnterReleased()
-{
-  play(Sample::enterReleased);
-}
-
-
-void Annoyme::handleBackspacePressed()
-{
-  play(Sample::backspacePressed);
-}
-
-
-void Annoyme::handleBackspaceReleased()
-{
-  play(Sample::backspaceReleased);
-}
-
 
 void Annoyme::init()
 {
@@ -117,54 +87,25 @@ void Annoyme::init()
   m_soundOutput->open();
   cout << "Opening event input.\n";
   m_input->open();
+
+  m_soundOutputAdapter = new SoundOutputAdapter(m_soundLoader, m_soundOutput);
+  m_inputEventHandler = new HandlerSoundOutput(m_soundOutputAdapter);
+  m_dispatcher = new Dispatcher(m_input, m_inputEventHandler);
+	
+  cout << "Initializing dispatcher.\n";
+  m_dispatcher->init();
 }
 
 
 void Annoyme::run()
 {
-  Event event;
-  while (1)
-  {
-    // TODO create dynamic mapping table, event, (key) ,sound
-    m_input->getNextEvent(event);
-
-    cout << "Key " << event.getType() << " '" << event.getSymbol() << "'";
-    if (isprint(event.getValue().c_str()[0]))
-    {
-      cout << " '" << event.getValue() << "' ";
-    }
-    cout << endl;
-
-    switch (event.getType())
-    {
-      case eventNormalKeyPressed:
-        handleNormalKeyPressed();
-      break;
-      case eventNormalKeyReleased:
-        handleNormalKeyReleased();
-      break;
-      case eventEnterKeyPressed:
-        handleEnterPressed();
-      break;
-      case eventEnterKeyReleased:
-        handleEnterReleased();
-      break;
-      case eventBackspaceKeyPressed:
-        handleBackspacePressed();
-      break;
-      case eventBackspaceKeyReleased:
-        handleBackspaceReleased();
-      break;
-      default:
-        cerr << "Event '"<< event.getType() << "' currently not supported.\n";
-      break;
-    }
-  }
+	cout << "Starting dispatcher.\n";
+	m_dispatcher->run();
 }
-
 
 void Annoyme::close()
 {
+  m_dispatcher->close();
   m_input->close();
   m_soundOutput->close();
 }

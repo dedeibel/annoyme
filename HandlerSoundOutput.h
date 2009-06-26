@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Benjamin Peter <BenjaminPeter@arcor.de>
+ * Copyright (c) 2009, Benjamin Peter <BenjaminPeter@arcor.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,34 +25,27 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ANNOYME_H
-#define ANNOYME_H
+#ifndef HANDLER_SOUND_OUTPUT_H
+#define HANDLER_SOUND_OUTPUT_H
 
-class Configuration;
-class InputEventReader;
-class SoundLoader;
-class SoundOutput;
-class SoundOutputAdapter;
-class InputEventHandler;
-class Dispatcher;
-
-class Annoyme
+class HandlerSoundOutput : public InputEventHandler
 {
 public:
-  Annoyme();
-  ~Annoyme();
+	HandlerSoundOutput(SoundOutputAdapter *output);
+	~HandlerSoundOutput();
+		
+	virtual void handleNormalKeyPressed();
+	virtual void handleNormalKeyReleased();
+	virtual void handleEnterPressed();
+	virtual void handleEnterReleased();
+	virtual void handleBackspacePressed();
+	virtual void handleBackspaceReleased();
 	
-  void init();
-  void run();
-  void close();
 private:
-  Configuration      *m_config;
-  InputEventReader   *m_input;
-  SoundLoader        *m_soundLoader;
-  SoundOutput        *m_soundOutput;
-  SoundOutputAdapter *m_soundOutputAdapter;
-  InputEventHandler  *m_inputEventHandler;
-  Dispatcher         *m_dispatcher;
+	void play(enum Sample::SampleType type);
+		
+private:
+	SoundOutputAdapter *m_output;
 };
 
-#endif // ANNOYME_H
+#endif // HANDLER_SOUND_OUTPUT_H

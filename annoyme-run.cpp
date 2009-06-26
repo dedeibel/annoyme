@@ -26,19 +26,7 @@
  */
 
 #include <cstdlib>
-#include <string>
 
-using namespace std;
-
-#include "Event.h"
-#include "Sample.h"
-#include "StaticConfiguration.h"
-#include "InputEventReader.h"
-#include "InputEventReaderFactory.h"
-#include "SoundOutput.h"
-#include "SoundOutputFactory.h"
-#include "SoundLoader.h"
-#include "SoundLoaderFactory.h"
 #include "Annoyme.h"
 
 int main(int argc, char **argv)
