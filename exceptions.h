@@ -25,6 +25,9 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef EXCEPTIONS_H
+#define EXCEPTIONS_H
+
 #include <exception>
 
 class AnnoymeException : public exception
@@ -151,3 +154,5 @@ class InvalidNameException : public AnnoymeException
 
   virtual ~InvalidNameException() throw() {};
 };
+
+#endif // EXCEPTIONS_H

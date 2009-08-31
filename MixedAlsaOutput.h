@@ -25,29 +25,45 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#ifndef MIXED_ALSA_OUTPUT_H
+#define MIXED_ALSA_OUTPUT_H
+
 #include <string>
-#include <cstring>
-#include <algorithm>
+#include <iostream>
+
+extern "C" {
+  #include <alsa/asoundlib.h>
+}
 
 using namespace std;
 
-#include "config.h"
-#include "StaticConfiguration.h"
 #include "exceptions.h"
+#include "Sample.h"
 
-string StaticConfiguration::get(string name)
+#include "AlsaOutput.h"
+#include "SoundOutput.h"
+
+class MixerOutput;
+class AnnoymeException;
+
+class MixedAlsaOutput : public virtual SoundOutput
 {
-  std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-  if (name.compare("sample directory")   == 0) { return string(ANNOYME_SAMPLE_DIRECTORY"/pcm/modern"); };
-  if (name.compare("alsa output device") == 0) { return string("plughw:0,0"); };
-  if (name.compare("sound loader") == 0) { return string("wav"); };
-  if (name.compare("sound output") == 0) { return string("mixed-alsa"); };
-  if (name.compare("input event reader") == 0) { return string("xevie"); };
+public:
+  MixedAlsaOutput(const std::string &device);
+  virtual ~MixedAlsaOutput();
+  virtual void playSound(const Sample *sound);
+  virtual void open();
+  virtual void close();
+private:
+  void startThread() throw(AnnoymeException);
+  void stopThread() throw(AnnoymeException);
+  void run();
+  static void* runObject(void *object);
 
-  throw UnknownOptionException(name);
-}
+private:
+  SoundOutput *m_soundOutput;
+  MixerOutput *m_mixer;
+  pthread_t    m_thread;
+};
 
-void StaticConfiguration::init()
-{
-
-}
+#endif // MIXED_ALSA_OUTPUT_H

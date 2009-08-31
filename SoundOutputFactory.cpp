@@ -14,6 +14,7 @@ using namespace std;
     #include <alsa/asoundlib.h>
   }
   #include "AlsaOutput.h"
+  #include "MixedAlsaOutput.h"
 #endif
 #ifdef WITH_AO
   extern "C" {
@@ -36,6 +37,10 @@ SoundOutput *SoundOutputFactory::getSoundOutput(const string &name, const string
   else if (name == "alsa")
   {
     return new AlsaOutput(param);
+  }
+  else if (name == "mixed-alsa")
+  {
+    return new MixedAlsaOutput(param);
   }
 #endif
 #ifdef WITH_AO

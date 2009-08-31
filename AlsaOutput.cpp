@@ -73,20 +73,14 @@ void AlsaOutput::playSound(const Sample *sample)
   while ((pcmreturn = snd_pcm_writei(m_pcm_handle, sample->getData(), frames)) < 0)
   {
     cerr << "pcmreturn: " << pcmreturn << " msg: " <<  snd_strerror(pcmreturn) << endl;
-    snd_pcm_drop(m_pcm_handle);
     snd_pcm_prepare(m_pcm_handle);
-  }
-
-  if (! snd_pcm_drain(m_pcm_handle))
-  {
-    cerr << "could not drain the pcm output stream" << endl;
   }
 }
 
 void AlsaOutput::open()
 {
-  /* Allocate the snd_pcm_hw_params_t structure on the stack. */
-  snd_pcm_hw_params_alloca(&m_hwparams);
+  /* Allocate the snd_pcm_hw_params_t structure */
+  snd_pcm_hw_params_malloc(&m_hwparams);
 
   /* Open PCM. The last parameter of this function is the mode. */
   /* If this is set to 0, the standard mode is used. Possible   */
@@ -95,7 +89,7 @@ void AlsaOutput::open()
   /* PCM device will return immediately. If SND_PCM_ASYNC is    */
   /* specified, SIGIO will be emitted whenever a period has     */
   /* been completely processed by the soundcard.                */
-  if (snd_pcm_open(&m_pcm_handle, m_device.c_str(), m_stream, SND_PCM_NONBLOCK) < 0)
+  if (snd_pcm_open(&m_pcm_handle, m_device.c_str(), m_stream, 0) < 0)
   {
     throw AlsaOutputException(
             string("ALSA output: could not open output device: ") + m_device);
@@ -114,8 +108,8 @@ void AlsaOutput::open()
                     /* exact_rate < rate  --> dir = -1 */
                     /* exact_rate > rate  --> dir = 1 */
   int periods = 2;       /* Number of periods */
-  //snd_pcm_uframes_t periodsize = 8192; /* Periodsize (bytes) */
-  snd_pcm_uframes_t periodsize = 12220; /* Periodsize (bytes) */
+  // Two periods a 8192 for 16 * 1024
+  snd_pcm_uframes_t periodsize = 8192; /* Periodsize (bytes) */
   
   /* Set access type. This can be either    */
   /* SND_PCM_ACCESS_RW_INTERLEAVED or       */
@@ -155,16 +149,24 @@ void AlsaOutput::open()
   }
   
   /* Set number of periods. Periods used to be called fragments. */ 
-  if (snd_pcm_hw_params_set_periods(m_pcm_handle, m_hwparams, periods, 0) < 0)
+  if (snd_pcm_hw_params_set_periods(m_pcm_handle, m_hwparams, periods, 2) < 0)
   {
-    throw AlsaOutputException("ALSA output: Error setting periods.");
+     throw AlsaOutputException("ALSA output: Error setting periods.");
   }
   
   /* Set buffer size (in frames). The resulting latency is given by */
   /* latency = periodsize * periods / (rate * bytes_per_frame)     */
-  if (snd_pcm_hw_params_set_buffer_size(m_pcm_handle, m_hwparams, (periodsize * periods)>>2) < 0)
+  snd_pcm_uframes_t buffer_size = (periodsize * periods) >> 2;
+  snd_pcm_uframes_t buffer_size_exact = buffer_size;
+  if (snd_pcm_hw_params_set_buffer_size_near(m_pcm_handle, m_hwparams, &buffer_size_exact) < 0)
   {
     throw AlsaOutputException("ALSA output: Error setting buffersize.");
+  }
+
+  if (buffer_size_exact != buffer_size)
+  {
+    cerr << "Warning: The buffer size "<< buffer_size <<"B is not supported by your hardware.\n"
+                     "==> Using "<< buffer_size_exact <<"B instead.\n";
   }
   
    /* Apply HW parameter settings to */

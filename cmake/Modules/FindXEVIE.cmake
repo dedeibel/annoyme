@@ -9,6 +9,7 @@
 # http://www.cmake.org/Wiki/CMake:How_To_Find_Libraries
 
 include(LibFindMacros)
+include(CheckIncludeFile)
 
 # Dependencies
 libfind_package(XEVIE X11)
@@ -19,6 +20,12 @@ find_path(XEVIE_INCLUDE_DIR
   NAMES X11/extensions/Xevie.h
   PATHS ${XEVIE_PKGCONF_INCLUDE_DIRS}
 )
+
+CHECK_INCLUDE_FILE(X11/extensions/Xevie.h HAVE_XEVIE_H) 
+
+IF (NOT HAVE_XEVIE_H)
+  SET(XEVIE_FOUND 0)
+ENDIF (NOT HAVE_XEVIE_H)
 
 find_library(XEVIE_LIBRARY
   NAMES Xevie
