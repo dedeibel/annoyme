@@ -28,6 +28,19 @@ cd build
 cmake ..
 make
 
+Notes for Mac:
+
+There seems to be a Problem with libao and MacOS 10.4, have a look
+at https://trac.xiph.org/ticket/727 before compiling the lib.
+
+The binary can currently be built but is not working, have a look :)
+
+  ./annoyme
+  ...
+  Opening sound output.
+  ao_macosx_open: Only support 44.1kHz right now
+  terminate called after throwing an instance of 'SoundOutputException'
+
 EXECUTION
 
 ./annoyme

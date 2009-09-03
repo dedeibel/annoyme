@@ -14,3 +14,9 @@ TODO
   e.g. make them reinitialize the sound library if
   there is a problem.
 - Add more documentation *g*
+- Use static class initialization where possible
+- Refactor the sound mixer part, make it more ... good OO
+
+Features:
+
+- Sound Sample rotation (different key hit sound for example)

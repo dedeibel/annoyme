@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Benjamin Peter <BenjaminPeter@arcor.de>
+ * Copyright (c) 2009, Benjamin Peter <BenjaminPeter@arcor.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,34 +25,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ANNOYME_H
-#define ANNOYME_H
+#ifndef INPUT_EVENT_HANDLER_H
+#define INPUT_EVENT_HANDLER_H
 
-class Configuration;
-class InputEventReader;
-class SoundLoader;
-class SoundOutput;
-class SoundOutputAdapter;
-class InputEventHandler;
-class Dispatcher;
-
-class Annoyme
+class InputEventHandler
 {
-public:
-  Annoyme();
-  ~Annoyme();
-	
-  void init();
-  void run();
-  void close();
-private:
-  Configuration      *m_config;
-  InputEventReader   *m_input;
-  SoundLoader        *m_soundLoader;
-  SoundOutput        *m_soundOutput;
-  SoundOutputAdapter *m_soundOutputAdapter;
-  InputEventHandler  *m_inputEventHandler;
-  Dispatcher         *m_dispatcher;
+	public:
+		virtual void handleNormalKeyPressed()	= 0;
+		virtual void handleNormalKeyReleased()	= 0;
+		virtual void handleEnterPressed()		= 0;
+		virtual void handleEnterReleased()		= 0;
+		virtual void handleBackspacePressed()	= 0;
+		virtual void handleBackspaceReleased()	= 0;
 };
 
-#endif // ANNOYME_H
+#endif // INPUT_EVENT_HANDLER_H

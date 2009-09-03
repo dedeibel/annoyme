@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Benjamin Peter <BenjaminPeter@arcor.de>
+ * Copyright (c) 2009, Benjamin Peter <BenjaminPeter@arcor.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,34 +25,23 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ANNOYME_H
-#define ANNOYME_H
+#ifndef SOUND_OUTPUT_ADAPTER_H
+#define SOUND_OUTPUT_ADAPTER_H
 
-class Configuration;
-class InputEventReader;
 class SoundLoader;
 class SoundOutput;
-class SoundOutputAdapter;
-class InputEventHandler;
-class Dispatcher;
 
-class Annoyme
+class SoundOutputAdapter
 {
 public:
-  Annoyme();
-  ~Annoyme();
-	
-  void init();
-  void run();
-  void close();
+	SoundOutputAdapter(SoundLoader *loader, SoundOutput *output);
+	~SoundOutputAdapter();
+		
+	void play(enum Sample::SampleType type);
+		
 private:
-  Configuration      *m_config;
-  InputEventReader   *m_input;
-  SoundLoader        *m_soundLoader;
-  SoundOutput        *m_soundOutput;
-  SoundOutputAdapter *m_soundOutputAdapter;
-  InputEventHandler  *m_inputEventHandler;
-  Dispatcher         *m_dispatcher;
+	SoundLoader *m_loader;
+	SoundOutput *m_output;
 };
 
-#endif // ANNOYME_H
+#endif // SOUND_OUTPUT_ADAPTER_H

@@ -25,34 +25,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ANNOYME_H
-#define ANNOYME_H
+#include <cstdlib>
 
-class Configuration;
-class InputEventReader;
-class SoundLoader;
-class SoundOutput;
-class SoundOutputAdapter;
-class InputEventHandler;
-class Dispatcher;
+#include "Annoyme.h"
 
-class Annoyme
+int main(int argc, char **argv)
 {
-public:
-  Annoyme();
-  ~Annoyme();
-	
-  void init();
-  void run();
-  void close();
-private:
-  Configuration      *m_config;
-  InputEventReader   *m_input;
-  SoundLoader        *m_soundLoader;
-  SoundOutput        *m_soundOutput;
-  SoundOutputAdapter *m_soundOutputAdapter;
-  InputEventHandler  *m_inputEventHandler;
-  Dispatcher         *m_dispatcher;
-};
+  Annoyme annoyme;
+  annoyme.init();
+  annoyme.run();
+  annoyme.close();
 
-#endif // ANNOYME_H
+  return EXIT_SUCCESS;
+}
+

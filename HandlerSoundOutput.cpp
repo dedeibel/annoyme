@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Benjamin Peter <BenjaminPeter@arcor.de>
+ * Copyright (c) 2009, Benjamin Peter <BenjaminPeter@arcor.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -18,41 +18,64 @@
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
  * DISCLAIMED. IN NO EVENT SHALL Benjamin Peter BE LIABLE FOR ANY
  * DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
- * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
- * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES
+ * LOSS OF USE, DATA, OR PROFITS OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ANNOYME_H
-#define ANNOYME_H
+#include <string>
 
-class Configuration;
-class InputEventReader;
-class SoundLoader;
-class SoundOutput;
-class SoundOutputAdapter;
-class InputEventHandler;
-class Dispatcher;
+using namespace std;
 
-class Annoyme
+#include "InputEventHandler.h"
+#include "Sample.h"
+#include "SoundOutputAdapter.h"
+#include "HandlerSoundOutput.h"
+
+HandlerSoundOutput::HandlerSoundOutput(SoundOutputAdapter *output)
+: m_output(output)
 {
-public:
-  Annoyme();
-  ~Annoyme();
 	
-  void init();
-  void run();
-  void close();
-private:
-  Configuration      *m_config;
-  InputEventReader   *m_input;
-  SoundLoader        *m_soundLoader;
-  SoundOutput        *m_soundOutput;
-  SoundOutputAdapter *m_soundOutputAdapter;
-  InputEventHandler  *m_inputEventHandler;
-  Dispatcher         *m_dispatcher;
-};
+}
 
-#endif // ANNOYME_H
+HandlerSoundOutput::~HandlerSoundOutput()
+{
+	
+}
+
+void HandlerSoundOutput::play(enum Sample::SampleType type)
+{
+	m_output->play(type);
+} 
+
+void HandlerSoundOutput::handleNormalKeyPressed()
+{
+	play(Sample::normalKeyPressed);
+}
+
+void HandlerSoundOutput::handleNormalKeyReleased()
+{
+	play(Sample::normalKeyReleased);
+}
+
+void HandlerSoundOutput::handleEnterPressed()
+{
+	play(Sample::enterPressed);
+}
+
+void HandlerSoundOutput::handleEnterReleased()
+{
+	play(Sample::enterReleased);
+}
+
+void HandlerSoundOutput::handleBackspacePressed()
+{
+	play(Sample::backspacePressed);
+}
+
+void HandlerSoundOutput::handleBackspaceReleased()
+{
+	play(Sample::backspaceReleased);
+}

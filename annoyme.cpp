@@ -25,29 +25,89 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cstdlib>
 #include <string>
+#include <iostream>
 
 using namespace std;
 
-#include "Event.h"
-#include "Sample.h"
 #include "StaticConfiguration.h"
+
+// Input
+#include "Event.h"
 #include "InputEventReader.h"
 #include "InputEventReaderFactory.h"
+
+// Sound
+#include "Sample.h"
 #include "SoundOutput.h"
 #include "SoundOutputFactory.h"
 #include "SoundLoader.h"
 #include "SoundLoaderFactory.h"
+
+// Flow
+#include "SoundOutputAdapter.h"
+#include "InputEventHandler.h"
+#include "HandlerSoundOutput.h"
+#include "Dispatcher.h"
+
 #include "Annoyme.h"
 
-int main(int argc, char **argv)
+Annoyme::Annoyme()
 {
-  Annoyme annoyme;
-  annoyme.init();
-  annoyme.run();
-  annoyme.close();
 
-  return EXIT_SUCCESS;
 }
+
+Annoyme::~Annoyme()
+{
+  delete m_dispatcher;
+  delete m_inputEventHandler;
+  delete m_soundOutputAdapter;
+  delete m_soundOutput;
+  delete m_soundLoader;
+  delete m_input;
+  delete m_config;
+}
+
+void Annoyme::init()
+{
+  m_config        = new StaticConfiguration;
+  cout << "Creating key input reader.\n";
+  m_input         = InputEventReaderFactory::getInstance()->getInputEventReader(
+                         m_config->get("Input event reader"));
+  cout << "Creating sound file loader.\n";
+  m_soundLoader   = SoundLoaderFactory::getInstance()->getSoundLoader(
+                         m_config->get("Sound loader"), m_config->get("Sample directory"));
+  cout << "Creating sound output.\n";
+  m_soundOutput   = SoundOutputFactory::getInstance()->getSoundOutput(
+                         m_config->get("Sound output"), m_config->get("alsa output device"));
+
+  cout << "Loading sound files.\n";
+  m_soundLoader->loadFiles();
+  cout << "Opening sound output.\n";
+  m_soundOutput->open();
+  cout << "Opening event input.\n";
+  m_input->open();
+
+  m_soundOutputAdapter = new SoundOutputAdapter(m_soundLoader, m_soundOutput);
+  m_inputEventHandler = new HandlerSoundOutput(m_soundOutputAdapter);
+  m_dispatcher = new Dispatcher(m_input, m_inputEventHandler);
+	
+  cout << "Initializing dispatcher.\n";
+  m_dispatcher->init();
+}
+
+
+void Annoyme::run()
+{
+	cout << "Starting dispatcher.\n";
+	m_dispatcher->run();
+}
+
+void Annoyme::close()
+{
+  m_dispatcher->close();
+  m_input->close();
+  m_soundOutput->close();
+}
+
 

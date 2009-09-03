@@ -46,7 +46,7 @@ private:
 
   inline const string getName(const char *path)
   {
-    const char *fileBasename = basename(path);
+    const char *fileBasename = basename(const_cast<char *>(path));
     const unsigned int lastDot = lastOccurance(fileBasename, '.');
     string s = string(fileBasename, lastDot);
     return s;

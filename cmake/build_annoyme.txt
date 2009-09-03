@@ -13,7 +13,7 @@
 #                               the annoyme binary
 
 SET(ANNOYME_SRC
-  annoyme.cpp
+  annoyme-run.cpp
   Annoyme.cpp
   Event.cpp
   FileConfiguration.cpp
@@ -24,6 +24,9 @@ SET(ANNOYME_SRC
   SoundLoaderFactory.cpp
   SoundOutputFactory.cpp
   StaticConfiguration.cpp
+  HandlerSoundOutput.cpp
+  SoundOutputAdapter.cpp
+  Dispatcher.cpp
   ${ANNOYME_SRC_SOUNDOUTPUT}
   ${ANNOYME_SRC_KEYINPUT}
 )

@@ -30,12 +30,14 @@
 #include <cstring>
 
 // OS specific headers
-#include <unistd.h>
-#include <X11/Xlib.h>
-#include <X11/Xproto.h>
-#include <X11/X.h>
-#include <X11/extensions/Xevie.h>
-#include <X11/Xutil.h>
+extern "C" {
+  #include <unistd.h>
+  #include <X11/Xlib.h>
+  #include <X11/Xproto.h>
+  #include <X11/X.h>
+  #include <X11/extensions/Xevie.h>
+  #include <X11/Xutil.h>
+}
 
 using namespace std;
 
@@ -62,10 +64,15 @@ XevieInput::~XevieInput()
 void XevieInput::open()
 {
 	m_display = XOpenDisplay(NULL);
+  if (! m_display)
+  {
+    throw XDisplayException();
+  }
   if (!XevieQueryVersion(m_display, &m_xevieVersionMinor, &m_xevieVersionMajor))
   {
     throw XevieExtensionNotInstalledException();
   }
+  // TODO check xevie version!
 
   if (!XevieStart(m_display))
   {
