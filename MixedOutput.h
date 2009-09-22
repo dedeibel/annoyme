@@ -25,32 +25,27 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MIXED_ALSA_OUTPUT_H
-#define MIXED_ALSA_OUTPUT_H
+#ifndef MIXED_OUTPUT_H
+#define MIXED_OUTPUT_H
 
 #include <string>
 #include <iostream>
-
-extern "C" {
-  #include <alsa/asoundlib.h>
-}
 
 using namespace std;
 
 #include "exceptions.h"
 #include "Sample.h"
 
-#include "AlsaOutput.h"
 #include "SoundOutput.h"
 
 class MixerOutput;
 class AnnoymeException;
 
-class MixedAlsaOutput : public virtual SoundOutput
+class MixedOutput : public virtual SoundOutput
 {
 public:
-  MixedAlsaOutput(const std::string &device);
-  virtual ~MixedAlsaOutput();
+  MixedOutput(SoundOutput *output);
+  virtual ~MixedOutput();
   virtual void playSound(const Sample *sound);
   virtual void open();
   virtual void close();
@@ -66,4 +61,4 @@ private:
   pthread_t    m_thread;
 };
 
-#endif // MIXED_ALSA_OUTPUT_H
+#endif // MIXED_OUTPUT_H

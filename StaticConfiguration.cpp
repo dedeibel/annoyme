@@ -38,10 +38,10 @@ using namespace std;
 string StaticConfiguration::get(string name)
 {
   std::transform(name.begin(), name.end(), name.begin(), ::tolower);
-  if (name.compare("sample directory")   == 0) { return string(ANNOYME_SAMPLE_DIRECTORY"/pcm/modern"); };
-  if (name.compare("alsa output device") == 0) { return string("plughw:0,0"); };
+  if (name.compare("sample directory")   == 0) { return string(ANNOYME_SAMPLE_DIRECTORY"/pcm/default"); };
+  if (name.compare("alsa output device") == 0) { return string("default"); }; // alt: plughw:0,0
   if (name.compare("sound loader") == 0) { return string("wav"); };
-  if (name.compare("sound output") == 0) { return string("mixed-alsa"); };
+  if (name.compare("sound output") == 0) { return string("mixed-alsa"); }; // or "ao" or "alsa"
   if (name.compare("input event reader") == 0) { return string("xevie"); };
 
   throw UnknownOptionException(name);

@@ -76,7 +76,6 @@ void AOutput::open()
   ao_sample_format format;
   format.bits = 16;
   format.channels = 1;
-  //format.rate = 11025;
   format.rate = 22050;
   format.byte_format = AO_FMT_LITTLE;
   

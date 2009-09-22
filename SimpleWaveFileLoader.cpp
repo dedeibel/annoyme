@@ -48,6 +48,8 @@ extern "C" {
 #include "SimpleWaveFileLoader.h"
 #include "stdutil.h"
 
+// TODO rename to raw file loader
+
 bool isDirectory(const string &path)
 {
   struct stat buf;
@@ -105,14 +107,22 @@ void SimpleWaveFileLoader::loadFiles()
 
   if (! isDirectory(m_path)) return;
   string path = m_path;
-  path += "/*.wav";
+  path += "/*.raw";
 
   glob_t globbuf;
   glob(path.c_str(), 0, 0, &globbuf);
+
+  bool foundSamples = false;
   for (unsigned int i = 0; i < globbuf.gl_pathc; ++i)
   {
+    foundSamples = true;
     loadSampleFromFile(globbuf.gl_pathv[i]);
   }
+
+  if (foundSamples == 0) {
+    cout << "Warning, no sound samples found in: '" << path << "'" << endl;
+  }
+
   cout << "done.\n";
   globfree(&globbuf);
 }
@@ -161,12 +171,14 @@ void SimpleWaveFileLoader::loadSampleFromFile(const char *path)
 
 void SimpleWaveFileLoader::loadDataFromFile(Sample *sample)
 {
+  // TODO parameterize
   sample->setFormat(Sample::PCM);
   sample->setRate(22050);
 
   unsigned int size = 0;
   char* data = 0;
 
+  // TODO parameterize
   unsigned int allocated = 32000 * sizeof(char);
   unsigned int bytesRead = 0;
 

@@ -19,6 +19,7 @@ SET(ANNOYME_SRC
   FileConfiguration.cpp
   InputEventReaderFactory.cpp
   MixerOutput.cpp
+  MixedOutput.cpp
   Sample.cpp
   SimpleWaveFileLoader.cpp
   SoundLoaderFactory.cpp
@@ -35,6 +36,8 @@ SET(ANNOYME_SRC
 # Set Libs and Executables
 #
 
+SET(CMAKE_BUILD_TYPE Debug)
+SET(CMAKE_CXX_FLAGS_DEBUG "-ggdb")
 ADD_DEFINITIONS(-D_REENTRANT)
 
 ADD_EXECUTABLE(annoyme ${ANNOYME_SRC})

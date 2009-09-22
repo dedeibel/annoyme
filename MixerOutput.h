@@ -161,7 +161,8 @@ inline void MixerOutput::mix(byte *dst, byte *src, unsigned int size)
   int s2 = 0;
   byte *dstt = dst;
   byte *srct = src;
-  for (unsigned int i = 0; i < size; i += m_formatBits >> 3)
+  unsigned int formatBytes = m_formatBits >> 3; // div by 8
+  for (unsigned int i = 0; i < size; i += formatBytes)
   {
     if (m_formatBits == 16) {
       s1 = (int)*(int16_t*)dstt;
@@ -169,8 +170,8 @@ inline void MixerOutput::mix(byte *dst, byte *src, unsigned int size)
       s1 += s2;
       *(int16_t*)dstt = (int16_t)s1;
     }
-    dstt += m_formatBits >> 3;
-    srct += m_formatBits >> 3;
+    dstt += formatBytes;
+    srct += formatBytes;
   }
 }
 

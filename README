@@ -1,20 +1,20 @@
 
-README
+=README
 
 Annoyme
 
-WARNING
+=WARNING
 
 This project is merely alpha, any comments,
 requests or suggestions are welcome.
 
 Feel free to contact me before writing patches.
 
-DESCRIPTION
+=DESCRIPTION
 
 Adds beautiful typewriter sounds to your X
 
-DEPENDENCIES
+=DEPENDENCIES
 
 - CMake is required to build the project.
 - XEvIE
@@ -22,18 +22,40 @@ DEPENDENCIES
  * alsa
  * ao
 
-INSTALLATION
+=INSTALLATION
 
 cd build
 cmake ..
 make
 
-Notes for Mac:
+=EXECUTION
+
+./annoyme
+
+APPENDIX A - Activating XEvIE
+
+In case you want to use the XEvIE input and get a message like the following,
+you will have to active it in your X Server configuration first.
+
+  'terminate called after throwing an instance of
+  'XevieExtensionNotInstalledException'
+  what():  Xevie Extension is not installed or enabled.'
+
+To activate XEvIE you just have to add an entry to your "Extensions"
+section of the X configuration.
+
+  Section "Extensions"
+    Option "XEVIE" "Enable"
+  EndSection
+ 
+XEvIE project page http://www.freedesktop.org/wiki/Software/XEvIE
+
+APPENDIX B - Notes for Mac
 
 There seems to be a Problem with libao and MacOS 10.4, have a look
 at https://trac.xiph.org/ticket/727 before compiling the lib.
 
-The binary can currently be built but is not working, have a look :)
+Currently the binary can be built but is not working, have a look :)
 
   ./annoyme
   ...
@@ -41,6 +63,3 @@ The binary can currently be built but is not working, have a look :)
   ao_macosx_open: Only support 44.1kHz right now
   terminate called after throwing an instance of 'SoundOutputException'
 
-EXECUTION
-
-./annoyme

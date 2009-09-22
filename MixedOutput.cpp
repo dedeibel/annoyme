@@ -29,31 +29,26 @@
 #include <iostream>
 #include <cstring>
 
-extern "C" {
-  #include <alsa/asoundlib.h>
-}
-
 using namespace std;
 
 #include "exceptions.h"
 #include "Sample.h"
 
-#include "AlsaOutput.h"
 #include "MixerOutput.h"
-#include "MixedAlsaOutput.h"
+#include "MixedOutput.h"
 
-MixedAlsaOutput::MixedAlsaOutput(const std::string &device)
-: m_soundOutput(new AlsaOutput(device))
+MixedOutput::MixedOutput(SoundOutput *output)
+: m_soundOutput(output)
 {
   
 }
 
-MixedAlsaOutput::~MixedAlsaOutput()
+MixedOutput::~MixedOutput()
 {
-
+  delete m_soundOutput;
 }
 
-void MixedAlsaOutput::playSound(const Sample *sample)
+void MixedOutput::playSound(const Sample *sample)
 {
   std::cout << "Playing sound " << sample->getName() << std::endl;
   m_mixer->add(reinterpret_cast<byte*>(sample->getData()), sample->getSize());
@@ -63,7 +58,7 @@ void MixedAlsaOutput::playSound(const Sample *sample)
    endl;
 }
 
-void MixedAlsaOutput::open()
+void MixedOutput::open()
 {
   m_mixer = new MixerOutput("5242880 16");
   m_mixer->open();
@@ -73,13 +68,13 @@ void MixedAlsaOutput::open()
   startThread();
 }
 
-void MixedAlsaOutput::close()
+void MixedOutput::close()
 {
   m_soundOutput->close();
   stopThread();
 }
 
-void MixedAlsaOutput::startThread() throw(AnnoymeException)
+void MixedOutput::startThread() throw(AnnoymeException)
 {
   int rc;
   rc = pthread_create(&m_thread, NULL, runObject, reinterpret_cast<void*>(this));
@@ -89,21 +84,23 @@ void MixedAlsaOutput::startThread() throw(AnnoymeException)
   }
 }
 
-void MixedAlsaOutput::stopThread() throw(AnnoymeException)
+void MixedOutput::stopThread() throw(AnnoymeException)
 {
   pthread_exit(NULL);
 }
 
-void MixedAlsaOutput::run()
+void MixedOutput::run()
 {
-  byte buffer[40000];
+  /* 20ms buffer ->
+   * 22050Hz * 16Bit / 8 = 44100 Byte/s ... 44100 Byte/s * 20ms = 820Byte */
+  static const unsigned int buffsize = 882;
+  byte buffer[buffsize];
   unsigned int bytes_fetched;
   int ret;
   Sample s;
   while (1) {
-    /* 2 * samplesize, enough to keep the card buffer filled */
-    bytes_fetched = m_mixer->fetch(buffer, 16384<<2);
-    s.setSize(bytes_fetched);
+    bytes_fetched = m_mixer->fetch(buffer, buffsize);
+    s.setSize(buffsize);
     s.setData(reinterpret_cast<char*>(buffer));
     m_soundOutput->playSound(&s);
 
@@ -111,9 +108,9 @@ void MixedAlsaOutput::run()
   }
 }
 
-void* MixedAlsaOutput::runObject(void *object)
+void* MixedOutput::runObject(void *object)
 {
-  MixedAlsaOutput* out = reinterpret_cast<MixedAlsaOutput*>(object);
+  MixedOutput* out = reinterpret_cast<MixedOutput*>(object);
   out->run();
   return 0;
 }

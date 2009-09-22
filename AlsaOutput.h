@@ -43,8 +43,7 @@ private:
 
   /* Handle for the PCM device */
   snd_pcm_t            *m_pcm_handle;
-  /* Playback stream */
-  snd_pcm_stream_t      m_stream;
+
   /* This structure contains information about    */
   /* the hardware and can be used to specify the  */      
   /* configuration to be used for the PCM stream. */

@@ -8,14 +8,15 @@ using namespace std;
 #include "exceptions.h"
 #include "Sample.h"
 #include "SoundOutput.h"
+#include "MixedOutput.h"
 
 #ifdef WITH_ALSA
   extern "C" {
     #include <alsa/asoundlib.h>
   }
   #include "AlsaOutput.h"
-  #include "MixedAlsaOutput.h"
 #endif
+
 #ifdef WITH_AO
   extern "C" {
     #include <ao/ao.h>
@@ -40,7 +41,7 @@ SoundOutput *SoundOutputFactory::getSoundOutput(const string &name, const string
   }
   else if (name == "mixed-alsa")
   {
-    return new MixedAlsaOutput(param);
+    return new MixedOutput(new AlsaOutput(param));
   }
 #endif
 #ifdef WITH_AO
