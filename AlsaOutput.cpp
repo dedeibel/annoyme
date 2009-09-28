@@ -148,12 +148,6 @@ void AlsaOutput::open()
     throw AlsaOutputException("ALSA output: Error setting channels.");
   }
   
-  /* Set number of periods. Periods used to be called fragments. */ 
-  if (snd_pcm_hw_params_set_periods(m_pcm_handle, m_hwparams, periods, 0) < 0)
-  {
-     throw AlsaOutputException("ALSA output: Error setting periods.");
-  }
-
   snd_pcm_uframes_t periodsize_exact = periodsize;
   if (snd_pcm_hw_params_set_period_size_near(m_pcm_handle, m_hwparams, &periodsize_exact, NULL) < 0)
   {
@@ -220,7 +214,7 @@ void AlsaOutput::open()
    * {
    *   throw AlsaOutputException(string("Unable to set stop threshold mode for playback: ") + snd_strerror(err));
    * }
-  /*
+   */
 
   /* write the parameters to the playback device */
   err = snd_pcm_sw_params(m_pcm_handle, m_swparams);

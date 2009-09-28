@@ -27,10 +27,13 @@
 
 #include <string>
 #include <iostream>
+#include <map>
 
 using namespace std;
 
-#include "StaticConfiguration.h"
+#include "ConfigTools.h"
+#include "Configuration.h"
+#include "YAMLConfig.h"
 
 // Input
 #include "Event.h"
@@ -70,13 +73,16 @@ Annoyme::~Annoyme()
 
 void Annoyme::init()
 {
-  m_config        = new StaticConfiguration;
+  m_config = new YAMLConfig(ConfigTools::getConfigFileName());
+  cout << "Loading config file.\n";
+  m_config->init();
   cout << "Creating key input reader.\n";
   m_input         = InputEventReaderFactory::getInstance()->getInputEventReader(
                          m_config->get("Input event reader"));
   cout << "Creating sound file loader.\n";
   m_soundLoader   = SoundLoaderFactory::getInstance()->getSoundLoader(
-                         m_config->get("Sound loader"), m_config->get("Sample directory"));
+                         m_config->get("Sound loader"),
+                         ConfigTools::getSampleDirectoryPath(m_config->get("Sample theme")));
   cout << "Creating sound output.\n";
   m_soundOutput   = SoundOutputFactory::getInstance()->getSoundOutput(
                          m_config->get("Sound output"), m_config->get("alsa output device"));
@@ -91,7 +97,7 @@ void Annoyme::init()
   m_soundOutputAdapter = new SoundOutputAdapter(m_soundLoader, m_soundOutput);
   m_inputEventHandler = new HandlerSoundOutput(m_soundOutputAdapter);
   m_dispatcher = new Dispatcher(m_input, m_inputEventHandler);
-  
+	
   cout << "Initializing dispatcher.\n";
   m_dispatcher->init();
 }
@@ -99,8 +105,8 @@ void Annoyme::init()
 
 void Annoyme::run()
 {
-  cout << "Starting dispatcher.\n";
-  m_dispatcher->run();
+	cout << "Starting dispatcher.\n";
+	m_dispatcher->run();
 }
 
 void Annoyme::close()
@@ -109,4 +115,5 @@ void Annoyme::close()
   m_input->close();
   m_soundOutput->close();
 }
+
 

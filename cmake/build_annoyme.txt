@@ -24,7 +24,7 @@ SET(ANNOYME_SRC
   SimpleWaveFileLoader.cpp
   SoundLoaderFactory.cpp
   SoundOutputFactory.cpp
-  StaticConfiguration.cpp
+  YAMLConfig.cpp
   HandlerSoundOutput.cpp
   SoundOutputAdapter.cpp
   Dispatcher.cpp

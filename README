@@ -17,7 +17,8 @@ Adds beautiful typewriter sounds to your X
 =DEPENDENCIES
 
 - CMake is required to build the project.
-- XEvIE
+- XEvIE       - http://www.freedesktop.org/wiki/Software/XEvIE
+- yaml-cpp    - http://code.google.com/p/yaml-cpp
 - One of the following sound output libraries:
  * alsa
  * ao
