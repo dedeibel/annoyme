@@ -1,7 +1,7 @@
-sample theme: default
-# alt: plughw:0,0
-alsa output device: default
-sound loader: wav
-sound output: mixed-alsa
 # or "ao" or "alsa"
-input event reader: xevie
+input.reader: xevie
+sample_theme: default
+sound.loader: wav
+sound.output: mixed-alsa
+# alt: plughw:0,0
+sound.alsa.device: default

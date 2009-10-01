@@ -25,24 +25,33 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef CONFIGTOOLS_H
-#define CONFIGTOOLS_H
+#include <string>
+#include <map>
 
-#include <cstdlib>
+#include "Configuration.h"
+#include "BasicConfiguration.h"
+#include "SystemConfiguration.h"
 
-#include <config.h>
+#include "SystemConfigurationLinux.h"
 
-class ConfigTools
+using namespace std;
+
+Configuration *SystemConfiguration::m_systemConfiguration = 0;
+
+Configuration* SystemConfiguration::getInstance()
 {
-public:
-  static string getConfigFileName() {
-    string home = string(getenv("HOME"));
-    return home +"/" ANNOYME_CONFIG_NAME;
-  }
+  if (m_systemConfiguration == 0) {
+    const string os = determineOS();
+    if (os == "linux") {
+      m_systemConfiguration = new SystemConfigurationLinux();
+    }
 
-  static string getSampleDirectoryPath(string sampleDirectory) {
-    return string(ANNOYME_SAMPLE_DIRECTORY "/pcm/"+ sampleDirectory);
+    m_systemConfiguration->init();
   }
-};
+  return m_systemConfiguration;
+}
 
-#endif // CONFIGTOOLS_H
+const std::string SystemConfiguration::determineOS() {
+  return "linux";
+}
+

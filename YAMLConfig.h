@@ -28,17 +28,20 @@
 #ifndef YAMLCONFIG_H
 #define YAMLCONFIG_H
 
-class YAMLConfig : public Configuration
+class YAMLConfig : public BasicConfiguration
 {
 public:
-  YAMLConfig(string configFilePath);
+  YAMLConfig(const std::string &configFilePath);
   virtual ~YAMLConfig();
-  virtual string get(string name);
   virtual void init();
+  virtual const std::string getNormalized(const std::string &path);
 
 private:
-  string m_configFilePath;
-  map<string, string> m_values;
+  std::string m_configFilePath;
+  std::map<std::string, std::string> m_values;
+
+private:
+  void createDefault();
 };
 
 #endif // YAMLCONFIG_H

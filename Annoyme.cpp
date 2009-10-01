@@ -31,8 +31,9 @@
 
 using namespace std;
 
-#include "ConfigTools.h"
 #include "Configuration.h"
+#include "BasicConfiguration.h"
+#include "AnnoymeConfiguration.h"
 #include "YAMLConfig.h"
 
 // Input
@@ -73,19 +74,17 @@ Annoyme::~Annoyme()
 
 void Annoyme::init()
 {
-  m_config = new YAMLConfig(ConfigTools::getConfigFileName());
-  cout << "Loading config file.\n";
-  m_config->init();
   cout << "Creating key input reader.\n";
   m_input         = InputEventReaderFactory::getInstance()->getInputEventReader(
-                         m_config->get("Input event reader"));
+                         AnnoymeConfiguration::value("input.reader"));
   cout << "Creating sound file loader.\n";
   m_soundLoader   = SoundLoaderFactory::getInstance()->getSoundLoader(
-                         m_config->get("Sound loader"),
-                         ConfigTools::getSampleDirectoryPath(m_config->get("Sample theme")));
+                         AnnoymeConfiguration::value("sound.loader"),
+                         AnnoymeConfiguration::value("sample_directory"));
   cout << "Creating sound output.\n";
   m_soundOutput   = SoundOutputFactory::getInstance()->getSoundOutput(
-                         m_config->get("Sound output"), m_config->get("alsa output device"));
+                         AnnoymeConfiguration::value("sound.output"),
+                         AnnoymeConfiguration::value("sound.alsa.device"));
 
   cout << "Loading sound files.\n";
   m_soundLoader->loadFiles();

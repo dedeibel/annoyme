@@ -96,7 +96,6 @@ void MixedOutput::run()
   static const unsigned int buffsize = 882;
   byte buffer[buffsize];
   unsigned int bytes_fetched;
-  int ret;
   Sample s;
   while (1) {
     bytes_fetched = m_mixer->fetch(buffer, buffsize);

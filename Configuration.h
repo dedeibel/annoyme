@@ -32,8 +32,9 @@ class Configuration
 {
 public:
   virtual ~Configuration() {};
-  virtual std::string get(std::string name) = 0;
   virtual void init() = 0;
+  virtual const std::string get(const std::string &path) = 0;
+  virtual const std::string getNormalized(const std::string &path) = 0;
 };
 
 #endif // CONFIGURATION_H

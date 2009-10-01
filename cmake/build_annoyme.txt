@@ -24,7 +24,13 @@ SET(ANNOYME_SRC
   SimpleWaveFileLoader.cpp
   SoundLoaderFactory.cpp
   SoundOutputFactory.cpp
+
+  AnnoymeConfiguration.cpp
+  BasicConfiguration.cpp
+  SystemConfiguration.cpp
+  SystemConfigurationLinux.cpp
   YAMLConfig.cpp
+
   HandlerSoundOutput.cpp
   SoundOutputAdapter.cpp
   Dispatcher.cpp
@@ -38,6 +44,7 @@ SET(ANNOYME_SRC
 
 SET(CMAKE_BUILD_TYPE Debug)
 SET(CMAKE_CXX_FLAGS_DEBUG "-ggdb")
+SET(CMAKE_CXX_FLAGS "-Wall")
 ADD_DEFINITIONS(-D_REENTRANT)
 
 ADD_EXECUTABLE(annoyme ${ANNOYME_SRC})

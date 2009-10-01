@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009, Benjamin Peter <BenjaminPeter@arcor.de>
+ * Copyright (c) 2008, Benjamin Peter <BenjaminPeter@arcor.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,65 +25,19 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <string>
-#include <cstring>
-#include <algorithm>
-#include <map>
-#include <fstream>
+#ifndef BASICCONFIGURATION_H
+#define BASICCONFIGURATION_H
 
-using namespace std;
-
-#include "Configuration.h"
-#include "BasicConfiguration.h"
-#include "YAMLConfig.h"
-#include "exceptions.h"
-
-// yaml-cpp
-#include "yaml-cpp/yaml.h"
-
-YAMLConfig::YAMLConfig(const string &configFilePath)
-: m_configFilePath(configFilePath)
+class BasicConfiguration : public Configuration
 {
+public:
+  virtual ~BasicConfiguration() {};
+  virtual void init() = 0;
+  virtual const std::string get(const std::string &path);
+  virtual const std::string getNormalized(const std::string &path) = 0;
 
-}
+protected:
+  void normalizeConfigName(std::string &target, const std::string &path);
+};
 
-YAMLConfig::~YAMLConfig()
-{
-
-}
-
-const string YAMLConfig::getNormalized(const std::string &path)
-{
-  map<string, string>::iterator it = m_values.find(path);
-  if (it != m_values.end()) {
-    return it->second;
-  }
-  else {
-    throw UnknownOptionException(path);
-  }
-}
-
-void YAMLConfig::init()
-{
-  ifstream fin(m_configFilePath.c_str());
-  if (!fin) {
-    cerr << "bad fin: "<< m_configFilePath << "\n";
-    return;
-  }
-  YAML::Parser parser(fin);
-  YAML::Node doc;
-  parser.GetNextDocument(doc);
-
-  for (YAML::Iterator it = doc.begin(); it != doc.end(); ++it) {
-    string key;
-    string value;
-    it.first()  >> key;
-    it.second() >> value;
-    m_values[key] = value;
-  }
-}
-
-void YAMLConfig::createDefault()
-{
-  // TODO
-}
+#endif // BASICCONFIGURATION_H
