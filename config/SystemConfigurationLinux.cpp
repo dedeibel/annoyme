@@ -25,20 +25,41 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <cstring>
 #include <string>
+#include <cstdlib>
+
 using namespace std;
 
-#include "Configuration.h"
+#include "config/Configuration.h"
+#include "config/BasicConfiguration.h"
+#include "config/SystemConfiguration.h"
+#include "config/SystemConfigurationLinux.h"
 
-#include "FileConfiguration.h"
+#include "exceptions.h"
 
-FileConfiguration::FileConfiguration() 
+SystemConfigurationLinux::SystemConfigurationLinux()
 {
 
 }
 
-FileConfiguration::~FileConfiguration() 
+SystemConfigurationLinux::~SystemConfigurationLinux()
 {
 
 }
 
+const std::string SystemConfigurationLinux::getNormalized(const std::string &path)
+{
+  if (path == "system.dir_separator") {
+    return string("/");
+  }
+  if (path == "system.home") {
+    return string(getenv("HOME"));
+  }
+  throw UnknownOptionException(path);
+}
+
+void SystemConfigurationLinux::init()
+{
+
+}

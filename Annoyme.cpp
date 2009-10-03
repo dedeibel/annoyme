@@ -28,13 +28,16 @@
 #include <string>
 #include <iostream>
 #include <map>
+#include <vector>
 
 using namespace std;
 
-#include "Configuration.h"
-#include "BasicConfiguration.h"
-#include "AnnoymeConfiguration.h"
-#include "YAMLConfig.h"
+#include "config/Configuration.h"
+#include "config/BasicConfiguration.h"
+#include "config/AggregateConfiguration.h"
+#include "config/ConfigurationMap.h"
+#include "config/YAMLConfig.h"
+#include "config/AnnoymeConfiguration.h"
 
 // Input
 #include "Event.h"

@@ -25,44 +25,33 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SIMPLEWAVEFILELOADER_H
-#define SIMPLEWAVEFILELOADER_H
+#include <string>
+#include <map>
 
-#include "SoundLoader.h"
+#include "config/Configuration.h"
+#include "config/BasicConfiguration.h"
+#include "config/SystemConfiguration.h"
 
-class SimpleWaveFileLoader : virtual public SoundLoader
+#include "config/SystemConfigurationLinux.h"
+
+using namespace std;
+
+Configuration *SystemConfiguration::m_systemConfiguration = 0;
+
+Configuration* SystemConfiguration::getInstance()
 {
-public:
-  SimpleWaveFileLoader(const string &path);
-  virtual ~SimpleWaveFileLoader();
+  if (m_systemConfiguration == 0) {
+    const string os = determineOS();
+    if (os == "linux") {
+      m_systemConfiguration = new SystemConfigurationLinux();
+    }
 
-  virtual void clear();
-  virtual void loadFiles();
-  virtual void getSample(enum Sample::SampleType type, const Sample **sample);
-private:
-  void insertDefault();
-  void loadSampleFromFile(const char *path);
-  void loadDataFromFile(Sample *sample);
-
-  inline const string getName(const char *path)
-  {
-    const char *fileBasename = basename(const_cast<char *>(path));
-    const unsigned int lastDot = lastOccurance(fileBasename, '.');
-    string s = string(fileBasename, lastDot);
-    return s;
+    m_systemConfiguration->init();
   }
+  return m_systemConfiguration;
+}
 
-  inline unsigned int lastOccurance(const char *path, char c)
-  {
-    unsigned int length = strlen(path);
-    while (path[--length] != c);
-    return length;
-  }
+const std::string SystemConfiguration::determineOS() {
+  return "linux";
+}
 
-private:
-  string m_path;
-  typedef map<const enum Sample::SampleType, Sample*> SamplesMap;
-  SamplesMap samples;
-};
-
-#endif // SIMPLEWAVEFILELOADER_H

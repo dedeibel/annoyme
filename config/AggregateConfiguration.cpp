@@ -25,24 +25,50 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef YAMLCONFIG_H
-#define YAMLCONFIG_H
+#include <cstdlib>
+#include <cstring>
+#include <string>
+#include <vector>
+#include <algorithm>
 
-class YAMLConfig : public BasicConfiguration
+#include "config/Configuration.h"
+#include "config/BasicConfiguration.h"
+#include "config/AggregateConfiguration.h"
+
+using namespace std;
+
+#include "exceptions.h"
+#include "STLHelpers.h"
+
+const std::string AggregateConfiguration::getNormalized(const std::string &path)
 {
-public:
-  YAMLConfig(const std::string &configFilePath);
-  virtual ~YAMLConfig();
-  virtual void init();
-  virtual const std::string getNormalized(const std::string &path);
+  std::vector<Configuration*>::iterator entry = m_configs.begin();
+  while (entry != m_configs.end()) {
+    try {
+      return (*entry)->getNormalized(path);
+    }
+    catch (UnknownOptionException ex) {
+      // try next one
+    }
+    ++entry;
+  }
 
-private:
-  std::string m_configFilePath;
-  std::map<std::string, std::string> m_values;
+  throw UnknownOptionException(path);
+}
 
-private:
-  void createDefault();
-};
+void AggregateConfiguration::clear()
+{
+  m_configs.clear();
+}
 
-#endif // YAMLCONFIG_H
+void AggregateConfiguration::addConfig(Configuration *config)
+{
+  m_configs.push_back(config);
+}
 
+void AggregateConfiguration::removeConfig(Configuration *config)
+{
+  std::vector<Configuration*>::iterator entry;
+  entry = std::find(m_configs.begin(), m_configs.end(), config);
+  m_configs.erase(entry);
+}

@@ -29,6 +29,8 @@
 #define ANNOYMECONFIGURATION_H
 
 class YAMLConfig;
+class ConfigurationMap;
+class AggregateConfiguration;
 
 class AnnoymeConfiguration : public BasicConfiguration
 {
@@ -45,8 +47,9 @@ private:
 
 private:
   static AnnoymeConfiguration *m_annoymeConfiguration;
-  std::map<std::string, std::string> m_values;
-  YAMLConfig *m_yamlConfig;
+  ConfigurationMap       m_buildConfig;
+  YAMLConfig             m_yamlConfig;
+  AggregateConfiguration m_configs;
 };
 
 #endif // ANNOYMECONFIGURATION_H

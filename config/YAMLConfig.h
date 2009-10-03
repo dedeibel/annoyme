@@ -25,44 +25,26 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SIMPLEWAVEFILELOADER_H
-#define SIMPLEWAVEFILELOADER_H
+#ifndef YAMLCONFIG_H
+#define YAMLCONFIG_H
 
-#include "SoundLoader.h"
-
-class SimpleWaveFileLoader : virtual public SoundLoader
+class YAMLConfig : public BasicConfiguration
 {
 public:
-  SimpleWaveFileLoader(const string &path);
-  virtual ~SimpleWaveFileLoader();
-
-  virtual void clear();
-  virtual void loadFiles();
-  virtual void getSample(enum Sample::SampleType type, const Sample **sample);
-private:
-  void insertDefault();
-  void loadSampleFromFile(const char *path);
-  void loadDataFromFile(Sample *sample);
-
-  inline const string getName(const char *path)
-  {
-    const char *fileBasename = basename(const_cast<char *>(path));
-    const unsigned int lastDot = lastOccurance(fileBasename, '.');
-    string s = string(fileBasename, lastDot);
-    return s;
-  }
-
-  inline unsigned int lastOccurance(const char *path, char c)
-  {
-    unsigned int length = strlen(path);
-    while (path[--length] != c);
-    return length;
-  }
+  YAMLConfig(const std::string &configFilePath = std::string());
+  virtual ~YAMLConfig();
+  virtual void init();
+  virtual const std::string getNormalized(const std::string &path);
+  void setConfigFilePath(const std::string &path);
+  std::string getConfigFilePath() const;
 
 private:
-  string m_path;
-  typedef map<const enum Sample::SampleType, Sample*> SamplesMap;
-  SamplesMap samples;
+  std::string m_configFilePath;
+  std::map<std::string, std::string> m_values;
+
+private:
+  void createDefault();
 };
 
-#endif // SIMPLEWAVEFILELOADER_H
+#endif // YAMLCONFIG_H
+

@@ -25,40 +25,22 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <cstring>
-#include <string>
-#include <cstdlib>
+#ifndef STLHELPERS_H
+#define STLHELPERS_H
 
-using namespace std;
-
-#include "Configuration.h"
-#include "BasicConfiguration.h"
-#include "SystemConfiguration.h"
-#include "SystemConfigurationLinux.h"
-#include "exceptions.h"
-
-SystemConfigurationLinux::SystemConfigurationLinux()
+template<class T>
+struct del_fun_t
 {
+   del_fun_t& operator()(T* p) {
+     delete p;
+     return *this;
+   }
+};
 
+template<class T>
+del_fun_t<T> del_fun()
+{
+   return del_fun_t<T>();
 }
 
-SystemConfigurationLinux::~SystemConfigurationLinux()
-{
-
-}
-
-const std::string SystemConfigurationLinux::getNormalized(const std::string &path)
-{
-  if (path == "system.dir_separator") {
-    return string("/");
-  }
-  if (path == "system.home") {
-    return string(getenv("HOME"));
-  }
-  throw UnknownOptionException(path);
-}
-
-void SystemConfigurationLinux::init()
-{
-
-}
+#endif // STLHELPERS_H

@@ -25,44 +25,23 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SIMPLEWAVEFILELOADER_H
-#define SIMPLEWAVEFILELOADER_H
+#include <string>
+#include <cstring>
+#include <algorithm>
 
-#include "SoundLoader.h"
+#include "config/Configuration.h"
+#include "config/BasicConfiguration.h"
 
-class SimpleWaveFileLoader : virtual public SoundLoader
+const std::string BasicConfiguration::get(const std::string &path)
 {
-public:
-  SimpleWaveFileLoader(const string &path);
-  virtual ~SimpleWaveFileLoader();
+  std::string normalized(path);
+  normalizeConfigName(normalized, path);
+  return this->getNormalized(normalized);
+}
 
-  virtual void clear();
-  virtual void loadFiles();
-  virtual void getSample(enum Sample::SampleType type, const Sample **sample);
-private:
-  void insertDefault();
-  void loadSampleFromFile(const char *path);
-  void loadDataFromFile(Sample *sample);
-
-  inline const string getName(const char *path)
-  {
-    const char *fileBasename = basename(const_cast<char *>(path));
-    const unsigned int lastDot = lastOccurance(fileBasename, '.');
-    string s = string(fileBasename, lastDot);
-    return s;
-  }
-
-  inline unsigned int lastOccurance(const char *path, char c)
-  {
-    unsigned int length = strlen(path);
-    while (path[--length] != c);
-    return length;
-  }
-
-private:
-  string m_path;
-  typedef map<const enum Sample::SampleType, Sample*> SamplesMap;
-  SamplesMap samples;
-};
-
-#endif // SIMPLEWAVEFILELOADER_H
+void BasicConfiguration::normalizeConfigName(
+  std::string &target,
+  const std::string &path
+) {
+  std::transform(path.begin(), path.end(), target.begin(), ::tolower);
+}

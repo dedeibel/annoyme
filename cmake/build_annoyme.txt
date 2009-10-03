@@ -16,7 +16,6 @@ SET(ANNOYME_SRC
   annoyme-run.cpp
   Annoyme.cpp
   Event.cpp
-  FileConfiguration.cpp
   InputEventReaderFactory.cpp
   MixerOutput.cpp
   MixedOutput.cpp
@@ -25,11 +24,13 @@ SET(ANNOYME_SRC
   SoundLoaderFactory.cpp
   SoundOutputFactory.cpp
 
-  AnnoymeConfiguration.cpp
-  BasicConfiguration.cpp
-  SystemConfiguration.cpp
-  SystemConfigurationLinux.cpp
-  YAMLConfig.cpp
+  config/AnnoymeConfiguration.cpp
+  config/BasicConfiguration.cpp
+  config/ConfigurationMap.cpp
+  config/AggregateConfiguration.cpp
+  config/SystemConfiguration.cpp
+  config/SystemConfigurationLinux.cpp
+  config/YAMLConfig.cpp
 
   HandlerSoundOutput.cpp
   SoundOutputAdapter.cpp
@@ -44,10 +45,13 @@ SET(ANNOYME_SRC
 
 SET(CMAKE_BUILD_TYPE Debug)
 SET(CMAKE_CXX_FLAGS_DEBUG "-ggdb")
+
 SET(CMAKE_CXX_FLAGS "-Wall")
 ADD_DEFINITIONS(-D_REENTRANT)
 
 ADD_EXECUTABLE(annoyme ${ANNOYME_SRC})
+# Add source dir to include path (for subdirs for example)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 TARGET_LINK_LIBRARIES(annoyme ${ANNOYME_LIBS_COMMON})
 TARGET_LINK_LIBRARIES(annoyme ${ANNOYME_LIBS_KEYINPUT})
 TARGET_LINK_LIBRARIES(annoyme ${ANNOYME_LIBS_SOUNDOUTPUT})

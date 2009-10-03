@@ -25,33 +25,21 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <string>
-#include <map>
+#ifndef AGGREGATECONFIGURATION_H
+#define AGGREGATECONFIGURATION_H
 
-#include "Configuration.h"
-#include "BasicConfiguration.h"
-#include "SystemConfiguration.h"
-
-#include "SystemConfigurationLinux.h"
-
-using namespace std;
-
-Configuration *SystemConfiguration::m_systemConfiguration = 0;
-
-Configuration* SystemConfiguration::getInstance()
+class AggregateConfiguration : public BasicConfiguration
 {
-  if (m_systemConfiguration == 0) {
-    const string os = determineOS();
-    if (os == "linux") {
-      m_systemConfiguration = new SystemConfigurationLinux();
-    }
+public:
+  virtual ~AggregateConfiguration() {};
+  virtual void init() {};
+  virtual const std::string getNormalized(const std::string &path);
+  void addConfig(Configuration *config);
+  void removeConfig(Configuration *config);
+  void clear();
 
-    m_systemConfiguration->init();
-  }
-  return m_systemConfiguration;
-}
+private:
+  std::vector<Configuration*> m_configs;
+};
 
-const std::string SystemConfiguration::determineOS() {
-  return "linux";
-}
-
+#endif // AGGREGATECONFIGURATION_H

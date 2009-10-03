@@ -29,13 +29,15 @@
 #include <cstring>
 #include <string>
 #include <map>
+#include <vector>
 
 #include "Configuration.h"
 #include "BasicConfiguration.h"
-#include "AnnoymeConfiguration.h"
-
+#include "AggregateConfiguration.h"
+#include "ConfigurationMap.h"
 #include "SystemConfiguration.h"
 #include "YAMLConfig.h"
+#include "AnnoymeConfiguration.h"
 
 /* Created by cmake */
 #include "config.h" 
@@ -61,64 +63,46 @@ const std::string AnnoymeConfiguration::value(const std::string &path) {
 }
 
 AnnoymeConfiguration::AnnoymeConfiguration()
-: m_yamlConfig(0)
 {
 
 }
 
 AnnoymeConfiguration::~AnnoymeConfiguration()
 {
-  if (m_yamlConfig != 0) {
-    delete m_yamlConfig;
-  }
+
 }
 
 void AnnoymeConfiguration::init()
 {
+
+  m_buildConfig.setNormalized("base_directory", ANNOYME_INSTALL_DIRECTORY);
+  m_buildConfig.setNormalized("config_name", ANNOYME_CONFIG_NAME);
+
   Configuration *sys = SystemConfiguration::getInstance();
-
-  m_values["base_directory"]        = ANNOYME_INSTALL_DIRECTORY;
-  m_values["config_name"]           = ANNOYME_CONFIG_NAME;
-
   string yamlPath = sys->getNormalized("system.home")
                   + sys->getNormalized("system.dir_separator")
                   + ANNOYME_CONFIG_NAME;
 
-  m_yamlConfig = new YAMLConfig(yamlPath);
-  m_yamlConfig->init();
+  m_yamlConfig.setConfigFilePath(yamlPath);
+  m_yamlConfig.init();
 
-  m_values["sample_directory_base"] = m_values["base_directory"]
+  m_buildConfig.setNormalized("sample_directory_base",
+                                      ANNOYME_INSTALL_DIRECTORY
                                       + sys->getNormalized("system.dir_separator")
-                                      + "pcm";
+                                      + "pcm");
 
-  m_values["sample_directory"] = m_values["sample_directory_base"]
+  m_buildConfig.setNormalized("sample_directory",
+                                 m_buildConfig.getNormalized("sample_directory_base")
                                  + sys->getNormalized("system.dir_separator")
-                                 + m_yamlConfig->getNormalized("sample_theme");
+                                 + m_yamlConfig.getNormalized("sample_theme"));
+
+  m_configs.addConfig(&m_buildConfig);
+  m_configs.addConfig(sys);
+  m_configs.addConfig(&m_yamlConfig);
 }
 
 const std::string AnnoymeConfiguration::getNormalized(const std::string &path)
 {
-  map<string, string>::iterator value = m_values.find(path);
-  if (value != m_values.end()) {
-    return value->second;
-  }
-
-  try {
-    return SystemConfiguration::getInstance()->getNormalized(path);
-  }
-  catch (const UnknownOptionException &ex) {
-    // Ignore
-  }
-
-  if (m_yamlConfig != 0) {
-    try {
-      return m_yamlConfig->getNormalized(path);
-    }
-    catch (const UnknownOptionException &ex) {
-      // Ignore
-    }
-  }
-
-  throw UnknownOptionException(path);
+  return m_configs.getNormalized(path);
 }
 

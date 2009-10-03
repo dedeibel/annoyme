@@ -130,13 +130,13 @@ void SimpleWaveFileLoader::loadFiles()
 
 void SimpleWaveFileLoader::getSample(enum Sample::SampleType type, const Sample **sample)
 {
-  Sample *foundSample = samples.find(type)->second;
-  if (foundSample == 0)
+  SamplesMap::iterator foundSample = samples.find(type);
+  if (foundSample == samples.end())
   {
     *sample = samples.find(Sample::defaultType)->second;
   }
   else {
-    *sample = foundSample;
+    *sample = foundSample->second;
   }
 }
 

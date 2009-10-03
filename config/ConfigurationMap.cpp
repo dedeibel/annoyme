@@ -25,44 +25,33 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef SIMPLEWAVEFILELOADER_H
-#define SIMPLEWAVEFILELOADER_H
+#include <cstdlib>
+#include <cstring>
+#include <string>
+#include <map>
 
-#include "SoundLoader.h"
+#include "config/Configuration.h"
+#include "config/BasicConfiguration.h"
+#include "config/ConfigurationMap.h"
 
-class SimpleWaveFileLoader : virtual public SoundLoader
+using namespace std;
+
+#include "exceptions.h"
+
+const std::string ConfigurationMap::getNormalized(const std::string &path)
 {
-public:
-  SimpleWaveFileLoader(const string &path);
-  virtual ~SimpleWaveFileLoader();
-
-  virtual void clear();
-  virtual void loadFiles();
-  virtual void getSample(enum Sample::SampleType type, const Sample **sample);
-private:
-  void insertDefault();
-  void loadSampleFromFile(const char *path);
-  void loadDataFromFile(Sample *sample);
-
-  inline const string getName(const char *path)
-  {
-    const char *fileBasename = basename(const_cast<char *>(path));
-    const unsigned int lastDot = lastOccurance(fileBasename, '.');
-    string s = string(fileBasename, lastDot);
-    return s;
+  map<string, string>::iterator value = m_values.find(path);
+  if (value != m_values.end()) {
+    return value->second;
   }
-
-  inline unsigned int lastOccurance(const char *path, char c)
-  {
-    unsigned int length = strlen(path);
-    while (path[--length] != c);
-    return length;
+  else {
+    throw UnknownOptionException(path);
   }
+}
 
-private:
-  string m_path;
-  typedef map<const enum Sample::SampleType, Sample*> SamplesMap;
-  SamplesMap samples;
-};
-
-#endif // SIMPLEWAVEFILELOADER_H
+void ConfigurationMap::setNormalized(
+  const std::string &path,
+  const std::string &value
+) {
+  m_values[path] = value;
+}
