@@ -30,13 +30,14 @@
 
 class InputEventHandler
 {
-	public:
-		virtual void handleNormalKeyPressed()	= 0;
-		virtual void handleNormalKeyReleased()	= 0;
-		virtual void handleEnterPressed()		= 0;
-		virtual void handleEnterReleased()		= 0;
-		virtual void handleBackspacePressed()	= 0;
-		virtual void handleBackspaceReleased()	= 0;
+  public:
+    virtual ~InputEventHandler() {};
+    virtual void handleNormalKeyPressed()	= 0;
+    virtual void handleNormalKeyReleased()	= 0;
+    virtual void handleEnterPressed()		= 0;
+    virtual void handleEnterReleased()		= 0;
+    virtual void handleBackspacePressed()	= 0;
+    virtual void handleBackspaceReleased()	= 0;
 };
 
 #endif // INPUT_EVENT_HANDLER_H

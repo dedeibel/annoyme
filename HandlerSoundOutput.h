@@ -32,7 +32,7 @@ class HandlerSoundOutput : public InputEventHandler
 {
 public:
 	HandlerSoundOutput(SoundOutputAdapter *output);
-	~HandlerSoundOutput();
+	virtual ~HandlerSoundOutput();
 		
 	virtual void handleNormalKeyPressed();
 	virtual void handleNormalKeyReleased();
