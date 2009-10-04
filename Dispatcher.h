@@ -43,6 +43,7 @@ public:
 private:
 	InputEventReader  *m_inputEventReader;
 	InputEventHandler *m_inputEventHandler;
+  bool               m_running;
 };
 
 #endif // DISPATCHER_H

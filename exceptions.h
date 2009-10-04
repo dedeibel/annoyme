@@ -69,6 +69,28 @@ class UnknownOptionException : public AnnoymeException
   string m_name;
 };
 
+class FileNotFoundException : public AnnoymeException
+{
+  public:
+
+  FileNotFoundException(string path, string purpose = string()) throw()
+  : AnnoymeException(string("Could not open file: ") + path)
+  , m_path(path)
+  , m_purpose(purpose)
+  {
+    if (purpose.size() != 0) {
+       m_message.append(" ("+ m_purpose +")");
+    }
+  }
+
+  virtual ~FileNotFoundException() throw() {};
+
+  protected:
+
+  string m_path;
+  string m_purpose;
+};
+
 class XevieExtensionNotInstalledException : public AnnoymeException
 {
   public:

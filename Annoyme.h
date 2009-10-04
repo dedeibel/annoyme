@@ -42,11 +42,10 @@ public:
   Annoyme();
   ~Annoyme();
 	
-  void init();
+  void init() throw(AnnoymeException);
   void run();
   void close();
 private:
-  Configuration      *m_config;
   InputEventReader   *m_input;
   SoundLoader        *m_soundLoader;
   SoundOutput        *m_soundOutput;

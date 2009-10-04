@@ -87,7 +87,7 @@ void XevieInput::open()
  */
 void XevieInput::close()
 {
-  XevieEnd(m_display);
+  if (m_display) XevieEnd(m_display);
 }
 
 

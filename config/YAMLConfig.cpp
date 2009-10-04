@@ -66,11 +66,11 @@ throw(UnknownOptionException)
 }
 
 void YAMLConfig::init()
+  throw(FileNotFoundException)
 {
   ifstream fin(m_configFilePath.c_str());
   if (!fin) {
-    cerr << "bad fin: "<< m_configFilePath << "\n";
-    return;
+    throw FileNotFoundException(m_configFilePath, "Basic YAML configuration file");
   }
   YAML::Parser parser(fin);
   YAML::Node doc;

@@ -60,23 +60,30 @@ using namespace std;
 #include "Annoyme.h"
 
 Annoyme::Annoyme()
+: m_input(0)
+, m_soundLoader(0)
+, m_soundOutput(0)
+, m_soundOutputAdapter(0)
+, m_inputEventHandler(0)
+, m_dispatcher(0)
 {
 
 }
 
 Annoyme::~Annoyme()
 {
-  delete m_dispatcher;
-  delete m_inputEventHandler;
-  delete m_soundOutputAdapter;
-  delete m_soundOutput;
-  delete m_soundLoader;
-  delete m_input;
-  delete m_config;
+  if (m_dispatcher != 0)          delete m_dispatcher;
+  if (m_inputEventHandler != 0)   delete m_inputEventHandler;
+  if (m_soundOutputAdapter != 0)  delete m_soundOutputAdapter;
+  if (m_soundOutput != 0)         delete m_soundOutput;
+  if (m_soundLoader != 0)         delete m_soundLoader;
+  if (m_input != 0)               delete m_input;
 }
 
-void Annoyme::init()
+void Annoyme::init() throw(AnnoymeException)
 {
+  AnnoymeConfiguration::getInstance();
+
   cout << "Creating key input reader.\n";
   m_input         = InputEventReaderFactory::getInstance()->getInputEventReader(
                          AnnoymeConfiguration::value("input.reader"));
@@ -96,9 +103,9 @@ void Annoyme::init()
   cout << "Opening event input.\n";
   m_input->open();
 
-  m_soundOutputAdapter = new SoundOutputAdapter(m_soundLoader, m_soundOutput);
-  m_inputEventHandler = new HandlerSoundOutput(m_soundOutputAdapter);
-  m_dispatcher = new Dispatcher(m_input, m_inputEventHandler);
+  m_soundOutputAdapter  = new SoundOutputAdapter(m_soundLoader, m_soundOutput);
+  m_inputEventHandler   = new HandlerSoundOutput(m_soundOutputAdapter);
+  m_dispatcher          = new Dispatcher(m_input, m_inputEventHandler);
 	
   cout << "Initializing dispatcher.\n";
   m_dispatcher->init();
@@ -113,9 +120,9 @@ void Annoyme::run()
 
 void Annoyme::close()
 {
-  m_dispatcher->close();
-  m_input->close();
-  m_soundOutput->close();
+  if (m_dispatcher != 0)  m_dispatcher->close();
+  if (m_input != 0)       m_input->close();
+  if (m_soundOutput != 0) m_soundOutput->close();
 }
 
 

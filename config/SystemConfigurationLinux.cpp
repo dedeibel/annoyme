@@ -43,11 +43,6 @@ SystemConfigurationLinux::SystemConfigurationLinux()
 
 }
 
-SystemConfigurationLinux::~SystemConfigurationLinux()
-{
-
-}
-
 const std::string SystemConfigurationLinux::getNormalized(
   const std::string &path
 ) throw(UnknownOptionException)
@@ -61,7 +56,3 @@ const std::string SystemConfigurationLinux::getNormalized(
   throw UnknownOptionException(path);
 }
 
-void SystemConfigurationLinux::init()
-{
-
-}

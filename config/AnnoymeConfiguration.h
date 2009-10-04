@@ -40,7 +40,7 @@ public:
   static const std::string value(const std::string &path);
 
   virtual ~AnnoymeConfiguration();
-  virtual void init();
+  virtual void init() throw(AnnoymeException);
   virtual const std::string getNormalized(const std::string &path)
     throw(UnknownOptionException);
 

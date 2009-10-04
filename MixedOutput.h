@@ -59,6 +59,8 @@ private:
   SoundOutput *m_soundOutput;
   MixerOutput *m_mixer;
   pthread_t    m_thread;
+  bool         m_running;
+  bool         m_stopped;
 };
 
 #endif // MIXED_OUTPUT_H

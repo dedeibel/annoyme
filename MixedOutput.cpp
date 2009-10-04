@@ -70,12 +70,16 @@ void MixedOutput::open()
 
 void MixedOutput::close()
 {
-  m_soundOutput->close();
   stopThread();
+  m_soundOutput->close();
 }
 
 void MixedOutput::startThread() throw(AnnoymeException)
 {
+  m_running = true;
+  // only set stopped at start to false - so we can detect
+  // in stopThread if it might have stopped before we intended
+  m_stopped = false;
   int rc;
   rc = pthread_create(&m_thread, NULL, runObject, reinterpret_cast<void*>(this));
 
@@ -86,7 +90,8 @@ void MixedOutput::startThread() throw(AnnoymeException)
 
 void MixedOutput::stopThread() throw(AnnoymeException)
 {
-  pthread_exit(NULL);
+  m_running = false;
+  while(! m_stopped) usleep(1000);
 }
 
 void MixedOutput::run()
@@ -97,7 +102,7 @@ void MixedOutput::run()
   byte buffer[buffsize];
   unsigned int bytes_fetched;
   Sample s;
-  while (1) {
+  while (m_running) {
     bytes_fetched = m_mixer->fetch(buffer, buffsize);
     s.setSize(buffsize);
     s.setData(reinterpret_cast<char*>(buffer));
@@ -105,6 +110,8 @@ void MixedOutput::run()
 
     /* busy loop, should be improved like everything */
   }
+  m_stopped = true;
+  pthread_exit(NULL);
 }
 
 void* MixedOutput::runObject(void *object)

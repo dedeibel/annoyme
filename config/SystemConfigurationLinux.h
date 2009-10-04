@@ -28,15 +28,13 @@
 #ifndef SYSTEMCONFIGURATIONLINUX_H
 #define SYSTEMCONFIGURATIONLINUX_H
 
-class UnknownOptionException;
-
 class SystemConfigurationLinux : public BasicConfiguration
 {
   friend class SystemConfiguration;
 
 public:
-  virtual ~SystemConfigurationLinux();
-  virtual void init();
+  virtual ~SystemConfigurationLinux() {};
+  virtual void init() throw(AnnoymeException) {};
   virtual const std::string getNormalized(const std::string &path)
     throw(UnknownOptionException);
 

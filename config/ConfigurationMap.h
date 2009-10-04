@@ -32,7 +32,7 @@ class ConfigurationMap : public BasicConfiguration
 {
 public:
   virtual ~ConfigurationMap() {};
-  virtual void init() {};
+  virtual void init() throw(AnnoymeException) {};
   virtual const std::string getNormalized(const std::string &path)
     throw(UnknownOptionException);
   void setNormalized(const std::string &path, const std::string &value);

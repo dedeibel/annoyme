@@ -35,7 +35,7 @@ class YAMLConfig : public BasicConfiguration
 public:
   YAMLConfig(const std::string &configFilePath = std::string());
   virtual ~YAMLConfig();
-  virtual void init();
+  virtual void init() throw(FileNotFoundException);
   virtual const std::string getNormalized(const std::string &path)
     throw(UnknownOptionException);
   void setConfigFilePath(const std::string &path);

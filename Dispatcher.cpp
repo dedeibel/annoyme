@@ -38,6 +38,7 @@ using namespace std;
 Dispatcher::Dispatcher(InputEventReader *reader, InputEventHandler *handler)
 : m_inputEventReader(reader)
 , m_inputEventHandler(handler)
+, m_running(true)
 {
 	
 }
@@ -47,11 +48,12 @@ Dispatcher::~Dispatcher() {
 }
 
 void Dispatcher::init() {
+  m_running = true;
 }
 
 void Dispatcher::run() {
 	Event event;
-	while (1)
+	while (m_running)
 	{
 		// TODO create dynamic mapping table, event, (key) ,sound
 		m_inputEventReader->getNextEvent(event);
@@ -91,5 +93,5 @@ void Dispatcher::run() {
 }
 
 void Dispatcher::close() {
-	
+	m_running = false;
 }

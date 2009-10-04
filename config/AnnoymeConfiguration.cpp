@@ -75,7 +75,7 @@ AnnoymeConfiguration::~AnnoymeConfiguration()
   delete m_buildConfig;
 }
 
-void AnnoymeConfiguration::init()
+void AnnoymeConfiguration::init() throw(AnnoymeException)
 {
 
   m_buildConfig->setNormalized("base_directory",        ANNOYME_INSTALL_DIRECTORY);
@@ -89,7 +89,14 @@ void AnnoymeConfiguration::init()
                   + ANNOYME_CONFIG_NAME;
 
   m_yamlConfig->setConfigFilePath(yamlPath);
-  m_yamlConfig->init();
+  try {
+    m_yamlConfig->init();
+  }
+  catch (FileNotFoundException e) {
+    m_configs->addConfig(m_buildConfig);
+    m_configs->addConfig(sys);
+    throw;
+  }
 
   m_buildConfig->setNormalized("sample_directory",
                                  m_buildConfig->getNormalized("sample_base_directory")

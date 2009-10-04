@@ -26,13 +26,27 @@
  */
 
 #include <cstdlib>
+#include <cstring>
+#include <iostream>
 
+using namespace std;
+
+#include "exceptions.h"
 #include "Annoyme.h"
 
 int main(int argc, char **argv)
 {
   Annoyme annoyme;
-  annoyme.init();
+
+  try {
+    annoyme.init();
+  }
+  catch (AnnoymeException ex) {
+    cerr << "Error during initialization: "<< ex.what() << endl;
+    annoyme.close();
+    return EXIT_FAILURE;
+  }
+
   annoyme.run();
   annoyme.close();
 

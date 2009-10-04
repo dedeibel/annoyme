@@ -226,5 +226,6 @@ void AlsaOutput::open()
 
 void AlsaOutput::close()
 {
-
+  snd_pcm_drain(m_pcm_handle);
+  snd_pcm_close(m_pcm_handle);
 }
