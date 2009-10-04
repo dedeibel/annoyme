@@ -25,29 +25,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef YAMLCONFIG_H
-#define YAMLCONFIG_H
+#include <string>
+#include <fstream>
 
-class UnknownOptionException;
+#include "FileUtil.h"
 
-class YAMLConfig : public BasicConfiguration
-{
-public:
-  YAMLConfig(const std::string &configFilePath = std::string());
-  virtual ~YAMLConfig();
-  virtual void init() throw(FileNotFoundException, AnnoymeException);
-  virtual const std::string getNormalized(const std::string &path)
-    throw(UnknownOptionException);
-  void setConfigFilePath(const std::string &path);
-  std::string getConfigFilePath() const;
+using namespace std;
 
-private:
-  std::string m_configFilePath;
-  std::map<std::string, std::string> m_values;
+bool FileUtil::copy(const string &src, const string &dst) {
+  std::ifstream ifs(src.c_str()); // I'll never get why they excpect a cstring
+  if (! ifs) {
+    return false;
+  }
 
-private:
-  void createDefault() throw(AnnoymeException);
-};
+  std::ofstream ofs(dst.c_str());
+  if (! ofs) {
+    return false;
+  }
 
-#endif // YAMLCONFIG_H
+  // Copy the file
+  const unsigned int bufflen = 4068;
+  std::streamsize read;
+  char buffer[bufflen];
 
+  while ((read = ifs.readsome(buffer, bufflen)) > 0) {
+      ofs.write(buffer, read);
+  }
+
+  // check for failures
+  if (ifs.rdbuf()->in_avail() != 0 || !ofs) {
+    unlink(dst.c_str());
+    return false;
+  }
+
+  return true;
+}

@@ -27,6 +27,8 @@
 
 #include <string>
 #include <cstring>
+#include <cstdio>
+#include <cerrno>
 #include <algorithm>
 #include <map>
 #include <fstream>
@@ -34,10 +36,13 @@
 using namespace std;
 
 #include "exceptions.h"
+#include "FileUtil.h"
 
 #include "config/Configuration.h"
 #include "config/BasicConfiguration.h"
+#include "config/SystemConfiguration.h"
 #include "config/YAMLConfig.h"
+#include "config.h"
 
 // yaml-cpp
 #include "yaml-cpp/yaml.h"
@@ -66,11 +71,15 @@ throw(UnknownOptionException)
 }
 
 void YAMLConfig::init()
-  throw(FileNotFoundException)
+  throw(FileNotFoundException, AnnoymeException)
 {
+  if (access(m_configFilePath.c_str(), R_OK)) {
+    createDefault();
+  }
+
   ifstream fin(m_configFilePath.c_str());
   if (!fin) {
-    throw FileNotFoundException(m_configFilePath, "Basic YAML configuration file");
+    throw FileNotFoundException(m_configFilePath, "Application configuration file");
   }
   YAML::Parser parser(fin);
   YAML::Node doc;
@@ -95,7 +104,18 @@ std::string YAMLConfig::getConfigFilePath() const
   return m_configFilePath;
 }
 
-void YAMLConfig::createDefault()
+void YAMLConfig::createDefault() throw(AnnoymeException)
 {
-  // TODO
+  const std::string source = ANNOYME_RESOURCE_DIRECTORY
+    + SystemConfiguration::getInstance()->getNormalized("system.dir_separator")
+    + ANNOYME_DEFAULT_CONFIG_NAME;
+  bool ret = FileUtil::copy(source.c_str(), m_configFilePath.c_str());
+  if (! ret) {
+    char *errno_message = strerror(errno);
+    std::string message = string("Could not create configuration file ")
+      + "'" + m_configFilePath + "'"
+      + " from default file "
+      + "'" + source + "', error: " + errno_message;
+    throw AnnoymeException(message);
+  }
 }

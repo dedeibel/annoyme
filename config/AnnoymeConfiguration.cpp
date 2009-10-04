@@ -92,7 +92,7 @@ void AnnoymeConfiguration::init() throw(AnnoymeException)
   try {
     m_yamlConfig->init();
   }
-  catch (FileNotFoundException e) {
+  catch (AnnoymeException e) {
     m_configs->addConfig(m_buildConfig);
     m_configs->addConfig(sys);
     throw;

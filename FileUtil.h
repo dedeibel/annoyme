@@ -25,29 +25,11 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef YAMLCONFIG_H
-#define YAMLCONFIG_H
+#ifndef FILEUTIL_H
+#define FILEUTIL_H
 
-class UnknownOptionException;
+namespace FileUtil {
+  bool copy(const std::string &src, const std::string &dst);
+}
 
-class YAMLConfig : public BasicConfiguration
-{
-public:
-  YAMLConfig(const std::string &configFilePath = std::string());
-  virtual ~YAMLConfig();
-  virtual void init() throw(FileNotFoundException, AnnoymeException);
-  virtual const std::string getNormalized(const std::string &path)
-    throw(UnknownOptionException);
-  void setConfigFilePath(const std::string &path);
-  std::string getConfigFilePath() const;
-
-private:
-  std::string m_configFilePath;
-  std::map<std::string, std::string> m_values;
-
-private:
-  void createDefault() throw(AnnoymeException);
-};
-
-#endif // YAMLCONFIG_H
-
+#endif // FILEUTIL_H
