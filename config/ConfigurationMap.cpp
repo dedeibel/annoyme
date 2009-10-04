@@ -30,15 +30,16 @@
 #include <string>
 #include <map>
 
-#include "config/Configuration.h"
-#include "config/BasicConfiguration.h"
-#include "config/ConfigurationMap.h"
-
 using namespace std;
 
 #include "exceptions.h"
 
+#include "config/Configuration.h"
+#include "config/BasicConfiguration.h"
+#include "config/ConfigurationMap.h"
+
 const std::string ConfigurationMap::getNormalized(const std::string &path)
+throw(UnknownOptionException)
 {
   map<string, string>::iterator value = m_values.find(path);
   if (value != m_values.end()) {

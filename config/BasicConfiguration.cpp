@@ -29,10 +29,15 @@
 #include <cstring>
 #include <algorithm>
 
+using namespace std;
+
+#include "exceptions.h"
+
 #include "config/Configuration.h"
 #include "config/BasicConfiguration.h"
 
 const std::string BasicConfiguration::get(const std::string &path)
+throw(UnknownOptionException)
 {
   std::string normalized(path);
   normalizeConfigName(normalized, path);

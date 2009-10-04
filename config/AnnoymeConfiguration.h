@@ -31,6 +31,7 @@
 class YAMLConfig;
 class ConfigurationMap;
 class AggregateConfiguration;
+class UnknownOptionException;
 
 class AnnoymeConfiguration : public BasicConfiguration
 {
@@ -40,16 +41,17 @@ public:
 
   virtual ~AnnoymeConfiguration();
   virtual void init();
-  virtual const std::string getNormalized(const std::string &path);
+  virtual const std::string getNormalized(const std::string &path)
+    throw(UnknownOptionException);
 
 private:
   AnnoymeConfiguration();
 
 private:
   static AnnoymeConfiguration *m_annoymeConfiguration;
-  ConfigurationMap       m_buildConfig;
-  YAMLConfig             m_yamlConfig;
-  AggregateConfiguration m_configs;
+  ConfigurationMap       *m_buildConfig;
+  YAMLConfig             *m_yamlConfig;
+  AggregateConfiguration *m_configs;
 };
 
 #endif // ANNOYMECONFIGURATION_H

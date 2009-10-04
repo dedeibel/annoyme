@@ -31,12 +31,12 @@
 
 using namespace std;
 
+#include "exceptions.h"
+
 #include "config/Configuration.h"
 #include "config/BasicConfiguration.h"
 #include "config/SystemConfiguration.h"
 #include "config/SystemConfigurationLinux.h"
-
-#include "exceptions.h"
 
 SystemConfigurationLinux::SystemConfigurationLinux()
 {
@@ -48,7 +48,9 @@ SystemConfigurationLinux::~SystemConfigurationLinux()
 
 }
 
-const std::string SystemConfigurationLinux::getNormalized(const std::string &path)
+const std::string SystemConfigurationLinux::getNormalized(
+  const std::string &path
+) throw(UnknownOptionException)
 {
   if (path == "system.dir_separator") {
     return string("/");

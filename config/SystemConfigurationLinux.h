@@ -28,6 +28,8 @@
 #ifndef SYSTEMCONFIGURATIONLINUX_H
 #define SYSTEMCONFIGURATIONLINUX_H
 
+class UnknownOptionException;
+
 class SystemConfigurationLinux : public BasicConfiguration
 {
   friend class SystemConfiguration;
@@ -35,7 +37,8 @@ class SystemConfigurationLinux : public BasicConfiguration
 public:
   virtual ~SystemConfigurationLinux();
   virtual void init();
-  virtual const std::string getNormalized(const std::string &path);
+  virtual const std::string getNormalized(const std::string &path)
+    throw(UnknownOptionException);
 
 private:
   SystemConfigurationLinux();

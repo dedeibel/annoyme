@@ -33,10 +33,11 @@
 
 using namespace std;
 
+#include "exceptions.h"
+
 #include "config/Configuration.h"
 #include "config/BasicConfiguration.h"
 #include "config/YAMLConfig.h"
-#include "exceptions.h"
 
 // yaml-cpp
 #include "yaml-cpp/yaml.h"
@@ -53,6 +54,7 @@ YAMLConfig::~YAMLConfig()
 }
 
 const string YAMLConfig::getNormalized(const std::string &path)
+throw(UnknownOptionException)
 {
   map<string, string>::iterator it = m_values.find(path);
   if (it != m_values.end()) {

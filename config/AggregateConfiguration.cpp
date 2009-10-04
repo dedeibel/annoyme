@@ -31,16 +31,18 @@
 #include <vector>
 #include <algorithm>
 
+using namespace std;
+
+#include "exceptions.h"
+
 #include "config/Configuration.h"
 #include "config/BasicConfiguration.h"
 #include "config/AggregateConfiguration.h"
 
-using namespace std;
-
-#include "exceptions.h"
 #include "STLHelpers.h"
 
 const std::string AggregateConfiguration::getNormalized(const std::string &path)
+throw(UnknownOptionException)
 {
   std::vector<Configuration*>::iterator entry = m_configs.begin();
   while (entry != m_configs.end()) {

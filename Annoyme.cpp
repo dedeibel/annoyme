@@ -29,14 +29,14 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <cstring>
 
 using namespace std;
 
+#include "exceptions.h"
+
 #include "config/Configuration.h"
 #include "config/BasicConfiguration.h"
-#include "config/AggregateConfiguration.h"
-#include "config/ConfigurationMap.h"
-#include "config/YAMLConfig.h"
 #include "config/AnnoymeConfiguration.h"
 
 // Input

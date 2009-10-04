@@ -33,7 +33,8 @@ class AggregateConfiguration : public BasicConfiguration
 public:
   virtual ~AggregateConfiguration() {};
   virtual void init() {};
-  virtual const std::string getNormalized(const std::string &path);
+  virtual const std::string getNormalized(const std::string &path)
+    throw(UnknownOptionException);
   void addConfig(Configuration *config);
   void removeConfig(Configuration *config);
   void clear();

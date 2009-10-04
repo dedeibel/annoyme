@@ -31,6 +31,10 @@
 #include <map>
 #include <vector>
 
+using namespace std;
+
+#include "exceptions.h"
+
 #include "Configuration.h"
 #include "BasicConfiguration.h"
 #include "AggregateConfiguration.h"
@@ -41,11 +45,6 @@
 
 /* Created by cmake */
 #include "config.h" 
-
-using namespace std;
-
-#include "exceptions.h"
-
 
 AnnoymeConfiguration *AnnoymeConfiguration::m_annoymeConfiguration = 0;
 
@@ -63,46 +62,48 @@ const std::string AnnoymeConfiguration::value(const std::string &path) {
 }
 
 AnnoymeConfiguration::AnnoymeConfiguration()
+: m_buildConfig(new ConfigurationMap())
+, m_yamlConfig(new YAMLConfig())
+, m_configs(new AggregateConfiguration())
 {
-
 }
 
 AnnoymeConfiguration::~AnnoymeConfiguration()
 {
-
+  delete m_configs;
+  delete m_yamlConfig;
+  delete m_buildConfig;
 }
 
 void AnnoymeConfiguration::init()
 {
 
-  m_buildConfig.setNormalized("base_directory", ANNOYME_INSTALL_DIRECTORY);
-  m_buildConfig.setNormalized("config_name", ANNOYME_CONFIG_NAME);
+  m_buildConfig->setNormalized("base_directory",        ANNOYME_INSTALL_DIRECTORY);
+  m_buildConfig->setNormalized("resource_directory",    ANNOYME_RESOURCE_DIRECTORY);
+  m_buildConfig->setNormalized("sample_base_directory", ANNOYME_SAMPLE_DIRECTORY);
+  m_buildConfig->setNormalized("config_name",           ANNOYME_CONFIG_NAME);
 
   Configuration *sys = SystemConfiguration::getInstance();
   string yamlPath = sys->getNormalized("system.home")
                   + sys->getNormalized("system.dir_separator")
                   + ANNOYME_CONFIG_NAME;
 
-  m_yamlConfig.setConfigFilePath(yamlPath);
-  m_yamlConfig.init();
+  m_yamlConfig->setConfigFilePath(yamlPath);
+  m_yamlConfig->init();
 
-  m_buildConfig.setNormalized("sample_directory_base",
-                                      ANNOYME_INSTALL_DIRECTORY
-                                      + sys->getNormalized("system.dir_separator")
-                                      + "pcm");
-
-  m_buildConfig.setNormalized("sample_directory",
-                                 m_buildConfig.getNormalized("sample_directory_base")
+  m_buildConfig->setNormalized("sample_directory",
+                                 m_buildConfig->getNormalized("sample_base_directory")
                                  + sys->getNormalized("system.dir_separator")
-                                 + m_yamlConfig.getNormalized("sample_theme"));
+                                 + m_yamlConfig->getNormalized("sample_theme"));
 
-  m_configs.addConfig(&m_buildConfig);
-  m_configs.addConfig(sys);
-  m_configs.addConfig(&m_yamlConfig);
+  m_configs->addConfig(m_buildConfig);
+  m_configs->addConfig(sys);
+  m_configs->addConfig(m_yamlConfig);
 }
 
 const std::string AnnoymeConfiguration::getNormalized(const std::string &path)
+throw(UnknownOptionException)
 {
-  return m_configs.getNormalized(path);
+  return m_configs->getNormalized(path);
 }
 

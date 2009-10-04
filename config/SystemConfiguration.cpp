@@ -26,15 +26,18 @@
  */
 
 #include <string>
+#include <cstring>
 #include <map>
+
+using namespace std;
+
+#include "exceptions.h"
 
 #include "config/Configuration.h"
 #include "config/BasicConfiguration.h"
 #include "config/SystemConfiguration.h"
 
 #include "config/SystemConfigurationLinux.h"
-
-using namespace std;
 
 Configuration *SystemConfiguration::m_systemConfiguration = 0;
 
