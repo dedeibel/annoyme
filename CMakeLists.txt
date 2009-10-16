@@ -7,5 +7,4 @@ SET(CMAKE_FILES_DIR "${CMAKE_SOURCE_DIR}/cmake/")
 # Add the module include path for custom lib finders
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_FILES_DIR}/Modules/")
 
-include("${CMAKE_FILES_DIR}/main.txt")
-
+add_subdirectory("${CMAKE_SOURCE_DIR}/src")
