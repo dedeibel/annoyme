@@ -1,7 +1,7 @@
-# or "ao" or "alsa"
 input.reader: xevie
 sample_theme: default
 sound.loader: wav
 sound.output: mixed-alsa
-# alt: plughw:0,0
+# or "ao" or "alsa"
 sound.alsa.device: default
+# alt: plughw:0,0

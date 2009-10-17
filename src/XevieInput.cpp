@@ -49,6 +49,7 @@ using namespace std;
  * @param delay Delay in milliseconds
  */
 XevieInput::XevieInput()
+: m_xevieStarted(false)
 {
 
 }
@@ -79,6 +80,7 @@ void XevieInput::open()
     throw XevieExtensionNotInstalledException();
   }
 
+  m_xevieStarted = true;
   XevieSelectInput(m_display, KeyPressMask | KeyReleaseMask);
 }
 
@@ -87,7 +89,10 @@ void XevieInput::open()
  */
 void XevieInput::close()
 {
-  if (m_display) XevieEnd(m_display);
+  if (m_display && m_xevieStarted) {
+    XevieEnd(m_display);
+    m_xevieStarted = false;
+  }
 }
 
 

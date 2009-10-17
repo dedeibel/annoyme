@@ -48,6 +48,7 @@ private:
   int                  m_xevieVersionMajor;
   XEvent               m_event;
   XClientMessageEvent *m_xcme;
+  bool                 m_xevieStarted;
 };
 
 #endif // XEVIEINPUT_H
