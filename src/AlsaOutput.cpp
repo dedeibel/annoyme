@@ -42,6 +42,7 @@ using namespace std;
 
 AlsaOutput::AlsaOutput(const std::string &device)
 : m_device(device)
+, m_pcm_handle(0)
 {
 
 }
@@ -226,6 +227,9 @@ void AlsaOutput::open()
 
 void AlsaOutput::close()
 {
-  snd_pcm_drain(m_pcm_handle);
-  snd_pcm_close(m_pcm_handle);
+  if (m_pcm_handle != 0) {
+    snd_pcm_drain(m_pcm_handle);
+    snd_pcm_close(m_pcm_handle);
+    m_pcm_handle = 0;
+  }
 }

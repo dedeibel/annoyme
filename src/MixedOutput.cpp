@@ -39,6 +39,8 @@ using namespace std;
 
 MixedOutput::MixedOutput(SoundOutput *output)
 : m_soundOutput(output)
+, m_running(false)
+, m_stopped(true)
 {
   
 }
