@@ -57,6 +57,10 @@ void Dispatcher::run() {
 	{
 		// TODO create dynamic mapping table, event, (key) ,sound
 		m_inputEventReader->getNextEvent(event);
+
+    if (! m_running) {
+      break;
+    }
 		
 		cout << "Key " << event.getType() << " '" << event.getSymbol() << "'";
 		if (isprint(event.getValue().c_str()[0]))
@@ -67,22 +71,22 @@ void Dispatcher::run() {
 		
 		switch (event.getType())
 		{
-			case eventNormalKeyPressed:
+			case Annoyme::eventNormalKeyPressed:
 				m_inputEventHandler->handleNormalKeyPressed();
 				break;
-			case eventNormalKeyReleased:
+			case Annoyme::eventNormalKeyReleased:
 				m_inputEventHandler->handleNormalKeyReleased();
 				break;
-			case eventEnterKeyPressed:
+			case Annoyme::eventEnterKeyPressed:
 				m_inputEventHandler->handleEnterPressed();
 				break;
-			case eventEnterKeyReleased:
+			case Annoyme::eventEnterKeyReleased:
 				m_inputEventHandler->handleEnterReleased();
 				break;
-			case eventBackspaceKeyPressed:
+			case Annoyme::eventBackspaceKeyPressed:
 				m_inputEventHandler->handleBackspacePressed();
 				break;
-			case eventBackspaceKeyReleased:
+			case Annoyme::eventBackspaceKeyReleased:
 				m_inputEventHandler->handleBackspaceReleased();
 				break;
 			default:

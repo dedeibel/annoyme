@@ -25,34 +25,21 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ANNOYMECONFIGURATION_H
-#define ANNOYMECONFIGURATION_H
+#ifndef MACINPUT_H
+#define MACINPUT_H
 
-class YAMLConfig;
-class ConfigurationMap;
-class AggregateConfiguration;
-class UnknownOptionException;
+#include "InputEventReader.h"
 
-class AnnoymeConfiguration : public BasicConfiguration
+class MacInput : virtual public InputEventReader
 {
 public:
-  static AnnoymeConfiguration* getInstance();
-  static const std::string value(const std::string &path);
-  static const int intValue(const std::string &path) throw (InvalidValueException);
-
-  virtual ~AnnoymeConfiguration();
-  virtual void init() throw(AnnoymeException);
-  virtual const std::string getNormalized(const std::string &path)
-    throw(UnknownOptionException);
+  MacInput();
+  virtual ~MacInput();
+  virtual void open();
+  virtual void close();
+  virtual bool getNextEvent(Event &event);
 
 private:
-  AnnoymeConfiguration();
-
-private:
-  static AnnoymeConfiguration *m_annoymeConfiguration;
-  ConfigurationMap       *m_buildConfig;
-  YAMLConfig             *m_yamlConfig;
-  AggregateConfiguration *m_configs;
 };
 
-#endif // ANNOYMECONFIGURATION_H
+#endif // MACINPUT_H

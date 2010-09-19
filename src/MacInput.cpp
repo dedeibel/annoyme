@@ -25,34 +25,56 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ANNOYMECONFIGURATION_H
-#define ANNOYMECONFIGURATION_H
+#include <string>
+#include <cerrno>
+#include <cstring>
+#include <iostream>
 
-class YAMLConfig;
-class ConfigurationMap;
-class AggregateConfiguration;
-class UnknownOptionException;
+using namespace std;
 
-class AnnoymeConfiguration : public BasicConfiguration
+#include "exceptions.h"
+#include "Event.h"
+
+#include "MacInput.h"
+
+#include <Carbon/Carbon.h>
+
+MacInput::MacInput()
 {
-public:
-  static AnnoymeConfiguration* getInstance();
-  static const std::string value(const std::string &path);
-  static const int intValue(const std::string &path) throw (InvalidValueException);
 
-  virtual ~AnnoymeConfiguration();
-  virtual void init() throw(AnnoymeException);
-  virtual const std::string getNormalized(const std::string &path)
-    throw(UnknownOptionException);
+}
 
-private:
-  AnnoymeConfiguration();
+MacInput::~MacInput()
+{
 
-private:
-  static AnnoymeConfiguration *m_annoymeConfiguration;
-  ConfigurationMap       *m_buildConfig;
-  YAMLConfig             *m_yamlConfig;
-  AggregateConfiguration *m_configs;
-};
+}
 
-#endif // ANNOYMECONFIGURATION_H
+void MacInput::open()
+{
+/*
+  CheckSystem verifies that the correct Mac OS X version is present - 10.3.x
+  The EventMonitor mechanism is present only in 10.3.x and newer
+*/
+  Boolean   ok = FALSE;
+  OSStatus  status;
+  long    response;
+  
+  status = Gestalt(gestaltSystemVersion, &response);
+  ok = ((noErr == status) && (response >= 0x00001030));
+  if (ok == FALSE)
+  {
+    std::cerr << "System < mac osx 10.3!\n";
+  }
+  std::cout << "System >= mac osx 10.3.\n";
+}
+
+void MacInput::close()
+{
+}
+
+
+bool MacInput::getNextEvent(Event &event)
+{
+  return false;
+}
+
