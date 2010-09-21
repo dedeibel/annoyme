@@ -51,8 +51,6 @@ private:
   ao_device   *m_device;
   MixerOutput *m_mixer;
   pthread_t    m_thread;
-  bool         m_running;
-  bool         m_stopped;
 };
 
 #endif // AOUTPUT_H

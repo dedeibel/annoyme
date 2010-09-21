@@ -38,7 +38,6 @@ class AnnoymeConfiguration : public BasicConfiguration
 public:
   static AnnoymeConfiguration* getInstance();
   static const std::string value(const std::string &path);
-  static const int intValue(const std::string &path) throw (InvalidValueException);
 
   virtual ~AnnoymeConfiguration();
   virtual void init() throw(AnnoymeException);

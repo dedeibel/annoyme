@@ -1,18 +1,7 @@
 input.reader: xevie
 sample_theme: default
 sound.loader: wav
-# or "ao" or "alsa"
 sound.output: mixed-alsa
-# alternative: plughw:0,0
+# or "ao" or "alsa"
 sound.alsa.device: default
-# rate Should be determined by input, but for now it can
-# be entered here
-sound.input.rate: 22050
-sound.input.channels: 1
-
-# For Mac OSX
-# (ao implementation only allows 44k on 2 channels)
-#sample_theme: default_hq
-#sound.input.rate: 22050
-#sound.input.channels: 1
-
+# alt: plughw:0,0

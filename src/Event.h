@@ -25,13 +25,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-/* Do not call it "EVENT_H" since some apple header library uses it too ...
- * Same prob: http://lists.apple.com/archives/quicktime-api/2005/dec/msg00162.html
- */
-#ifndef _EVENT_H_
-#define _EVENT_H_
-
-namespace Annoyme {
+#ifndef EVENT_H
+#define EVENT_H
 
 enum EventType {
   eventNormalKeyPressed,
@@ -44,8 +39,6 @@ enum EventType {
   eventMouseReleased,
 };
 
-}
-
 class Event
 {
 public:
@@ -53,12 +46,12 @@ public:
   virtual ~Event();
 
 public:
-  void setType(Annoyme::EventType new_var)
+  void setType(EventType new_var)
   {
     m_type = new_var;
   }
 
-  Annoyme::EventType getType() {
+  EventType getType() {
     return m_type;
   }
 
@@ -83,9 +76,9 @@ public:
   }
 
 private:
-  Annoyme::EventType     m_type;
+  EventType     m_type;
   string        m_value;
   unsigned int  m_symbol;
 };
 
-#endif // _EVENT_H_
+#endif // EVENT_H

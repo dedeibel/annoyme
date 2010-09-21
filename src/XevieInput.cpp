@@ -149,26 +149,26 @@ void XevieInput::fillEventFromXKeyEvent(Event &event, XEvent &xevent, bool press
     case XK_Escape:
     case XK_Delete:
       if (pressed) {
-        event.setType(Annoyme::eventBackspaceKeyPressed);
+        event.setType(eventBackspaceKeyPressed);
       }
       else {
-        event.setType(Annoyme::eventBackspaceKeyReleased);
+        event.setType(eventBackspaceKeyReleased);
       }
     break;
     case XK_Return:
       if (pressed) {
-        event.setType(Annoyme::eventEnterKeyPressed);
+        event.setType(eventEnterKeyPressed);
       }
       else {
-        event.setType(Annoyme::eventEnterKeyReleased);
+        event.setType(eventEnterKeyReleased);
       }
     break;
     default:
       if (pressed) {
-        event.setType(Annoyme::eventNormalKeyPressed);
+        event.setType(eventNormalKeyPressed);
       }
       else {
-        event.setType(Annoyme::eventNormalKeyReleased);
+        event.setType(eventNormalKeyReleased);
       }
     break;
   }

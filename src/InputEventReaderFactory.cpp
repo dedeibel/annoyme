@@ -18,7 +18,6 @@ using namespace std;
 #include "InputEventReader.h"
 
 #include "XevieInput.h"
-#include "MacInput.h"
 
 #include "InputEventReaderFactory.h"
 
@@ -30,10 +29,6 @@ InputEventReader *InputEventReaderFactory::getInputEventReader(
   if (name == "xevie")
   {
     return new XevieInput();
-  }
-  else if (name == "mac")
-  {
-    return new MacInput();
   }
   else
   {

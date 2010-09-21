@@ -27,7 +27,6 @@
 
 #include <cstdlib>
 #include <cstring>
-#include <sstream>
 #include <string>
 #include <map>
 #include <vector>
@@ -47,15 +46,6 @@ using namespace std;
 /* Created by cmake */
 #include "config.h" 
 
-template <class T>
-bool from_string(T& t, 
-                 const std::string& s, 
-                                  std::ios_base& (*f)(std::ios_base&))
-{
-    std::istringstream iss(s);
-    return !(iss >> f >> t).fail();
-}
-
 AnnoymeConfiguration *AnnoymeConfiguration::m_annoymeConfiguration = 0;
 
 AnnoymeConfiguration* AnnoymeConfiguration::getInstance()
@@ -69,14 +59,6 @@ AnnoymeConfiguration* AnnoymeConfiguration::getInstance()
 
 const std::string AnnoymeConfiguration::value(const std::string &path) {
   return AnnoymeConfiguration::getInstance()->get(path);
-}
-
-const int AnnoymeConfiguration::intValue(const std::string &path) throw (InvalidValueException) {
-  int i;
-  if (from_string<int>(i, AnnoymeConfiguration::getInstance()->get(path), std::dec)) {
-    return i;
-  }
-  throw InvalidValueException(path + " value: "+ AnnoymeConfiguration::getInstance()->get(path));
 }
 
 AnnoymeConfiguration::AnnoymeConfiguration()

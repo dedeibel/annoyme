@@ -69,24 +69,6 @@ class UnknownOptionException : public AnnoymeException
   string m_name;
 };
 
-class InvalidValueException : public AnnoymeException
-{
-  public:
-
-  InvalidValueException(string name) throw()
-  : AnnoymeException(string("Invalid or unexpected value received: ") + name)
-  , m_name(name)
-  {
-
-  }
-
-  virtual ~InvalidValueException() throw() {};
-
-  protected:
-
-  string m_name;
-};
-
 class FileNotFoundException : public AnnoymeException
 {
   public:

@@ -27,7 +27,6 @@
 
 #include <string>
 #include <iostream>
-#include <sstream>
 #include <cstring>
 
 extern "C" {
@@ -44,13 +43,8 @@ using namespace std;
 
 #include "AOutput.h"
 
-#include "config/Configuration.h"
-#include "config/BasicConfiguration.h"
-#include "config/AnnoymeConfiguration.h"
 
 AOutput::AOutput(const std::string &)
-: m_running(false)
-, m_stopped(true)
 {
   
 }
@@ -81,16 +75,8 @@ void AOutput::open()
   
   ao_sample_format format;
   format.bits = 16;
-
-  AnnoymeConfiguration::getInstance();
-	
-  format.channels = AnnoymeConfiguration::intValue("sound.input.channels");
-  format.rate = AnnoymeConfiguration::intValue("sound.input.rate");
-	
-  // To use with HQ sample for MAC
-  //format.channels = 2;
-  //format.rate = 44100;
-	
+  format.channels = 1;
+  format.rate = 22050;
   format.byte_format = AO_FMT_LITTLE;
   
   /* -- Open driver -- */
@@ -104,14 +90,13 @@ void AOutput::open()
 
 void AOutput::close()
 {
-  stopThread();
   ao_shutdown();
+  stopThread();
 }
 
 void AOutput::startThread() throw(AnnoymeException)
 {
   int rc;
-  m_running = true;
   rc = pthread_create(&m_thread, NULL, runObject, reinterpret_cast<void*>(this));
 
   if (rc != 0) {
@@ -121,19 +106,17 @@ void AOutput::startThread() throw(AnnoymeException)
 
 void AOutput::stopThread() throw(AnnoymeException)
 {
-  m_running = false;
-  pthread_join(m_thread, 0);
+  pthread_exit(NULL);
 }
 
 void AOutput::run()
 {
   byte buffer[1024];
   unsigned int bytes_fetched;
-  //unsigned int sample_ms = (1. / 22050.0 * 1000000.0); // well 1_000_000 should be right but isn't ... hmm
-  unsigned int sample_ms = (1. / 44100.0 * 1000000.0); // well 1_000_000 should be right but isn't ... hmm
+  unsigned int sample_ms = (1. / 22050.0 * 1000000.0); // well 1_000_000 should be right but isn't ... hmm
   unsigned int byte_ms = (sample_ms >> 1) * 0.8; // 10ms for processing
   int ret;
-  while (m_running) {
+  while (1) {
     bytes_fetched = m_mixer->fetch(buffer, 128);
     ret = ao_play(m_device, reinterpret_cast<char*>(buffer), bytes_fetched);
     if (ret == 0) {
@@ -142,8 +125,6 @@ void AOutput::run()
 
     usleep(bytes_fetched * byte_ms); // sleep or burn cpu power ...
   }
-  m_stopped = true;
-  pthread_exit(NULL);
 }
 
 void* AOutput::runObject(void *object)
