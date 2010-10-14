@@ -29,7 +29,13 @@
 #define FILEUTIL_H
 
 namespace FileUtil {
-  bool copy(const std::string &src, const std::string &dst);
+bool copy(const std::string &src, const std::string &dst);
+std::string findFile(const std::string &filename,
+		const std::vector<std::string> paths) throw (FileNotFoundException);
+void loadFile(const std::string &filename,
+		const std::vector<std::string> paths, char **data, unsigned int *size)
+		throw (FileNotFoundException);
+bool isDirectory(const string &path) throw (AnnoyErrnoException);
 }
 
 #endif // FILEUTIL_H

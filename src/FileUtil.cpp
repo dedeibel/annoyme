@@ -27,36 +27,100 @@
 
 #include <string>
 #include <fstream>
+#include <vector>
+
+#include <cstring>
+using namespace std;
+#include "exceptions.h"
 
 #include "FileUtil.h"
 
-using namespace std;
-
-bool FileUtil::copy(const string &src, const string &dst) {
-  std::ifstream ifs(src.c_str()); // I'll never get why they excpect a cstring
-  if (! ifs) {
-    return false;
-  }
-
-  std::ofstream ofs(dst.c_str());
-  if (! ofs) {
-    return false;
-  }
-
-  // Copy the file
-  const unsigned int bufflen = 4068;
-  std::streamsize read;
-  char buffer[bufflen];
-
-  while ((read = ifs.readsome(buffer, bufflen)) > 0) {
-      ofs.write(buffer, read);
-  }
-
-  // check for failures
-  if (ifs.rdbuf()->in_avail() != 0 || !ofs) {
-    unlink(dst.c_str());
-    return false;
-  }
-
-  return true;
+extern "C"
+{
+#include <glob.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <libgen.h>
 }
+#include <cerrno>
+
+bool FileUtil::isDirectory(const string &path) throw (AnnoyErrnoException)
+{
+	struct stat buf;
+	int retval = stat(path.c_str(), &buf);
+	if (retval == -1) {
+		throw AnnoyErrnoException("Could not stat directory", path, errno);
+	}
+
+	if (S_ISDIR(buf.st_mode)) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+
+bool FileUtil::copy(const string &src, const string &dst)
+{
+	ifstream ifs(src.c_str()); // I'll never get why they excpect a cstring
+	if (!ifs) {
+		return false;
+	}
+
+	ofstream ofs(dst.c_str());
+	if (!ofs) {
+		return false;
+	}
+
+	// Copy the file
+	const unsigned int bufflen = 4068;
+	streamsize read;
+	char buffer[bufflen];
+
+	while ((read = ifs.readsome(buffer, bufflen)) > 0) {
+		ofs.write(buffer, read);
+	}
+
+	// check for failures
+	if (ifs.rdbuf()->in_avail() != 0 || !ofs) {
+		unlink(dst.c_str());
+		return false;
+	}
+
+	return true;
+}
+
+string findFile(const string &filename, const vector<string> &paths)
+		throw (FileNotFoundException)
+{
+	vector<string>::const_iterator it = paths.begin();
+
+	while (it != paths.end()) {
+		ifstream file(it->c_str(), ios::in | ios::binary);
+		if (file.is_open()) {
+			return *it;
+		}
+	}
+	throw FileNotFoundException(filename, "finding");
+}
+
+void loadFile(const string &filename, const vector<string> paths, char **data,
+		unsigned int *size) throw (FileNotFoundException)
+{
+	vector<string>::const_iterator it = paths.begin();
+
+	while (it != paths.end()) {
+		ifstream file(it->c_str(), ios::in | ios::binary | ios::ate);
+		if (file.is_open()) {
+			*size = file.tellg();
+			*data = new char[*size];
+			file.seekg(0, ios::beg);
+			file.read(*data, *size);
+			file.close();
+			return;
+		}
+	}
+	throw FileNotFoundException(filename, "loading");
+}
+

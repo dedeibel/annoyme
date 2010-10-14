@@ -32,6 +32,7 @@
 #include <algorithm>
 #include <map>
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
