@@ -28,18 +28,29 @@
 #ifndef RESOURCE_LOADER_H
 #define RESOURCE_LOADER_H
 
+class FileUtil;
+using std::string;
+using std::vector;
+
 class ResourceLoader
 {
 public:
-  ResourceLoader(const string &path);
-  virtual ~ResourceLoader();
+	ResourceLoader(const string &path);
+  ResourceLoader(const string &path, FileUtil* fileUtil);
+  ~ResourceLoader();
+  void init();
   bool isResourceDirectory(const string &dir);
   void listResources(const string &dir, const vector<string> &resources);
   string getPath(const string &resource);
-  void getContent(const string &resource, char **data, unsigned int *size);
+  void getContent(const string &resource, char** data, unsigned int* size);
 
 private:
   string m_path;
+  string m_resourceDir;
+  FileUtil* m_fileUtil;
+
+private:
+  void initInternal(const string &path, FileUtil *fileUtil);
 };
 
 #endif // RESOURCE_LOADER_H

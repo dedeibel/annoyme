@@ -30,23 +30,25 @@
 
 #include "SoundLoader.h"
 
+class ResourceLoader;
+
 class SimpleWaveFileLoader : virtual public SoundLoader
 {
 public:
-  SimpleWaveFileLoader(const string &path);
+  SimpleWaveFileLoader(ResourceLoader *resourceLoader);
   virtual ~SimpleWaveFileLoader();
 
   virtual void clear();
-  virtual void loadFiles();
+  virtual void loadFiles(const string &theme);
   virtual void getSample(enum Sample::SampleType type, const Sample **sample);
 private:
   void insertDefault();
-  void loadSampleFromFile(const char *path);
+  void loadSampleFromFile(const string &path);
   void loadDataFromFile(Sample *sample);
 
-  inline const string getName(const char *path)
+  inline const string getName(const string &path)
   {
-    const char *fileBasename = basename(const_cast<char *>(path));
+    const char *fileBasename = basename(const_cast<char *>(path.c_str()));
     const unsigned int lastDot = lastOccurance(fileBasename, '.');
     string s = string(fileBasename, lastDot);
     return s;
@@ -60,7 +62,7 @@ private:
   }
 
 private:
-  string m_path;
+  ResourceLoader *m_resourceLoader;
   typedef map<const enum Sample::SampleType, Sample*> SamplesMap;
   SamplesMap samples;
 };

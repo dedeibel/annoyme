@@ -41,7 +41,7 @@ using namespace std;
 
 #include "STLHelpers.h"
 
-const std::string AggregateConfiguration::getNormalized(const std::string &path)
+std::string AggregateConfiguration::getNormalized(const std::string &path)
 throw(UnknownOptionException)
 {
   std::vector<Configuration*>::iterator entry = m_configs.begin();

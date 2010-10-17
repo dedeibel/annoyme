@@ -77,6 +77,8 @@ void AOutput::open()
   format.bits = 16;
   format.channels = 1;
   format.rate = 22050;
+  format.channels = 2;
+  format.rate = 44100;
   format.byte_format = AO_FMT_LITTLE;
   
   /* -- Open driver -- */

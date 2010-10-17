@@ -32,7 +32,7 @@ class BasicConfiguration : public Configuration
 {
 public:
   virtual ~BasicConfiguration() {};
-  virtual const std::string get(const std::string &path)
+  virtual std::string get(const std::string &path)
     throw(UnknownOptionException);
 
 protected:

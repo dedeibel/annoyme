@@ -1,2 +1,2 @@
 
-include("${CMAKE_FILES_DIR}/main.txt")
+include("${CMAKE_FILES_DIR}/main.cmake")

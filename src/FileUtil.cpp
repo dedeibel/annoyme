@@ -28,35 +28,60 @@
 #include <string>
 #include <fstream>
 
-#include "FileUtil.h"
-
 using namespace std;
 
-bool FileUtil::copy(const string &src, const string &dst) {
-  std::ifstream ifs(src.c_str()); // I'll never get why they excpect a cstring
-  if (! ifs) {
-    return false;
-  }
+#include <cerrno>
+#include "exceptions.h"
+#include "FileUtil.h"
 
-  std::ofstream ofs(dst.c_str());
-  if (! ofs) {
-    return false;
-  }
+extern "C"
+{
+#include <sys/types.h>
+#include <sys/stat.h>
+}
 
-  // Copy the file
-  const unsigned int bufflen = 4068;
-  std::streamsize read;
-  char buffer[bufflen];
+bool FileUtil::isDirectory(const string &path) throw (AnnoyErrnoException)
+{
+	struct stat buf;
+	int retval = stat(path.c_str(), &buf);
+	if (retval == -1) {
+		throw AnnoyErrnoException("Could not stat directory", path, errno);
+	}
 
-  while ((read = ifs.readsome(buffer, bufflen)) > 0) {
-      ofs.write(buffer, read);
-  }
+	if (S_ISDIR(buf.st_mode)) {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
 
-  // check for failures
-  if (ifs.rdbuf()->in_avail() != 0 || !ofs) {
-    unlink(dst.c_str());
-    return false;
-  }
+bool FileUtil::copy(const string &src, const string &dst)
+{
+	std::ifstream ifs(src.c_str()); // I'll never get why they excpect a cstring
+	if (!ifs) {
+		return false;
+	}
 
-  return true;
+	std::ofstream ofs(dst.c_str());
+	if (!ofs) {
+		return false;
+	}
+
+	// Copy the file
+	const unsigned int bufflen = 4068;
+	std::streamsize read;
+	char buffer[bufflen];
+
+	while ((read = ifs.readsome(buffer, bufflen)) > 0) {
+		ofs.write(buffer, read);
+	}
+
+	// check for failures
+	if (ifs.rdbuf()->in_avail() != 0 || !ofs) {
+		unlink(dst.c_str());
+		return false;
+	}
+
+	return true;
 }

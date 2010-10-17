@@ -44,73 +44,98 @@ using namespace std;
 #include "AnnoymeConfiguration.h"
 
 /* Created by cmake */
-#include "config.h" 
+#include "config.h"
+
+#include <iostream>
 
 AnnoymeConfiguration *AnnoymeConfiguration::m_annoymeConfiguration = 0;
 
 AnnoymeConfiguration* AnnoymeConfiguration::getInstance()
 {
-  if (m_annoymeConfiguration == 0) {
-    m_annoymeConfiguration = new AnnoymeConfiguration();
-    m_annoymeConfiguration->init();
-  }
-  return m_annoymeConfiguration;
+	if (m_annoymeConfiguration == 0) {
+		throw AnnoymeException("Config not initialized, call iniWithBinaryPath before anything else.");
+	}
+	return m_annoymeConfiguration;
 }
 
-const std::string AnnoymeConfiguration::value(const std::string &path) {
-  return AnnoymeConfiguration::getInstance()->get(path);
+std::string AnnoymeConfiguration::value(const std::string &path)
+{
+	return AnnoymeConfiguration::getInstance()->get(path);
 }
 
-AnnoymeConfiguration::AnnoymeConfiguration()
-: m_buildConfig(new ConfigurationMap())
-, m_yamlConfig(new YAMLConfig())
-, m_configs(new AggregateConfiguration())
+void AnnoymeConfiguration::initWithBinaryPath(const std::string &binary_path) {
+	m_annoymeConfiguration = new AnnoymeConfiguration();
+	m_annoymeConfiguration->init(binary_path);
+}
+
+AnnoymeConfiguration::AnnoymeConfiguration() :
+	m_buildConfig(new ConfigurationMap()), m_yamlConfig(new YAMLConfig()),
+			m_configs(new AggregateConfiguration())
 {
 }
 
 AnnoymeConfiguration::~AnnoymeConfiguration()
 {
-  delete m_configs;
-  delete m_yamlConfig;
-  delete m_buildConfig;
+	delete m_configs;
+	delete m_yamlConfig;
+	delete m_buildConfig;
 }
 
-void AnnoymeConfiguration::init() throw(AnnoymeException)
+void AnnoymeConfiguration::init() throw(AnnoymeException) {
+	this->init("");
+}
+
+void AnnoymeConfiguration::init(const string& binary_path) throw (AnnoymeException)
 {
 
-  m_buildConfig->setNormalized("base_directory",        ANNOYME_INSTALL_DIRECTORY);
-  m_buildConfig->setNormalized("resource_directory",    ANNOYME_RESOURCE_DIRECTORY);
-  m_buildConfig->setNormalized("sample_base_directory", ANNOYME_SAMPLE_DIRECTORY);
-  m_buildConfig->setNormalized("config_name",           ANNOYME_CONFIG_NAME);
+	m_buildConfig->setNormalized("config_name", ANNOYME_CONFIG_NAME);
+	m_buildConfig->setNormalized("resource_directory", ANNOYME_RESOURCE_DIRECTORY);
+	m_buildConfig->setNormalized("samples_dir", ANNOYME_SAMPLE_DIRECTORY);
+	m_buildConfig->setNormalized("base_directory", ANNOYME_INSTALL_DIRECTORY);
+	m_buildConfig->setNormalized("prefix", ANNOYME_INSTALL_DIRECTORY);
 
-  Configuration *sys = SystemConfiguration::getInstance();
-  string yamlPath = sys->getNormalized("system.home")
-                  + sys->getNormalized("system.dir_separator")
-                  + ANNOYME_CONFIG_NAME;
+	Configuration *sys = SystemConfiguration::getInstance();
+	string yamlPath = sys->getNormalized("system.home") + sys->getNormalized(
+			"system.dir_separator") + ANNOYME_CONFIG_NAME;
 
-  m_yamlConfig->setConfigFilePath(yamlPath);
-  try {
-    m_yamlConfig->init();
-  }
-  catch (AnnoymeException e) {
-    m_configs->addConfig(m_buildConfig);
-    m_configs->addConfig(sys);
-    throw;
-  }
+	m_buildConfig->setNormalized("dynamic_prefix", getDynamicPrefix(sys->getNormalized("system.pwd"), binary_path));
 
-  m_buildConfig->setNormalized("sample_directory",
-                                 m_buildConfig->getNormalized("sample_base_directory")
-                                 + sys->getNormalized("system.dir_separator")
-                                 + m_yamlConfig->getNormalized("sample_theme"));
+	m_yamlConfig->setConfigFilePath(yamlPath);
+	try {
+		m_yamlConfig->init();
+	}
+	catch (AnnoymeException e) {
+		m_configs->addConfig(m_buildConfig);
+		m_configs->addConfig(sys);
+		throw;
+	}
 
-  m_configs->addConfig(m_buildConfig);
-  m_configs->addConfig(sys);
-  m_configs->addConfig(m_yamlConfig);
+	m_buildConfig->setNormalized("resource_path", m_buildConfig->getNormalized(
+			"prefix") + sys->getNormalized("system.dir_separator") +
+			m_buildConfig->getNormalized("resource_directory"));
+
+	m_buildConfig->setNormalized("dynamic_resource_path",
+			m_buildConfig->getNormalized("dynamic_prefix") + sys->getNormalized(
+					"system.dir_separator") + m_buildConfig->getNormalized(
+					"resource_directory"));
+
+	m_configs->addConfig(m_buildConfig);
+	m_configs->addConfig(sys);
+	m_configs->addConfig(m_yamlConfig);
 }
 
-const std::string AnnoymeConfiguration::getNormalized(const std::string &path)
-throw(UnknownOptionException)
+std::string AnnoymeConfiguration::getNormalized(const std::string &path)
+		throw (UnknownOptionException)
 {
-  return m_configs->getNormalized(path);
+	return m_configs->getNormalized(path);
 }
 
+std::string AnnoymeConfiguration::getDynamicPrefix(const std::string &pwd, const std::string &binary_path) const {
+	// If binary path is empty or not containing a directory, return pwd
+	if (binary_path.empty() || binary_path.find("/") == binary_path.npos) {
+		return pwd;
+	}
+	else {
+		return pwd.substr(0, pwd.find_last_of('/'));
+	}
+}

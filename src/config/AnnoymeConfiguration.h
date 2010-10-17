@@ -37,15 +37,20 @@ class AnnoymeConfiguration : public BasicConfiguration
 {
 public:
   static AnnoymeConfiguration* getInstance();
-  static const std::string value(const std::string &path);
+  static std::string value(const std::string &path);
+  static void initWithBinaryPath(const std::string &binary_path);
 
   virtual ~AnnoymeConfiguration();
   virtual void init() throw(AnnoymeException);
-  virtual const std::string getNormalized(const std::string &path)
+  virtual void init(const std::string &binary_path) throw(AnnoymeException);
+  virtual std::string getNormalized(const std::string &path)
     throw(UnknownOptionException);
 
 private:
   AnnoymeConfiguration();
+
+protected:
+  std::string getDynamicPrefix(const std::string &pwd, const std::string &binary_path) const;
 
 private:
   static AnnoymeConfiguration *m_annoymeConfiguration;

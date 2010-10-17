@@ -29,25 +29,34 @@
 #define YAMLCONFIG_H
 
 class UnknownOptionException;
+class FileNotFoundException;
+class AnnoymeException;
+class FileUtil;
 
-class YAMLConfig : public BasicConfiguration
+class YAMLConfig: public BasicConfiguration
 {
 public:
-  YAMLConfig(const std::string &configFilePath = std::string());
-  virtual ~YAMLConfig();
-  virtual void init() throw(FileNotFoundException, AnnoymeException);
-  virtual const std::string getNormalized(const std::string &path)
-    throw(UnknownOptionException);
-  void setConfigFilePath(const std::string &path);
-  std::string getConfigFilePath() const;
+	YAMLConfig(const std::string &configFilePath = std::string());
+
+	/**
+	 * @param fileUtil, memory responsibility will be given to YAMLConfig
+	 */
+	YAMLConfig(const std::string &configFilePath,
+			FileUtil* fileUtil);
+	virtual ~YAMLConfig();
+	virtual void init() throw (FileNotFoundException, AnnoymeException);
+	virtual std::string getNormalized(const std::string &path)
+			throw (UnknownOptionException);
+	void setConfigFilePath(const std::string &path);
+	std::string getConfigFilePath() const;
 
 private:
-  std::string m_configFilePath;
-  std::map<std::string, std::string> m_values;
+	std::string m_configFilePath;
+	std::map<std::string, std::string> m_values;
+	FileUtil* m_fileUtil;
 
 private:
-  void createDefault() throw(AnnoymeException);
+	void createDefault() throw (AnnoymeException);
 };
 
 #endif // YAMLCONFIG_H
-

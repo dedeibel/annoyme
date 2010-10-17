@@ -36,7 +36,7 @@ using namespace std;
 #include "config/Configuration.h"
 #include "config/BasicConfiguration.h"
 
-const std::string BasicConfiguration::get(const std::string &path)
+std::string BasicConfiguration::get(const std::string &path)
 throw(UnknownOptionException)
 {
   std::string normalized(path);

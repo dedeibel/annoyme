@@ -32,39 +32,70 @@ using namespace std;
 
 #include "ResourceLoader.h"
 
-ResourceLoader::ResourceLoader(const string &path)
-: m_path(path)
+#include "exceptions.h"
+#include "FileUtil.h"
+
+#include "config/Configuration.h"
+#include "config/BasicConfiguration.h"
+#include "config/AnnoymeConfiguration.h"
+
+ResourceLoader::ResourceLoader(const string &path, FileUtil* fileUtil)
 {
-	
+	initInternal(path, fileUtil);
 }
 
+ResourceLoader::ResourceLoader(const string &path)
+{
+	initInternal(path, new FileUtil());
+}
+
+void ResourceLoader::initInternal(const string &path, FileUtil *fileUtil)
+{
+	m_path = path;
+	m_fileUtil = fileUtil;
+}
 
 ResourceLoader::~ResourceLoader()
 {
-	
+	delete (m_fileUtil);
 }
 
+void ResourceLoader::init()
+{
+	/* Try the absolute defined path fist, defined by build process */
+	if (m_fileUtil->isDirectory(AnnoymeConfiguration::value("resource_path"))) {
+		m_path = AnnoymeConfiguration::value("resource_path");
+	}
+	/* Try the relative app prefix path from binary position afterwards */
+	else if (m_fileUtil->isDirectory(AnnoymeConfiguration::value(
+			"dynamic_resource_path"))) {
+		m_path = AnnoymeConfiguration::value("dynamic_resource_path");
+	}
+	else {
+		throw AnnoymeException(
+				"Could not determine resource path. Please check your compile parameters and installation paths.");
+	}
+}
 
 bool ResourceLoader::isResourceDirectory(const string &dir)
 {
-	return false;
+	return m_fileUtil->isDirectory(m_path + AnnoymeConfiguration::value("system.dir_separator") + dir);
 }
 
-
-void ResourceLoader::listResources(const string &dir, const vector<string> &resources)
+void ResourceLoader::listResources(const string &dir,
+		const vector<string> &resources)
 {
-	
-}
 
+}
 
 string ResourceLoader::getPath(const string &resource)
 {
-	return "";
+	return m_path + AnnoymeConfiguration::value("system.dir_separator") + resource;
 }
 
-
-void ResourceLoader::getContent(const string &resource, char **data, unsigned int *size)
+void ResourceLoader::getContent(const string &resource, char **data,
+		unsigned int *size)
 {
-	
+
 }
 

@@ -34,8 +34,13 @@ using namespace std;
 #include "exceptions.h"
 #include "Annoyme.h"
 
+#include "config/Configuration.h"
+#include "config/BasicConfiguration.h"
+#include "config/AnnoymeConfiguration.h"
+
 int main(int argc, char **argv)
 {
+  AnnoymeConfiguration::initWithBinaryPath(argv[0]);
   Annoyme annoyme;
 
   try {

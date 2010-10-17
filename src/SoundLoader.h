@@ -32,7 +32,7 @@ class SoundLoader
 {
 public:
   virtual ~SoundLoader() {};
-  virtual void loadFiles() = 0;
+  virtual void loadFiles(const string &theme) = 0;
   virtual void getSample(enum Sample::SampleType type, const Sample **sample) = 0;
 };
 

@@ -35,9 +35,9 @@ class Configuration
 public:
   virtual ~Configuration() {};
   virtual void init() throw(AnnoymeException) = 0;
-  virtual const std::string get(const std::string &path)
+  virtual std::string get(const std::string &path)
     throw(UnknownOptionException) = 0;
-  virtual const std::string getNormalized(const std::string &path)
+  virtual std::string getNormalized(const std::string &path)
     throw(UnknownOptionException) = 0;
 };
 

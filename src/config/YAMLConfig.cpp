@@ -47,75 +47,80 @@ using namespace std;
 // yaml-cpp
 #include "yaml-cpp/yaml.h"
 
-YAMLConfig::YAMLConfig(const string &configFilePath)
-: m_configFilePath(configFilePath)
+YAMLConfig::YAMLConfig(const string &configFilePath) :
+	m_configFilePath(configFilePath), m_fileUtil(new FileUtil())
+{
+
+}
+
+YAMLConfig::YAMLConfig(const string &configFilePath, FileUtil* fileUtil) :
+	m_configFilePath(configFilePath), m_fileUtil(fileUtil)
 {
 
 }
 
 YAMLConfig::~YAMLConfig()
 {
-
+	delete (m_fileUtil);
 }
 
-const string YAMLConfig::getNormalized(const std::string &path)
-throw(UnknownOptionException)
+string YAMLConfig::getNormalized(const std::string &path)
+		throw (UnknownOptionException)
 {
-  map<string, string>::iterator it = m_values.find(path);
-  if (it != m_values.end()) {
-    return it->second;
-  }
-  else {
-    throw UnknownOptionException(path);
-  }
+	map<string, string>::iterator it = m_values.find(path);
+	if (it != m_values.end()) {
+		return it->second;
+	}
+	else {
+		throw UnknownOptionException(path);
+	}
 }
 
-void YAMLConfig::init()
-  throw(FileNotFoundException, AnnoymeException)
+void YAMLConfig::init() throw (FileNotFoundException, AnnoymeException)
 {
-  if (access(m_configFilePath.c_str(), R_OK)) {
-    createDefault();
-  }
+	if (access(m_configFilePath.c_str(), R_OK)) {
+		createDefault();
+	}
 
-  ifstream fin(m_configFilePath.c_str());
-  if (!fin) {
-    throw FileNotFoundException(m_configFilePath, "Application configuration file");
-  }
-  YAML::Parser parser(fin);
-  YAML::Node doc;
-  parser.GetNextDocument(doc);
+	ifstream fin(m_configFilePath.c_str());
+	if (!fin) {
+		throw FileNotFoundException(m_configFilePath,
+				"Application configuration file");
+	}
+	YAML::Parser parser(fin);
+	YAML::Node doc;
+	parser.GetNextDocument(doc);
 
-  for (YAML::Iterator it = doc.begin(); it != doc.end(); ++it) {
-    string key;
-    string value;
-    it.first()  >> key;
-    it.second() >> value;
-    m_values[key] = value;
-  }
+	for (YAML::Iterator it = doc.begin(); it != doc.end(); ++it) {
+		string key;
+		string value;
+		it.first() >> key;
+		it.second() >> value;
+		m_values[key] = value;
+	}
 }
 
 void YAMLConfig::setConfigFilePath(const std::string &path)
 {
-  m_configFilePath = path;
+	m_configFilePath = path;
 }
 
 std::string YAMLConfig::getConfigFilePath() const
 {
-  return m_configFilePath;
+	return m_configFilePath;
 }
 
-void YAMLConfig::createDefault() throw(AnnoymeException)
+void YAMLConfig::createDefault() throw (AnnoymeException)
 {
-  const std::string source = ANNOYME_RESOURCE_DIRECTORY
-    + SystemConfiguration::getInstance()->getNormalized("system.dir_separator")
-    + ANNOYME_DEFAULT_CONFIG_NAME;
-  bool ret = FileUtil::copy(source.c_str(), m_configFilePath.c_str());
-  if (! ret) {
-    char *errno_message = strerror(errno);
-    std::string message = string("Could not create configuration file ")
-      + "'" + m_configFilePath + "'"
-      + " from default file "
-      + "'" + source + "', error: " + errno_message;
-    throw AnnoymeException(message);
-  }
+	const std::string source = ANNOYME_RESOURCE_DIRECTORY
+			+ SystemConfiguration::getInstance()->getNormalized(
+					"system.dir_separator") + ANNOYME_DEFAULT_CONFIG_NAME;
+	bool ret = m_fileUtil->copy(source.c_str(), m_configFilePath.c_str());
+	if (!ret) {
+		char *errno_message = strerror(errno);
+		std::string message = string("Could not create configuration file ") + "'"
+				+ m_configFilePath + "'" + " from default file " + "'" + source
+				+ "', error: " + errno_message;
+		throw AnnoymeException(message);
+	}
 }

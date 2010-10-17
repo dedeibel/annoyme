@@ -89,15 +89,14 @@ void Annoyme::init() throw(AnnoymeException)
                          AnnoymeConfiguration::value("input.reader"));
   cout << "Creating sound file loader.\n";
   m_soundLoader   = SoundLoaderFactory::getInstance()->getSoundLoader(
-                         AnnoymeConfiguration::value("sound.loader"),
-                         AnnoymeConfiguration::value("sample_directory"));
+                         AnnoymeConfiguration::value("sound.loader"));
   cout << "Creating sound output.\n";
   m_soundOutput   = SoundOutputFactory::getInstance()->getSoundOutput(
                          AnnoymeConfiguration::value("sound.output"),
                          AnnoymeConfiguration::value("sound.alsa.device"));
 
   cout << "Loading sound files.\n";
-  m_soundLoader->loadFiles();
+  m_soundLoader->loadFiles(AnnoymeConfiguration::value("sample_theme"));
   cout << "Opening sound output.\n";
   m_soundOutput->open();
   cout << "Opening event input.\n";

@@ -28,8 +28,13 @@
 #ifndef FILEUTIL_H
 #define FILEUTIL_H
 
-namespace FileUtil {
-  bool copy(const std::string &src, const std::string &dst);
-}
+class AnnoyErrnoException;
+
+class FileUtil
+{
+public:
+	bool isDirectory(const string &path) throw (AnnoyErrnoException);
+	bool copy(const std::string &src, const std::string &dst);
+};
 
 #endif // FILEUTIL_H

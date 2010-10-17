@@ -28,6 +28,8 @@
 #ifndef SOUNDLOADERFACTORY_H
 #define SOUNDLOADERFACTORY_H
 
+class ResourceLoader;
+
 class SoundLoaderFactory
 {
 public:
@@ -43,14 +45,14 @@ public:
   SoundLoader *getSoundLoader(const string &name, const string &param = string());
 
 private:
-  SoundLoaderFactory()
-  {
-  }
+  SoundLoaderFactory();
+  ~SoundLoaderFactory();
 
   SoundLoaderFactory(const SoundLoaderFactory&);
   SoundLoaderFactory& operator=(const SoundLoaderFactory&);
 
   static SoundLoaderFactory *m_instance;
+  ResourceLoader *m_resourceLoader;
 };
 
 #endif // SOUNDLOADERFACTORY_H

@@ -38,7 +38,9 @@ using namespace std;
 #include "config/BasicConfiguration.h"
 #include "config/ConfigurationMap.h"
 
-const std::string ConfigurationMap::getNormalized(const std::string &path)
+#include <ostream>
+
+std::string ConfigurationMap::getNormalized(const std::string &path)
 throw(UnknownOptionException)
 {
   map<string, string>::iterator value = m_values.find(path);
@@ -55,4 +57,12 @@ void ConfigurationMap::setNormalized(
   const std::string &value
 ) {
   m_values[path] = value;
+}
+
+void ConfigurationMap::dump(std::ostream &os) {
+	map<string, string>::iterator it = m_values.begin();
+	while (it != m_values.end()) {
+		os << it->first << ": " << it->second << std::endl;
+		++it;
+	}
 }

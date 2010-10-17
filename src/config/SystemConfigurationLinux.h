@@ -28,21 +28,20 @@
 #ifndef SYSTEMCONFIGURATIONLINUX_H
 #define SYSTEMCONFIGURATIONLINUX_H
 
-class SystemConfigurationLinux : public BasicConfiguration
+class SystemConfigurationLinux: public BasicConfiguration
 {
-  friend class SystemConfiguration;
+	friend class SystemConfiguration;
 
 public:
-  virtual ~SystemConfigurationLinux() {};
-  virtual void init() throw(AnnoymeException) {};
-  virtual const std::string getNormalized(const std::string &path)
-    throw(UnknownOptionException);
+	virtual ~SystemConfigurationLinux() {	};
+	virtual void init() throw (AnnoymeException) { };
+	virtual std::string getNormalized(const std::string &path)
+			throw (UnknownOptionException);
 
 private:
-  SystemConfigurationLinux();
+	SystemConfigurationLinux();
 
 private:
 };
 
 #endif // SYSTEMCONFIGURATIONLINUX_H
-

@@ -43,7 +43,7 @@ SystemConfigurationLinux::SystemConfigurationLinux()
 
 }
 
-const std::string SystemConfigurationLinux::getNormalized(
+std::string SystemConfigurationLinux::getNormalized(
   const std::string &path
 ) throw(UnknownOptionException)
 {
@@ -52,6 +52,9 @@ const std::string SystemConfigurationLinux::getNormalized(
   }
   if (path == "system.home") {
     return string(getenv("HOME"));
+  }
+  if (path == "system.pwd") {
+  	return string(getenv("PWD"));
   }
   throw UnknownOptionException(path);
 }

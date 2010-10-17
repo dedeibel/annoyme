@@ -1,9 +1,0 @@
-
-include("${CMAKE_FILES_DIR}/check_dependencies.txt")
-include("${CMAKE_FILES_DIR}/select_audio.txt")
-include("${CMAKE_FILES_DIR}/select_key_input.txt")
-include("${CMAKE_FILES_DIR}/write_configuration.txt")
-include("${CMAKE_FILES_DIR}/build_annoyme.txt")
-include("${CMAKE_FILES_DIR}/install.txt")
-include("${CMAKE_FILES_DIR}/package.txt")
-
