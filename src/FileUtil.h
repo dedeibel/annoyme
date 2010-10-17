@@ -29,12 +29,23 @@
 #define FILEUTIL_H
 
 class AnnoyErrnoException;
+class IllegalArgumentException;
 
 class FileUtil
 {
 public:
-	bool isDirectory(const string &path) throw (AnnoyErrnoException);
 	bool copy(const std::string &src, const std::string &dst);
+	std::string findFile(const std::string &filename, const std::vector<
+			std::string> paths) throw (FileNotFoundException);
+	void loadFile(const string &path, char** data, unsigned int* size)
+			throw (FileNotFoundException);
+	void loadFile(const std::string &filename,
+			const std::vector<std::string> paths, char** data, unsigned int* size)
+			throw (FileNotFoundException);
+	void listFiles(const std::string &dirname, std::vector<std::string> &files) throw (IllegalArgumentException);
+	bool isDirectory(const string &path) throw (AnnoyErrnoException);
+	bool isFile(const string &path) throw (AnnoyErrnoException);
+	bool isReadable(const string &path);
 };
 
 #endif // FILEUTIL_H

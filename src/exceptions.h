@@ -30,164 +30,209 @@
 
 #include <exception>
 
-class AnnoymeException : public exception
+class AnnoymeException: public exception
 {
-  public:
-  AnnoymeException(string msg = "") throw()
-  : m_message(msg)
-  {
+public:
+	AnnoymeException(string msg = "") throw () :
+		m_message(msg)
+	{
 
-  };
+	}
+	;
 
-  virtual ~AnnoymeException() throw() {};
+	virtual ~AnnoymeException() throw ()
+	{
+	}
+	;
 
-  virtual const char* what() const throw()
-  {
-    return m_message.c_str();
-  }
+	virtual const char* what() const throw ()
+	{
+		return m_message.c_str();
+	}
 
-  protected:
+protected:
 
-  string m_message;
+	string m_message;
 };
 
-class UnknownOptionException : public AnnoymeException
+class UnknownOptionException: public AnnoymeException
 {
-  public:
+public:
 
-  UnknownOptionException(string name) throw()
-  : AnnoymeException(string("Unknown option requested: ") + name)
-  , m_name(name)
-  {
+	UnknownOptionException(string name) throw () :
+		AnnoymeException(string("Unknown option requested: ") + name), m_name(name)
+	{
 
-  }
+	}
 
-  virtual ~UnknownOptionException() throw() {};
+	virtual ~UnknownOptionException() throw ()
+	{
+	}
+	;
 
-  protected:
+protected:
 
-  string m_name;
+	string m_name;
 };
 
-class FileNotFoundException : public AnnoymeException
+class FileNotFoundException: public AnnoymeException
 {
-  public:
+public:
 
-  FileNotFoundException(string path, string purpose = string()) throw()
-  : AnnoymeException(string("Could not open file: ") + path)
-  , m_path(path)
-  , m_purpose(purpose)
-  {
-    if (purpose.size() != 0) {
-       m_message.append(" ("+ m_purpose +")");
-    }
-  }
+	FileNotFoundException(string path, string purpose = string()) throw () :
+		AnnoymeException(string("Could not open file: ") + path), m_path(path),
+				m_purpose(purpose)
+	{
+		if (purpose.size() != 0) {
+			m_message.append(" (" + m_purpose + ")");
+		}
+	}
 
-  virtual ~FileNotFoundException() throw() {};
+	virtual ~FileNotFoundException() throw ()
+	{
+	}
+	;
 
-  protected:
+protected:
 
-  string m_path;
-  string m_purpose;
+	string m_path;
+	string m_purpose;
 };
 
-class XevieExtensionNotInstalledException : public AnnoymeException
+class XevieExtensionNotInstalledException: public AnnoymeException
 {
-  public:
+public:
 
-  XevieExtensionNotInstalledException() throw()
-  : AnnoymeException(string("Xevie Extension is not installed or enabled."))
-  {
+	XevieExtensionNotInstalledException() throw () :
+		AnnoymeException(string("Xevie Extension is not installed or enabled."))
+	{
 
-  }
+	}
 
-  virtual ~XevieExtensionNotInstalledException() throw() {};
+	virtual ~XevieExtensionNotInstalledException() throw ()
+	{
+	}
+	;
 };
 
-class XDisplayException : public AnnoymeException
+class XDisplayException: public AnnoymeException
 {
-  public:
+public:
 
-  XDisplayException() throw()
-  : AnnoymeException(string("Could not open X display."))
-  {
+	XDisplayException() throw () :
+		AnnoymeException(string("Could not open X display."))
+	{
 
-  }
+	}
 
-  virtual ~XDisplayException() throw() {};
+	virtual ~XDisplayException() throw ()
+	{
+	}
+	;
 };
 
-class UnknownEventReceived : public AnnoymeException
+class UnknownEventReceived: public AnnoymeException
 {
-  public:
+public:
 
-  UnknownEventReceived() throw()
-  : AnnoymeException(string("Xevie Extension is not installed or enabled."))
-  {
+	UnknownEventReceived() throw () :
+		AnnoymeException(string("Xevie Extension is not installed or enabled."))
+	{
 
-  }
+	}
 
-  virtual ~UnknownEventReceived() throw() {};
+	virtual ~UnknownEventReceived() throw ()
+	{
+	}
+	;
 };
 
-class AnnoyErrnoException : public AnnoymeException
+class AnnoyErrnoException: public AnnoymeException
 {
-  public:
+public:
 
-  AnnoyErrnoException(string msg, const string &subject, int errnum) throw()
-  : errnum(errnum)
-  {
-    msg += ": ";
-    msg += subject;
-    msg += ": ";
-    msg += string(strerror(errnum));
-    m_message = msg;
-  }
+	AnnoyErrnoException(string msg, const string &subject, int errnum) throw () :
+		errnum(errnum)
+	{
+		msg += ": ";
+		msg += subject;
+		msg += ": ";
+		msg += string(strerror(errnum));
+		m_message = msg;
+	}
 
-  virtual ~AnnoyErrnoException() throw() {};
+	virtual ~AnnoyErrnoException() throw ()
+	{
+	}
+	;
 
-  private:
+private:
 
-  int errnum;
+	int errnum;
 };
 
-class SoundOutputException : public AnnoymeException
+class SoundOutputException: public AnnoymeException
 {
-  public:
+public:
 
-  SoundOutputException(const string &msg) throw()
-  : AnnoymeException(msg)
-  {
+	SoundOutputException(const string &msg) throw () :
+		AnnoymeException(msg)
+	{
 
-  }
+	}
 
-  virtual ~SoundOutputException() throw() {};
+	virtual ~SoundOutputException() throw ()
+	{
+	}
+	;
 };
 
-class AlsaOutputException : public SoundOutputException
+class AlsaOutputException: public SoundOutputException
 {
-  public:
+public:
 
-  AlsaOutputException(const string &msg) throw()
-  : SoundOutputException(msg)
-  {
+	AlsaOutputException(const string &msg) throw () :
+		SoundOutputException(msg)
+	{
 
-  }
+	}
 
-  virtual ~AlsaOutputException() throw() {};
+	virtual ~AlsaOutputException() throw ()
+	{
+	}
+	;
 };
 
-class InvalidNameException : public AnnoymeException
+class InvalidNameException: public AnnoymeException
 {
-  public:
+public:
 
-  InvalidNameException(const string &msg, const string &name) throw()
-  : AnnoymeException(msg +": "+ name)
-  {
+	InvalidNameException(const string &msg, const string &name) throw () :
+		AnnoymeException(msg + ": " + name)
+	{
 
-  }
+	}
 
-  virtual ~InvalidNameException() throw() {};
+	virtual ~InvalidNameException() throw ()
+	{
+	}
+	;
+};
+
+class IllegalArgumentException : public AnnoymeException
+{
+public:
+
+	IllegalArgumentException(const string &msg) throw () :
+		AnnoymeException(msg)
+	{
+
+	}
+
+	virtual ~IllegalArgumentException() throw ()
+	{
+	}
+	;
 };
 
 #endif // EXCEPTIONS_H

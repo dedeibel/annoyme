@@ -51,8 +51,6 @@ using namespace std;
 #include <vector>
 #include "ResourceLoader.h"
 
-#include <cstdlib>
-
 SimpleWaveFileLoader::SimpleWaveFileLoader(ResourceLoader *resourceLoader) :
 	m_resourceLoader(resourceLoader)
 {
@@ -91,13 +89,18 @@ void SimpleWaveFileLoader::loadFiles(const string& theme)
 	m_resourceLoader->listResources(AnnoymeConfiguration::value("samples_dir")
 			+ "/" + theme, sampleResources);
 	if (sampleResources.empty()) {
+		// TODO proper handling
 		cout << "Warning, no sound samples found for theme '" << theme << "'"
 				<< endl;
 	}
 	else {
 		vector<string>::iterator it = sampleResources.begin();
 		while (it != sampleResources.end()) {
-			loadSampleFromFile(*it);
+			string suffix = it->substr(it->size() - 4);
+			std::transform(suffix.begin(), suffix.end(), suffix.begin(), ::tolower);
+			if (suffix == ".raw") {
+				loadSampleFromFile(*it);
+			}
 			++it;
 		}
 	}

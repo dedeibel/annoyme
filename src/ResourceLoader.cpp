@@ -30,29 +30,24 @@ using namespace std;
 #include <string>
 #include <vector>
 
-#include "ResourceLoader.h"
-
 #include "exceptions.h"
+
+#include "ResourceLoader.h"
 #include "FileUtil.h"
 
 #include "config/Configuration.h"
 #include "config/BasicConfiguration.h"
 #include "config/AnnoymeConfiguration.h"
 
-ResourceLoader::ResourceLoader(const string &path, FileUtil* fileUtil)
+ResourceLoader::ResourceLoader(FileUtil* fileUtil)
+: m_fileUtil(fileUtil)
 {
-	initInternal(path, fileUtil);
 }
 
-ResourceLoader::ResourceLoader(const string &path)
+ResourceLoader::ResourceLoader()
+: m_fileUtil(new FileUtil())
 {
-	initInternal(path, new FileUtil());
-}
 
-void ResourceLoader::initInternal(const string &path, FileUtil *fileUtil)
-{
-	m_path = path;
-	m_fileUtil = fileUtil;
 }
 
 ResourceLoader::~ResourceLoader()
@@ -62,6 +57,8 @@ ResourceLoader::~ResourceLoader()
 
 void ResourceLoader::init()
 {
+	// TODO enforce init being called
+
 	/* Try the absolute defined path fist, defined by build process */
 	if (m_fileUtil->isDirectory(AnnoymeConfiguration::value("resource_path"))) {
 		m_path = AnnoymeConfiguration::value("resource_path");
@@ -77,15 +74,21 @@ void ResourceLoader::init()
 	}
 }
 
+// TODO document methods and about "resource paths" relative to resource dir
 bool ResourceLoader::isResourceDirectory(const string &dir)
 {
 	return m_fileUtil->isDirectory(m_path + AnnoymeConfiguration::value("system.dir_separator") + dir);
 }
 
 void ResourceLoader::listResources(const string &dir,
-		const vector<string> &resources)
+		vector<string> &resources)
 {
-
+	m_fileUtil->listFiles(m_path + AnnoymeConfiguration::value("system.dir_separator") + dir, resources);
+	vector<string>::iterator it = resources.begin();
+	while (it != resources.end()) {
+		it->erase(0, m_path.size() + 1);
+		++it;
+	}
 }
 
 string ResourceLoader::getPath(const string &resource)
@@ -94,8 +97,8 @@ string ResourceLoader::getPath(const string &resource)
 }
 
 void ResourceLoader::getContent(const string &resource, char **data,
-		unsigned int *size)
+		unsigned int *size) throw (FileNotFoundException)
 {
-
+	m_fileUtil->loadFile(m_path + AnnoymeConfiguration::value("system.dir_separator") + resource, data, size);
 }
 

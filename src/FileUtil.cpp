@@ -27,6 +27,11 @@
 
 #include <string>
 #include <fstream>
+#include <vector>
+
+#include <cstring>
+using namespace std;
+#include "exceptions.h"
 
 using namespace std;
 
@@ -38,6 +43,8 @@ extern "C"
 {
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <glob.h>
+#include <unistd.h>
 }
 
 bool FileUtil::isDirectory(const string &path) throw (AnnoyErrnoException)
@@ -45,15 +52,25 @@ bool FileUtil::isDirectory(const string &path) throw (AnnoyErrnoException)
 	struct stat buf;
 	int retval = stat(path.c_str(), &buf);
 	if (retval == -1) {
-		throw AnnoyErrnoException("Could not stat directory", path, errno);
+		throw AnnoyErrnoException("Could not stat path", path, errno);
 	}
 
-	if (S_ISDIR(buf.st_mode)) {
-		return true;
+	return S_ISDIR(buf.st_mode);
+}
+
+bool FileUtil::isFile(const string &path) throw (AnnoyErrnoException)
+{
+	struct stat buf;
+	int retval = stat(path.c_str(), &buf);
+	if (retval == -1) {
+		throw AnnoyErrnoException("Could not stat path", path, errno);
 	}
-	else {
-		return false;
-	}
+	return S_ISREG(buf.st_mode) || S_ISLNK(buf.st_mode) || S_ISCHR(buf.st_mode);
+}
+
+bool FileUtil::isReadable(const string &path)
+{
+	return access(path.c_str(), R_OK) == 0;
 }
 
 bool FileUtil::copy(const string &src, const string &dst)
@@ -84,4 +101,71 @@ bool FileUtil::copy(const string &src, const string &dst)
 	}
 
 	return true;
+}
+
+string findFile(const string &filename, const vector<string> &paths)
+		throw (FileNotFoundException)
+{
+	vector<string>::const_iterator it = paths.begin();
+
+	while (it != paths.end()) {
+		ifstream file(it->c_str(), ios::in | ios::binary);
+		if (file.is_open()) {
+			return *it;
+		}
+	}
+	throw FileNotFoundException(filename, "reading");
+}
+
+void loadFile(const string &filename, const vector<string> paths, char **data,
+		unsigned int *size) throw (FileNotFoundException)
+{
+	vector<string>::const_iterator it = paths.begin();
+
+	while (it != paths.end()) {
+		ifstream file(it->c_str(), ios::in | ios::binary | ios::ate);
+		if (file.is_open()) {
+			*size = file.tellg();
+			*data = new char[*size];
+			file.seekg(0, ios::beg);
+			file.read(*data, *size);
+			file.close();
+			return;
+		}
+	}
+	throw FileNotFoundException(filename, "reading");
+}
+
+void FileUtil::loadFile(const string &path, char** data, unsigned int* size)
+		throw (FileNotFoundException)
+{
+	ifstream file(path.c_str(), ios::in | ios::binary | ios::ate);
+	if (file.is_open()) {
+		*size = file.tellg();
+		*data = new char[*size];
+		file.seekg(0, ios::beg);
+		file.read(*data, *size);
+		file.close();
+	}
+	else {
+		throw FileNotFoundException(path, "reading");
+	}
+}
+
+// TODO document methods, specify return values
+void FileUtil::listFiles(const std::string &path,
+		std::vector<std::string> &files) throw (IllegalArgumentException)
+{
+	if (!isDirectory(path)) {
+		throw IllegalArgumentException("Given path is not a directory: " + path);
+	}
+
+	glob_t globbuf;
+	glob((path + "/*").c_str(), 0, 0, &globbuf);
+	for (unsigned int i = 0; i < globbuf.gl_pathc; ++i) {
+		if (this->isFile(globbuf.gl_pathv[i])) {
+			files.push_back(globbuf.gl_pathv[i]);
+		}
+	}
+	globfree(&globbuf);
 }

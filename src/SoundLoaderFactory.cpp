@@ -32,9 +32,10 @@ extern "C" {
 SoundLoaderFactory *SoundLoaderFactory::m_instance = 0;
 
 SoundLoaderFactory::SoundLoaderFactory()
-: m_resourceLoader(new ResourceLoader(AnnoymeConfiguration::value("resource_directory")))
+: m_resourceLoader(new ResourceLoader())
 {
   // TODO resource loader should be build by factory
+	m_resourceLoader->init();
 }
 
 SoundLoaderFactory::~SoundLoaderFactory() {
