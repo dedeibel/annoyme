@@ -50,6 +50,7 @@ using namespace std;
 
 #include <vector>
 #include "ResourceLoader.h"
+#include <algorithm>
 
 SimpleWaveFileLoader::SimpleWaveFileLoader(ResourceLoader *resourceLoader) :
 	m_resourceLoader(resourceLoader)

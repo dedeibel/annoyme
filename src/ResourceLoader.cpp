@@ -29,6 +29,7 @@ using namespace std;
 
 #include <string>
 #include <vector>
+#include <cstring>
 
 #include "exceptions.h"
 
