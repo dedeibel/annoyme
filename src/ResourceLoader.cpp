@@ -40,13 +40,14 @@ using namespace std;
 #include "config/BasicConfiguration.h"
 #include "config/AnnoymeConfiguration.h"
 
-ResourceLoader::ResourceLoader(FileUtil* fileUtil)
-: m_fileUtil(fileUtil)
+#include <iostream> // TODO DEBUG
+ResourceLoader::ResourceLoader(FileUtil* fileUtil) :
+	m_fileUtil(fileUtil)
 {
 }
 
-ResourceLoader::ResourceLoader()
-: m_fileUtil(new FileUtil())
+ResourceLoader::ResourceLoader() :
+	m_fileUtil(new FileUtil())
 {
 
 }
@@ -64,6 +65,10 @@ void ResourceLoader::init()
 	if (m_fileUtil->isDirectory(AnnoymeConfiguration::value("resource_path"))) {
 		m_path = AnnoymeConfiguration::value("resource_path");
 	}
+	else if (m_fileUtil->isDirectory(AnnoymeConfiguration::value(
+			"packaged_resource_path"))) {
+		m_path = AnnoymeConfiguration::value("packaged_resource_path");
+	}
 	/* Try the relative app prefix path from binary position afterwards */
 	else if (m_fileUtil->isDirectory(AnnoymeConfiguration::value(
 			"dynamic_resource_path"))) {
@@ -73,18 +78,19 @@ void ResourceLoader::init()
 		throw AnnoymeException(
 				"Could not determine resource path. Please check your compile parameters and installation paths.");
 	}
+
+	std::cout << "Resource path is: " << m_path << std::endl; // TODO DEBUG
 }
 
 // TODO document methods and about "resource paths" relative to resource dir
 bool ResourceLoader::isResourceDirectory(const string &dir)
 {
-	return m_fileUtil->isDirectory(m_path + AnnoymeConfiguration::value("system.dir_separator") + dir);
+	return m_fileUtil->isDirectory(m_path + "/" + dir);
 }
 
-void ResourceLoader::listResources(const string &dir,
-		vector<string> &resources)
+void ResourceLoader::listResources(const string &dir, vector<string> &resources)
 {
-	m_fileUtil->listFiles(m_path + AnnoymeConfiguration::value("system.dir_separator") + dir, resources);
+	m_fileUtil->listFiles(m_path + "/" + dir, resources);
 	vector<string>::iterator it = resources.begin();
 	while (it != resources.end()) {
 		it->erase(0, m_path.size() + 1);
@@ -94,12 +100,13 @@ void ResourceLoader::listResources(const string &dir,
 
 string ResourceLoader::getPath(const string &resource)
 {
-	return m_path + AnnoymeConfiguration::value("system.dir_separator") + resource;
+	return m_path + "/"
+			+ resource;
 }
 
 void ResourceLoader::getContent(const string &resource, char **data,
 		unsigned int *size) throw (FileNotFoundException)
 {
-	m_fileUtil->loadFile(m_path + AnnoymeConfiguration::value("system.dir_separator") + resource, data, size);
+	m_fileUtil->loadFile(m_path + "/" + resource, data, size);
 }
 

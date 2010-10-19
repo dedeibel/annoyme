@@ -47,13 +47,13 @@ std::string SystemConfigurationLinux::getNormalized(
   const std::string &path
 ) throw(UnknownOptionException)
 {
-  if (path == "system.dir_separator") {
+  if (path.compare("system.dir_separator") == 0) {
     return string("/");
   }
-  if (path == "system.home") {
+  if (path.compare("system.home") == 0) {
     return string(getenv("HOME"));
   }
-  if (path == "system.pwd") {
+  if (path.compare("system.pwd") == 0) {
   	return string(getenv("PWD"));
   }
   throw UnknownOptionException(path);

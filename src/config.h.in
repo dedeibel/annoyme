@@ -5,8 +5,19 @@
 #cmakedefine WITH_ALSA 1
 #cmakedefine WITH_AO 1
 
-#cmakedefine ANNOYME_INSTALL_DIRECTORY    "@ANNOYME_INSTALL_DIRECTORY@"
+/* Application name, usually annoyme */
+#cmakedefine ANNOYME_PROJECT_NAME		  "@ANNOYME_PROJECT_NAME@"
+/* Complete path to the shared resources directory e.g. "/usr/local/share/annoyme" */
+#cmakedefine ANNOYME_SHARED_PATH     	  "@ANNOYME_SHARED_PATH@"
+/* Install directory or prefix, e.g. "/usr/local" */
+#cmakedefine ANNOYME_INSTALL_PATH    	  "@ANNOYME_INSTALL_PATH@"
+/* Name of the shared directory below prefix e.g. "share/annoyme" */
+#cmakedefine ANNOYME_SHARED_DIRECTORY     "@ANNOYME_SHARED_DIRECTORY@"
+/* Resource directory name, e.g. "resources" */
 #cmakedefine ANNOYME_RESOURCE_DIRECTORY   "@ANNOYME_RESOURCE_DIRECTORY@"
+/* Sample directory below resource, e.g. "samples" */
 #cmakedefine ANNOYME_SAMPLE_DIRECTORY     "@ANNOYME_SAMPLE_DIRECTORY@"
+/* Name of the annoyme config, e.g. ".annoyme" */
 #cmakedefine ANNOYME_CONFIG_NAME          "@ANNOYME_CONFIG_NAME@"
+/* Name of the detail annoyme config used for initialization, e.g. "default_config.yaml" */
 #cmakedefine ANNOYME_DEFAULT_CONFIG_NAME  "@ANNOYME_DEFAULT_CONFIG_NAME@"

@@ -113,15 +113,13 @@ std::string YAMLConfig::getConfigFilePath() const
 
 void YAMLConfig::createDefault() throw (AnnoymeException)
 {
-	const std::string source = ANNOYME_RESOURCE_DIRECTORY
-			+ SystemConfiguration::getInstance()->getNormalized(
-					"system.dir_separator") + ANNOYME_DEFAULT_CONFIG_NAME;
-	bool ret = m_fileUtil->copy(source.c_str(), m_configFilePath.c_str());
+	std::stringstream source;
+	source << ANNOYME_RESOURCE_DIRECTORY << "/" << ANNOYME_DEFAULT_CONFIG_NAME;
+	bool ret = m_fileUtil->copy(source.str(), m_configFilePath);
 	if (!ret) {
 		char *errno_message = strerror(errno);
-		std::string message = string("Could not create configuration file ") + "'"
-				+ m_configFilePath + "'" + " from default file " + "'" + source
-				+ "', error: " + errno_message;
-		throw AnnoymeException(message);
+		std::stringstream message;
+		message << "Could not create configuration file " << "'"	<< m_configFilePath << "'" << " from default file " << "'" << source << "', error: " << errno_message;
+		throw AnnoymeException(message.str());
 	}
 }

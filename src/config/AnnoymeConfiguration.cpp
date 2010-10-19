@@ -53,7 +53,8 @@ AnnoymeConfiguration *AnnoymeConfiguration::m_annoymeConfiguration = 0;
 AnnoymeConfiguration* AnnoymeConfiguration::getInstance()
 {
 	if (m_annoymeConfiguration == 0) {
-		throw AnnoymeException("Config not initialized, call iniWithBinaryPath before anything else.");
+		throw AnnoymeException(
+				"Config not initialized, call iniWithBinaryPath before anything else.");
 	}
 	return m_annoymeConfiguration;
 }
@@ -63,7 +64,8 @@ std::string AnnoymeConfiguration::value(const std::string &path)
 	return AnnoymeConfiguration::getInstance()->get(path);
 }
 
-void AnnoymeConfiguration::initWithBinaryPath(const std::string &binary_path) {
+void AnnoymeConfiguration::initWithBinaryPath(const std::string &binary_path)
+{
 	m_annoymeConfiguration = new AnnoymeConfiguration();
 	m_annoymeConfiguration->init(binary_path);
 }
@@ -81,24 +83,28 @@ AnnoymeConfiguration::~AnnoymeConfiguration()
 	delete m_buildConfig;
 }
 
-void AnnoymeConfiguration::init() throw(AnnoymeException) {
+void AnnoymeConfiguration::init() throw (AnnoymeException)
+{
 	this->init("");
 }
 
-void AnnoymeConfiguration::init(const string& binary_path) throw (AnnoymeException)
+void AnnoymeConfiguration::init(const string& binary_path)
+		throw (AnnoymeException)
 {
-
 	m_buildConfig->setNormalized("config_name", ANNOYME_CONFIG_NAME);
-	m_buildConfig->setNormalized("resource_directory", ANNOYME_RESOURCE_DIRECTORY);
+	m_buildConfig->setNormalized("prefix", ANNOYME_INSTALL_PATH);
+	m_buildConfig->setNormalized("shared_path", ANNOYME_SHARED_PATH);
+	m_buildConfig->setNormalized("resource_dir", ANNOYME_RESOURCE_DIRECTORY);
 	m_buildConfig->setNormalized("samples_dir", ANNOYME_SAMPLE_DIRECTORY);
-	m_buildConfig->setNormalized("base_directory", ANNOYME_INSTALL_DIRECTORY);
-	m_buildConfig->setNormalized("prefix", ANNOYME_INSTALL_DIRECTORY);
+	m_buildConfig->setNormalized("shared_directory", ANNOYME_SHARED_DIRECTORY);
 
+	/* Singleton, therefore mem not managed by the annoyme configuration class */
 	Configuration *sys = SystemConfiguration::getInstance();
-	string yamlPath = sys->getNormalized("system.home") + sys->getNormalized(
-			"system.dir_separator") + ANNOYME_CONFIG_NAME;
+	string yamlPath = sys->getNormalized("system.home") + "/"
+			+ ANNOYME_CONFIG_NAME;
 
-	m_buildConfig->setNormalized("dynamic_prefix", getDynamicPrefix(sys->getNormalized("system.pwd"), binary_path));
+	m_buildConfig->setNormalized("dynamic_prefix", getDynamicPrefix(
+			sys->getNormalized("system.pwd"), binary_path));
 
 	m_yamlConfig->setConfigFilePath(yamlPath);
 	try {
@@ -110,14 +116,20 @@ void AnnoymeConfiguration::init(const string& binary_path) throw (AnnoymeExcepti
 		throw;
 	}
 
+	/* For installed version */
 	m_buildConfig->setNormalized("resource_path", m_buildConfig->getNormalized(
-			"prefix") + sys->getNormalized("system.dir_separator") +
-			m_buildConfig->getNormalized("resource_directory"));
+			"shared_path") + "/" + m_buildConfig->getNormalized("resource_dir"));
 
+	/* For dev version */
 	m_buildConfig->setNormalized("dynamic_resource_path",
-			m_buildConfig->getNormalized("dynamic_prefix") + sys->getNormalized(
-					"system.dir_separator") + m_buildConfig->getNormalized(
-					"resource_directory"));
+			m_buildConfig->getNormalized("dynamic_prefix") + "/"
+					+ m_buildConfig->getNormalized("resource_dir"));
+
+	/* For locally extracted tar */
+	m_buildConfig->setNormalized("packaged_resource_path",
+			m_buildConfig->getNormalized("dynamic_prefix") + "/"
+					+ m_buildConfig->getNormalized("shared_directory") + "/"
+					+ m_buildConfig->getNormalized("resource_dir"));
 
 	m_configs->addConfig(m_buildConfig);
 	m_configs->addConfig(sys);
@@ -130,12 +142,40 @@ std::string AnnoymeConfiguration::getNormalized(const std::string &path)
 	return m_configs->getNormalized(path);
 }
 
-std::string AnnoymeConfiguration::getDynamicPrefix(const std::string &pwd, const std::string &binary_path) const {
+std::string AnnoymeConfiguration::getDynamicPrefix(const std::string &pwd,
+		const std::string &binary_path) const
+{
+	// TODO write properly and use unit testing ...
+
 	// If binary path is empty or not containing a directory, return pwd
 	if (binary_path.empty() || binary_path.find("/") == binary_path.npos) {
 		return pwd;
 	}
 	else {
-		return pwd.substr(0, pwd.find_last_of('/'));
+		std::string path;
+		if (binary_path.substr(0, 1).compare("/") == 0) {
+			path = binary_path;
+		}
+		else {
+			/*
+			 * Build the complete path pwd + binary path, then go one up
+			 */
+			path = pwd + "/" + binary_path;
+		}
+
+		const std::string searchString = "/./";
+		const std::string replaceString = "/";
+		std::string::size_type pos = 0;
+		while ((pos = path.find(searchString, pos)) != string::npos) {
+			path.replace(pos, searchString.size(), replaceString);
+			pos++;
+		}
+		/* Path without the binary, basename so to speak */
+		path = path.substr(0, path.find_last_of("/"));
+		std::cout << "using PATH1: " << path << std::endl;
+		/* One up */
+		path = path.substr(0, path.find_last_of("/"));
+		std::cout << "using PATH2: " << path << std::endl;
+		return path;
 	}
 }

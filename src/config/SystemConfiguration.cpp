@@ -55,6 +55,7 @@ Configuration* SystemConfiguration::getInstance()
 }
 
 const std::string SystemConfiguration::determineOS() {
+	// TODO I guess, use build system variable
   return "linux";
 }
 

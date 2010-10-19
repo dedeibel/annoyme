@@ -1,6 +1,6 @@
 
 cmake_minimum_required(VERSION 2.6)
-project(ANNOYME)
+project(annoyme CXX)
 
 # Set the variable where all cmake source files and modules are
 SET(CMAKE_FILES_DIR "${CMAKE_SOURCE_DIR}/cmake/")

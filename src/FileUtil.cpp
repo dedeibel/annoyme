@@ -47,7 +47,7 @@ extern "C"
 #include <unistd.h>
 }
 
-bool FileUtil::isDirectory(const string &path) throw (AnnoyErrnoException)
+bool FileUtil::isAccessableDirectory(const string &path) throw (AnnoyErrnoException)
 {
 	struct stat buf;
 	int retval = stat(path.c_str(), &buf);
@@ -55,15 +55,36 @@ bool FileUtil::isDirectory(const string &path) throw (AnnoyErrnoException)
 		throw AnnoyErrnoException("Could not stat path", path, errno);
 	}
 
-	return S_ISDIR(buf.st_mode);
+	return S_ISDIR(buf.st_mode) && access(path.c_str(), R_OK);
 }
 
-bool FileUtil::isFile(const string &path) throw (AnnoyErrnoException)
+bool FileUtil::isAccessableFile(const string &path) throw (AnnoyErrnoException)
 {
 	struct stat buf;
 	int retval = stat(path.c_str(), &buf);
 	if (retval == -1) {
 		throw AnnoyErrnoException("Could not stat path", path, errno);
+	}
+	return (S_ISREG(buf.st_mode) || S_ISLNK(buf.st_mode) || S_ISCHR(buf.st_mode)) && access(path.c_str(), R_OK);
+}
+
+bool FileUtil::isDirectory(const string &path)
+{
+	struct stat buf;
+	int retval = stat(path.c_str(), &buf);
+	if (retval == -1) {
+		return false;
+	}
+
+	return S_ISDIR(buf.st_mode);
+}
+
+bool FileUtil::isFile(const string &path)
+{
+	struct stat buf;
+	int retval = stat(path.c_str(), &buf);
+	if (retval == -1) {
+		return false;
 	}
 	return S_ISREG(buf.st_mode) || S_ISLNK(buf.st_mode) || S_ISCHR(buf.st_mode);
 }

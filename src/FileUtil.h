@@ -42,9 +42,29 @@ public:
 	void loadFile(const std::string &filename,
 			const std::vector<std::string> paths, char** data, unsigned int* size)
 			throw (FileNotFoundException);
-	void listFiles(const std::string &dirname, std::vector<std::string> &files) throw (IllegalArgumentException);
-	bool isDirectory(const string &path) throw (AnnoyErrnoException);
-	bool isFile(const string &path) throw (AnnoyErrnoException);
+	void listFiles(const std::string &dirname, std::vector<std::string> &files)
+			throw (IllegalArgumentException);
+
+	/**
+	 * Returns true if the directory exists and is a readable directory. If there is a problem accessing the directory, invalid path, not existing, too long, ... an exception is thrown.
+	 */
+	bool isAccessableDirectory(const string &path) throw (AnnoyErrnoException);
+
+	/**
+	 * Returns true if the file exists and is readable. If there is a problem accessing the directory, invalid path, not existing, too long, ... an exception is thrown.
+	 */
+	bool isAccessableFile(const string &path) throw (AnnoyErrnoException);
+
+	/**
+	 * Returns true if the directory exists and is a directory.
+	 */
+	bool isDirectory(const string &path);
+
+	/**
+	 * Returns true if the file exists and is a file.
+	 */
+	bool isFile(const string &path);
+
 	bool isReadable(const string &path);
 };
 
