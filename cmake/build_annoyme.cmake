@@ -45,6 +45,7 @@ SET(ANNOYME_SRC
 # Set Libs and Executables
 #
 
+# TODO Make debug configurable
 SET(CMAKE_BUILD_TYPE Debug)
 SET(CMAKE_CXX_FLAGS_DEBUG "-ggdb")
 SET(ANNOYME_EXECUTABLE "annoyme")

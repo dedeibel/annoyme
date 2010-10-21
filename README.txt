@@ -19,6 +19,7 @@ Adds beautiful typewriter sounds to your X
 - CMake is required to build the project.
 - XEvIE       - http://www.freedesktop.org/wiki/Software/XEvIE
 - yaml-cpp    - http://code.google.com/p/yaml-cpp
+- cppunit     - May be disabled using cmake BUILD_TESTING = false
 - One of the following sound output libraries:
  * alsa
  * ao
@@ -32,6 +33,14 @@ make
 =EXECUTION
 
 ./annoyme
+
+=UNIT_TESTING
+
+build annoyme using
+cd build
+(be sure BUILD_TESTING is set, see ccmake ..)
+cmake ..
+make test
 
 APPENDIX A - Activating XEvIE
 

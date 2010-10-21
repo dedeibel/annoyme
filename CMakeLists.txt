@@ -1,6 +1,10 @@
 
 cmake_minimum_required(VERSION 2.6)
-project(annoyme CXX)
+project(annoyme C CXX)
+
+ENABLE_TESTING()
+SET(UPDATE_TYPE git)
+include(CTest)
 
 # Set the variable where all cmake source files and modules are
 SET(CMAKE_FILES_DIR "${CMAKE_SOURCE_DIR}/cmake/")

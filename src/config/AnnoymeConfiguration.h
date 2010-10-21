@@ -57,6 +57,8 @@ private:
   ConfigurationMap       *m_buildConfig;
   YAMLConfig             *m_yamlConfig;
   AggregateConfiguration *m_configs;
+
+  friend class AnnoymeConfigurationTest;
 };
 
 #endif // ANNOYMECONFIGURATION_H

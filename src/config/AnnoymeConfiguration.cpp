@@ -53,8 +53,7 @@ AnnoymeConfiguration *AnnoymeConfiguration::m_annoymeConfiguration = 0;
 AnnoymeConfiguration* AnnoymeConfiguration::getInstance()
 {
 	if (m_annoymeConfiguration == 0) {
-		throw AnnoymeException(
-				"Config not initialized, call iniWithBinaryPath before anything else.");
+		m_annoymeConfiguration = new AnnoymeConfiguration();
 	}
 	return m_annoymeConfiguration;
 }
@@ -66,14 +65,14 @@ std::string AnnoymeConfiguration::value(const std::string &path)
 
 void AnnoymeConfiguration::initWithBinaryPath(const std::string &binary_path)
 {
-	m_annoymeConfiguration = new AnnoymeConfiguration();
-	m_annoymeConfiguration->init(binary_path);
+	getInstance()->init(binary_path);
 }
 
 AnnoymeConfiguration::AnnoymeConfiguration() :
 	m_buildConfig(new ConfigurationMap()), m_yamlConfig(new YAMLConfig()),
 			m_configs(new AggregateConfiguration())
 {
+
 }
 
 AnnoymeConfiguration::~AnnoymeConfiguration()
@@ -145,7 +144,7 @@ std::string AnnoymeConfiguration::getNormalized(const std::string &path)
 std::string AnnoymeConfiguration::getDynamicPrefix(const std::string &pwd,
 		const std::string &binary_path) const
 {
-	// TODO write properly and use unit testing ...
+	// TODO write properly and extract method
 
 	// If binary path is empty or not containing a directory, return pwd
 	if (binary_path.empty() || binary_path.find("/") == binary_path.npos) {
@@ -172,10 +171,8 @@ std::string AnnoymeConfiguration::getDynamicPrefix(const std::string &pwd,
 		}
 		/* Path without the binary, basename so to speak */
 		path = path.substr(0, path.find_last_of("/"));
-		std::cout << "using PATH1: " << path << std::endl;
 		/* One up */
 		path = path.substr(0, path.find_last_of("/"));
-		std::cout << "using PATH2: " << path << std::endl;
 		return path;
 	}
 }
