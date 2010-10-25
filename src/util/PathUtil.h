@@ -25,39 +25,35 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef ANNOYMECONFIGURATION_H
-#define ANNOYMECONFIGURATION_H
+#ifndef PATHUTIL_H
+#define PATHUTIL_H
 
-class YAMLConfig;
-class ConfigurationMap;
-class AggregateConfiguration;
-class UnknownOptionException;
-class PathUtil;
+class AnnoyErrnoException;
 
-class AnnoymeConfiguration : public BasicConfiguration
+class PathUtil
 {
 public:
-  static AnnoymeConfiguration* getInstance();
-  static std::string value(const std::string &path);
-  static void initWithBinaryPath(const std::string &binary_path);
+	PathUtil();
+	~PathUtil();
 
-  virtual ~AnnoymeConfiguration();
-  virtual void init() throw(AnnoymeException);
-  virtual void init(const std::string &binary_path) throw(AnnoymeException);
-  virtual std::string getNormalized(const std::string &path)
-    throw(UnknownOptionException);
+	/**
+	 * Fetches the prefix of the application if the current working directory and
+	 * the execution path of the application is given.
+	 *
+	 * It is assumed that the application binary is in sub directory. Example
+	 * pwd: "/usr/local/bin" binary_path: "./annoyme" Result: "/usr/local"
+	 */
+	std::string getDynamicPrefix(const std::string &pwd,
+			const std::string &binary_path) const;
+
+	/**
+	 * Normalizes a path, it removes /./ and /../ and resolves symlinks. See also
+	 * "realpath" *nix manpage.
+	 */
+	std::string normalizePath(const std::string &path) const
+			throw (AnnoyErrnoException);
 
 private:
-  AnnoymeConfiguration();
-
-private:
-  static AnnoymeConfiguration* m_annoymeConfiguration;
-  ConfigurationMap*				m_buildConfig;
-  YAMLConfig*							m_yamlConfig;
-  AggregateConfiguration* m_configs;
-  PathUtil*								m_pathUtil;
-
-  friend class AnnoymeConfigurationTest;
 };
 
-#endif // ANNOYMECONFIGURATION_H
+#endif /* PATHUTIL_H */

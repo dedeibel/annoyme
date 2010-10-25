@@ -34,13 +34,12 @@ using namespace std;
 #include "exceptions.h"
 
 #include "ResourceLoader.h"
-#include "FileUtil.h"
+#include "util/FileUtil.h"
 
 #include "config/Configuration.h"
 #include "config/BasicConfiguration.h"
 #include "config/AnnoymeConfiguration.h"
 
-#include <iostream> // TODO DEBUG
 ResourceLoader::ResourceLoader(FileUtil* fileUtil) :
 	m_fileUtil(fileUtil)
 {
@@ -78,8 +77,6 @@ void ResourceLoader::init()
 		throw AnnoymeException(
 				"Could not determine resource path. Please check your compile parameters and installation paths.");
 	}
-
-	std::cout << "Resource path is: " << m_path << std::endl; // TODO DEBUG
 }
 
 // TODO document methods and about "resource paths" relative to resource dir
@@ -100,8 +97,7 @@ void ResourceLoader::listResources(const string &dir, vector<string> &resources)
 
 string ResourceLoader::getPath(const string &resource)
 {
-	return m_path + "/"
-			+ resource;
+	return m_path + "/" + resource;
 }
 
 void ResourceLoader::getContent(const string &resource, char **data,

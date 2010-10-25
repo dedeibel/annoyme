@@ -37,7 +37,7 @@
 using namespace std;
 
 #include "exceptions.h"
-#include "FileUtil.h"
+#include "util/FileUtil.h"
 
 #include "config/Configuration.h"
 #include "config/BasicConfiguration.h"

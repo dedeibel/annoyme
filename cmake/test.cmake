@@ -16,7 +16,8 @@ FILE(GLOB ConfigSRC
     ${CMAKE_CURRENT_SOURCE_DIR}/config/AggregateConfiguration.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/config/YAMLConfig.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/config/SystemConfigurationLinux.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/FileUtil.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/util/FileUtil.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/util/PathUtil.cpp
 )
 SET(UnitTestDep_SRCS ${ConfigSRC})
 

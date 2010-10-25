@@ -31,13 +31,10 @@
 
 #include <cstring>
 using namespace std;
-#include "exceptions.h"
-
-using namespace std;
 
 #include <cerrno>
 #include "exceptions.h"
-#include "FileUtil.h"
+#include "util/FileUtil.h"
 
 extern "C"
 {
@@ -45,9 +42,13 @@ extern "C"
 #include <sys/stat.h>
 #include <glob.h>
 #include <unistd.h>
+#include <limits.h>
 }
 
-bool FileUtil::isAccessableDirectory(const string &path) throw (AnnoyErrnoException)
+#include <cstdlib>
+
+bool FileUtil::isAccessableDirectory(const std::string &path) const
+		throw (AnnoyErrnoException)
 {
 	struct stat buf;
 	int retval = stat(path.c_str(), &buf);
@@ -58,17 +59,19 @@ bool FileUtil::isAccessableDirectory(const string &path) throw (AnnoyErrnoExcept
 	return S_ISDIR(buf.st_mode) && access(path.c_str(), R_OK);
 }
 
-bool FileUtil::isAccessableFile(const string &path) throw (AnnoyErrnoException)
+bool FileUtil::isAccessableFile(const std::string &path) const
+		throw (AnnoyErrnoException)
 {
 	struct stat buf;
 	int retval = stat(path.c_str(), &buf);
 	if (retval == -1) {
 		throw AnnoyErrnoException("Could not stat path", path, errno);
 	}
-	return (S_ISREG(buf.st_mode) || S_ISLNK(buf.st_mode) || S_ISCHR(buf.st_mode)) && access(path.c_str(), R_OK);
+	return (S_ISREG(buf.st_mode) || S_ISLNK(buf.st_mode) || S_ISCHR(buf.st_mode))
+			&& access(path.c_str(), R_OK);
 }
 
-bool FileUtil::isDirectory(const string &path)
+bool FileUtil::isDirectory(const std::string &path) const
 {
 	struct stat buf;
 	int retval = stat(path.c_str(), &buf);
@@ -79,7 +82,7 @@ bool FileUtil::isDirectory(const string &path)
 	return S_ISDIR(buf.st_mode);
 }
 
-bool FileUtil::isFile(const string &path)
+bool FileUtil::isFile(const std::string &path) const
 {
 	struct stat buf;
 	int retval = stat(path.c_str(), &buf);
@@ -89,12 +92,12 @@ bool FileUtil::isFile(const string &path)
 	return S_ISREG(buf.st_mode) || S_ISLNK(buf.st_mode) || S_ISCHR(buf.st_mode);
 }
 
-bool FileUtil::isReadable(const string &path)
+bool FileUtil::isReadable(const std::string &path) const
 {
 	return access(path.c_str(), R_OK) == 0;
 }
 
-bool FileUtil::copy(const string &src, const string &dst)
+bool FileUtil::copy(const std::string &src, const std::string &dst) const
 {
 	std::ifstream ifs(src.c_str()); // I'll never get why they excpect a cstring
 	if (!ifs) {
@@ -124,13 +127,13 @@ bool FileUtil::copy(const string &src, const string &dst)
 	return true;
 }
 
-string findFile(const string &filename, const vector<string> &paths)
+std::string FileUtil::findFile(const std::string &filename, const std::vector<std::string> &paths) const
 		throw (FileNotFoundException)
 {
-	vector<string>::const_iterator it = paths.begin();
+	std::vector<std::string>::const_iterator it = paths.begin();
 
 	while (it != paths.end()) {
-		ifstream file(it->c_str(), ios::in | ios::binary);
+		std::ifstream file(it->c_str(), std::ios::in | std::ios::binary);
 		if (file.is_open()) {
 			return *it;
 		}
@@ -138,8 +141,8 @@ string findFile(const string &filename, const vector<string> &paths)
 	throw FileNotFoundException(filename, "reading");
 }
 
-void loadFile(const string &filename, const vector<string> paths, char **data,
-		unsigned int *size) throw (FileNotFoundException)
+void FileUtil::loadFile(const std::string &filename, const vector<string> paths, char **data,
+		unsigned int *size) const throw (FileNotFoundException)
 {
 	vector<string>::const_iterator it = paths.begin();
 
@@ -157,7 +160,7 @@ void loadFile(const string &filename, const vector<string> paths, char **data,
 	throw FileNotFoundException(filename, "reading");
 }
 
-void FileUtil::loadFile(const string &path, char** data, unsigned int* size)
+void FileUtil::loadFile(const std::string &path, char** data, unsigned int* size) const
 		throw (FileNotFoundException)
 {
 	ifstream file(path.c_str(), ios::in | ios::binary | ios::ate);
@@ -175,7 +178,7 @@ void FileUtil::loadFile(const string &path, char** data, unsigned int* size)
 
 // TODO document methods, specify return values
 void FileUtil::listFiles(const std::string &path,
-		std::vector<std::string> &files) throw (IllegalArgumentException)
+		std::vector<std::string> &files) const throw (IllegalArgumentException)
 {
 	if (!isDirectory(path)) {
 		throw IllegalArgumentException("Given path is not a directory: " + path);
@@ -190,3 +193,4 @@ void FileUtil::listFiles(const std::string &path,
 	}
 	globfree(&globbuf);
 }
+

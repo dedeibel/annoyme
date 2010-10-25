@@ -25,7 +25,8 @@ SET(ANNOYME_SRC
   SoundOutputFactory.cpp
 
   ResourceLoader.cpp
-  FileUtil.cpp
+  util/FileUtil.cpp
+  util/PathUtil.cpp
   config/AnnoymeConfiguration.cpp
   config/BasicConfiguration.cpp
   config/ConfigurationMap.cpp

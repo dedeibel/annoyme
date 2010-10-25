@@ -43,6 +43,8 @@ using namespace std;
 #include "YAMLConfig.h"
 #include "AnnoymeConfiguration.h"
 
+#include "util/PathUtil.h"
+
 /* Created by cmake */
 #include "config.h"
 
@@ -70,7 +72,7 @@ void AnnoymeConfiguration::initWithBinaryPath(const std::string &binary_path)
 
 AnnoymeConfiguration::AnnoymeConfiguration() :
 	m_buildConfig(new ConfigurationMap()), m_yamlConfig(new YAMLConfig()),
-			m_configs(new AggregateConfiguration())
+			m_configs(new AggregateConfiguration()), m_pathUtil(new PathUtil())
 {
 
 }
@@ -102,7 +104,7 @@ void AnnoymeConfiguration::init(const string& binary_path)
 	string yamlPath = sys->getNormalized("system.home") + "/"
 			+ ANNOYME_CONFIG_NAME;
 
-	m_buildConfig->setNormalized("dynamic_prefix", getDynamicPrefix(
+	m_buildConfig->setNormalized("dynamic_prefix", m_pathUtil->getDynamicPrefix(
 			sys->getNormalized("system.pwd"), binary_path));
 
 	m_yamlConfig->setConfigFilePath(yamlPath);
@@ -139,40 +141,4 @@ std::string AnnoymeConfiguration::getNormalized(const std::string &path)
 		throw (UnknownOptionException)
 {
 	return m_configs->getNormalized(path);
-}
-
-std::string AnnoymeConfiguration::getDynamicPrefix(const std::string &pwd,
-		const std::string &binary_path) const
-{
-	// TODO write properly and extract method
-
-	// If binary path is empty or not containing a directory, return pwd
-	if (binary_path.empty() || binary_path.find("/") == binary_path.npos) {
-		return pwd;
-	}
-	else {
-		std::string path;
-		if (binary_path.substr(0, 1).compare("/") == 0) {
-			path = binary_path;
-		}
-		else {
-			/*
-			 * Build the complete path pwd + binary path, then go one up
-			 */
-			path = pwd + "/" + binary_path;
-		}
-
-		const std::string searchString = "/./";
-		const std::string replaceString = "/";
-		std::string::size_type pos = 0;
-		while ((pos = path.find(searchString, pos)) != string::npos) {
-			path.replace(pos, searchString.size(), replaceString);
-			pos++;
-		}
-		/* Path without the binary, basename so to speak */
-		path = path.substr(0, path.find_last_of("/"));
-		/* One up */
-		path = path.substr(0, path.find_last_of("/"));
-		return path;
-	}
 }

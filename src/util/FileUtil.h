@@ -34,38 +34,42 @@ class IllegalArgumentException;
 class FileUtil
 {
 public:
-	bool copy(const std::string &src, const std::string &dst);
+	bool copy(const std::string &src, const std::string &dst) const;
 	std::string findFile(const std::string &filename, const std::vector<
-			std::string> paths) throw (FileNotFoundException);
-	void loadFile(const string &path, char** data, unsigned int* size)
+			std::string> paths) const throw (FileNotFoundException);
+	std::string findFile(const std::string &filename, const std::vector<
+			std::string> &paths) const throw (FileNotFoundException);
+	void loadFile(const std::string &filename, const vector<string> paths,
+			char **data, unsigned int *size) const throw (FileNotFoundException);
+	void loadFile(const std::string &path, char** data, unsigned int* size) const
 			throw (FileNotFoundException);
-	void loadFile(const std::string &filename,
-			const std::vector<std::string> paths, char** data, unsigned int* size)
-			throw (FileNotFoundException);
-	void listFiles(const std::string &dirname, std::vector<std::string> &files)
+	void
+	listFiles(const std::string &dirname, std::vector<std::string> &files) const
 			throw (IllegalArgumentException);
 
 	/**
 	 * Returns true if the directory exists and is a readable directory. If there is a problem accessing the directory, invalid path, not existing, too long, ... an exception is thrown.
 	 */
-	bool isAccessableDirectory(const string &path) throw (AnnoyErrnoException);
+	bool isAccessableDirectory(const std::string &path) const
+			throw (AnnoyErrnoException);
 
 	/**
 	 * Returns true if the file exists and is readable. If there is a problem accessing the directory, invalid path, not existing, too long, ... an exception is thrown.
 	 */
-	bool isAccessableFile(const string &path) throw (AnnoyErrnoException);
+	bool isAccessableFile(const std::string &path) const
+			throw (AnnoyErrnoException);
 
 	/**
 	 * Returns true if the directory exists and is a directory.
 	 */
-	bool isDirectory(const string &path);
+	bool isDirectory(const std::string &path) const;
 
 	/**
 	 * Returns true if the file exists and is a file.
 	 */
-	bool isFile(const string &path);
+	bool isFile(const std::string &path) const;
 
-	bool isReadable(const string &path);
+	bool isReadable(const std::string &path) const;
 };
 
 #endif // FILEUTIL_H
