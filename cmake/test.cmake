@@ -34,4 +34,10 @@ ENDFOREACH(test)
 
 TARGET_LINK_LIBRARIES(UnitTester ${ANNOYME_LIBS_COMMON})
 
+# Build the test runner after the main executable
+# but this is not usefull since it might break the test suite if
+# there is a problem with creating the executable. They do not share
+# the object files anyway. See cmake wiki: http://goo.gl/qK1C
+#ADD_DEPENDENCIES(UnitTester ${ANNOYME_EXECUTABLE})
+
 ENDIF(BUILD_TESTING)
