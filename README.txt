@@ -26,6 +26,7 @@ Adds beautiful typewriter sounds to your X
 
 =INSTALLATION
 
+mkdir build
 cd build
 cmake ..
 make
@@ -36,10 +37,9 @@ make
 
 =UNIT_TESTING
 
-build annoyme using
-cd build
 (be sure BUILD_TESTING is set, see ccmake ..)
-cmake ..
+build annoyme
+
 make test
 
 APPENDIX A - Activating XEvIE
