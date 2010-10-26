@@ -43,6 +43,7 @@ using namespace std;
 #include "YAMLConfig.h"
 #include "AnnoymeConfiguration.h"
 
+#include "util/FileUtil.h"
 #include "util/PathUtil.h"
 
 /* Created by cmake */
@@ -72,13 +73,15 @@ void AnnoymeConfiguration::initWithBinaryPath(const std::string &binary_path)
 
 AnnoymeConfiguration::AnnoymeConfiguration() :
 	m_buildConfig(new ConfigurationMap()), m_yamlConfig(new YAMLConfig()),
-			m_configs(new AggregateConfiguration()), m_pathUtil(new PathUtil())
+			m_configs(new AggregateConfiguration()), m_pathUtil(new PathUtil()), m_fileUtil(new FileUtil())
 {
 
 }
 
 AnnoymeConfiguration::~AnnoymeConfiguration()
 {
+	delete m_fileUtil;
+	delete m_pathUtil;
 	delete m_configs;
 	delete m_yamlConfig;
 	delete m_buildConfig;
@@ -101,21 +104,9 @@ void AnnoymeConfiguration::init(const string& binary_path)
 
 	/* Singleton, therefore mem not managed by the annoyme configuration class */
 	Configuration *sys = SystemConfiguration::getInstance();
-	string yamlPath = sys->getNormalized("system.home") + "/"
-			+ ANNOYME_CONFIG_NAME;
 
 	m_buildConfig->setNormalized("dynamic_prefix", m_pathUtil->getDynamicPrefix(
 			sys->getNormalized("system.pwd"), binary_path));
-
-	m_yamlConfig->setConfigFilePath(yamlPath);
-	try {
-		m_yamlConfig->init();
-	}
-	catch (AnnoymeException e) {
-		m_configs->addConfig(m_buildConfig);
-		m_configs->addConfig(sys);
-		throw;
-	}
 
 	/* For installed version */
 	m_buildConfig->setNormalized("resource_path", m_buildConfig->getNormalized(
@@ -132,6 +123,24 @@ void AnnoymeConfiguration::init(const string& binary_path)
 					+ m_buildConfig->getNormalized("shared_directory") + "/"
 					+ m_buildConfig->getNormalized("resource_dir"));
 
+	const std::string absolute_resource_path = determineAbsoluteResourcePath();
+	m_buildConfig->setNormalized("absolute_resource_path", absolute_resource_path);
+
+	const string userConfigPath = sys->getNormalized("system.home") + "/"
+				+ ANNOYME_CONFIG_NAME;
+	m_yamlConfig->setResourcePath(absolute_resource_path);
+	m_yamlConfig->setConfigFilePath(userConfigPath);
+
+	try {
+		m_yamlConfig->init();
+	}
+	catch (AnnoymeException e) {
+		// At least add those for now, but rethrow exception
+		m_configs->addConfig(m_buildConfig);
+		m_configs->addConfig(sys);
+		throw;
+	}
+
 	m_configs->addConfig(m_buildConfig);
 	m_configs->addConfig(sys);
 	m_configs->addConfig(m_yamlConfig);
@@ -141,4 +150,25 @@ std::string AnnoymeConfiguration::getNormalized(const std::string &path)
 		throw (UnknownOptionException)
 {
 	return m_configs->getNormalized(path);
+}
+
+std::string AnnoymeConfiguration::determineAbsoluteResourcePath() {
+	/* Try the absolute defined path fist, defined by build process */
+	if (m_fileUtil->isDirectory(m_buildConfig->getNormalized("resource_path"))) {
+		return m_buildConfig->getNormalized("resource_path");
+	}
+	else if (m_fileUtil->isDirectory(m_buildConfig->getNormalized(
+			"packaged_resource_path"))) {
+		return m_buildConfig->getNormalized(
+				"packaged_resource_path");
+	}
+	/* Try the relative app prefix path from binary position afterwards */
+	else if (m_fileUtil->isDirectory(m_buildConfig->getNormalized(
+			"dynamic_resource_path"))) {
+		return m_buildConfig->getNormalized(
+				"dynamic_resource_path");
+	}
+	else {
+		throw new FileNotFoundException("resource path", "dynamic resource path resolving");
+	}
 }

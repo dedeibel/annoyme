@@ -48,14 +48,17 @@ using namespace std;
 // yaml-cpp
 #include "yaml-cpp/yaml.h"
 
-YAMLConfig::YAMLConfig(const string &configFilePath) :
-	m_configFilePath(configFilePath), m_fileUtil(new FileUtil())
+YAMLConfig::YAMLConfig(const string &resourcePath, const string &configFileName) :
+	m_resourcePath(resourcePath), m_configFilePath(configFileName), m_fileUtil(
+			new FileUtil())
 {
 
 }
 
-YAMLConfig::YAMLConfig(const string &configFilePath, FileUtil* fileUtil) :
-	m_configFilePath(configFilePath), m_fileUtil(fileUtil)
+YAMLConfig::YAMLConfig(const string &resourcePath,
+		const string &configFileName, FileUtil* fileUtil) :
+	m_resourcePath(resourcePath), m_configFilePath(configFileName), m_fileUtil(
+			fileUtil)
 {
 
 }
@@ -111,15 +114,27 @@ std::string YAMLConfig::getConfigFilePath() const
 	return m_configFilePath;
 }
 
+void YAMLConfig::setResourcePath(const std::string &path)
+{
+	m_resourcePath = path;
+}
+
+std::string YAMLConfig::getResourcePath() const
+{
+	return m_resourcePath;
+}
+
 void YAMLConfig::createDefault() throw (AnnoymeException)
 {
 	std::stringstream source;
-	source << ANNOYME_RESOURCE_DIRECTORY << "/" << ANNOYME_DEFAULT_CONFIG_NAME;
+	source << m_resourcePath << "/" << ANNOYME_DEFAULT_CONFIG_NAME;
 	bool ret = m_fileUtil->copy(source.str(), m_configFilePath);
 	if (!ret) {
 		char *errno_message = strerror(errno);
 		std::stringstream message;
-		message << "Could not create configuration file " << "'"	<< m_configFilePath << "'" << " from default file " << "'" << source << "', error: " << errno_message;
+		message << "Could not create configuration file " << "'"
+				<< m_configFilePath << "'" << " from default file " << "'"
+				<< source.str() << "', error: " << errno_message;
 		throw AnnoymeException(message.str());
 	}
 }

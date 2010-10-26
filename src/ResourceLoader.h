@@ -39,6 +39,10 @@ public:
 	ResourceLoader();
 	ResourceLoader(FileUtil* fileUtil);
 	~ResourceLoader();
+
+	/**
+	 * Has to be called before anything else, determines the resource directory.
+	 */
 	void init();
 	bool isResourceDirectory(const string &dir);
 	void listResources(const string &dir, vector<string> &resources);

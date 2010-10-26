@@ -1,0 +1,63 @@
+.TH annoyme 1 "November 26, 2010" "version 0.1.0" "USER COMMANDS"
+.SH NAME
+annoyme \- Adds beautiful typewriter sounds to your desktop keyboard
+.SH SYNOPSIS
+.B annoyme
+.SH DESCRIPTION
+.P
+Adds beautiful typewriter sounds to your Desktop keyboard. Every time you hit a key on your keyboard, a sound effect is played and gives you the feeling you are using a real typewriter.
+.P
+If you experience problems with XEvIE, make sure the libraries are installed and the extension configured in your X server. See
+.I
+DIAGNOSTICS
+section for more information.
+.SH FILES
+$HOME/.annoyme \- User configuration file
+.SH EXAMPLES
+.SS $HOME/.annoyme
+
+.RS
+  input.reader: xevie
+  # Defines the input source used, currently only xevie supported
+  
+  sample_theme: default
+  # Defines the sound theme to use, currenlty only default available
+  
+  sound.loader: wav
+  # Defines the input format used, the format is actually
+  # Headerless, RAW 16 Bit, LE, mono, 22050Hz
+  
+  sound.output: mixed-alsa
+  # Sound output library used, alternative: ao, alsa
+  # mixed-also is recommended
+  
+  sound.alsa.device: default
+  # Parameter for the alsa device initialization, default
+  # choses the best fit, plughw:0,0 defines a certain device.
+.RE
+.SH DIAGNOSTICS
+
+.SS Activating XEvIE
+
+.P
+In case you want to use the XEvIE input and get a message like the following,
+you will have to active it in your X Server configuration first.
+
+.RS
+  'terminate called after throwing an instance of
+  'XevieExtensionNotInstalledException'
+  what():  Xevie Extension is not installed or enabled.'
+.RE
+.P
+To activate XEvIE you just have to add an entry to your "Extensions"
+section of the X configuration.
+
+.RS
+  Section "Extensions"
+    Option "XEVIE" "Enable"
+  EndSection
+.RE
+.P
+See also the XEvIE project page http://www.freedesktop.org/wiki/Software/XEvIE
+.SH AUTHOR
+Benjamin Peter (BenjaminPeter (at) arcor.de)

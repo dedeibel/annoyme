@@ -36,12 +36,12 @@ class FileUtil;
 class YAMLConfig: public BasicConfiguration
 {
 public:
-	YAMLConfig(const std::string &configFilePath = std::string());
+	YAMLConfig(const std::string &resourcePath = std::string(), const std::string &configFileName = std::string());
 
 	/**
 	 * @param fileUtil, memory responsibility will be given to YAMLConfig
 	 */
-	YAMLConfig(const std::string &configFilePath,
+	YAMLConfig(const std::string &resourcePath, const std::string &configFileName,
 			FileUtil* fileUtil);
 	virtual ~YAMLConfig();
 	virtual void init() throw (FileNotFoundException, AnnoymeException);
@@ -49,8 +49,11 @@ public:
 			throw (UnknownOptionException);
 	void setConfigFilePath(const std::string &path);
 	std::string getConfigFilePath() const;
+	void setResourcePath(const std::string &path);
+	std::string getResourcePath() const;
 
 private:
+	std::string m_resourcePath;
 	std::string m_configFilePath;
 	std::map<std::string, std::string> m_values;
 	FileUtil* m_fileUtil;

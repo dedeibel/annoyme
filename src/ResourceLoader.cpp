@@ -58,25 +58,7 @@ ResourceLoader::~ResourceLoader()
 
 void ResourceLoader::init()
 {
-	// TODO enforce init being called
-
-	/* Try the absolute defined path fist, defined by build process */
-	if (m_fileUtil->isDirectory(AnnoymeConfiguration::value("resource_path"))) {
-		m_path = AnnoymeConfiguration::value("resource_path");
-	}
-	else if (m_fileUtil->isDirectory(AnnoymeConfiguration::value(
-			"packaged_resource_path"))) {
-		m_path = AnnoymeConfiguration::value("packaged_resource_path");
-	}
-	/* Try the relative app prefix path from binary position afterwards */
-	else if (m_fileUtil->isDirectory(AnnoymeConfiguration::value(
-			"dynamic_resource_path"))) {
-		m_path = AnnoymeConfiguration::value("dynamic_resource_path");
-	}
-	else {
-		throw AnnoymeException(
-				"Could not determine resource path. Please check your compile parameters and installation paths.");
-	}
+	m_path = AnnoymeConfiguration::value("absolute_resource_path");
 }
 
 // TODO document methods and about "resource paths" relative to resource dir

@@ -33,6 +33,7 @@ class ConfigurationMap;
 class AggregateConfiguration;
 class UnknownOptionException;
 class PathUtil;
+class FileUtil;
 
 class AnnoymeConfiguration : public BasicConfiguration
 {
@@ -49,6 +50,7 @@ public:
 
 private:
   AnnoymeConfiguration();
+  std::string determineAbsoluteResourcePath();
 
 private:
   static AnnoymeConfiguration* m_annoymeConfiguration;
@@ -56,6 +58,7 @@ private:
   YAMLConfig*							m_yamlConfig;
   AggregateConfiguration* m_configs;
   PathUtil*								m_pathUtil;
+  FileUtil*								m_fileUtil;
 
   friend class AnnoymeConfigurationTest;
 };
