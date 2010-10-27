@@ -7,6 +7,7 @@ CHECK_INCLUDE_FILES(pthread.h HAVE_PTHREAD_H)
 IF(NOT HAVE_PTHREAD_H)
   MESSAGE(FATAL_ERROR "pthread.h not found.")
 ENDIF(NOT HAVE_PTHREAD_H)
+SET(ANNOYME_LIBS_COMMON ${ANNOYME_LIBS_COMMON} -lpthread)
 
 # Check for xevie
 find_package(X11)
