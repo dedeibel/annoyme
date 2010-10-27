@@ -4,3 +4,5 @@ Original Author and Copyright:
 Benjamin Peter <BenjaminPeter@arcor.de>
 
 Contributors:
+
+chutzimir (Georgi Georgiev) http://github.com/chutzimir

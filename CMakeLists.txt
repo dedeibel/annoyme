@@ -2,7 +2,10 @@
 cmake_minimum_required(VERSION 2.6)
 project(annoyme C CXX)
 
-ENABLE_TESTING()
+SET(ANNOYME_VERSION_MAJOR "0")
+SET(ANNOYME_VERSION_MINOR "1")
+SET(ANNOYME_VERSION_PATCH "2")
+
 SET(UPDATE_TYPE git)
 include(CTest)
 

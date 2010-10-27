@@ -46,9 +46,12 @@ SET(ANNOYME_SRC
 # Set Libs and Executables
 #
 
-# TODO Make debug configurable
-SET(CMAKE_BUILD_TYPE Debug)
-SET(CMAKE_CXX_FLAGS_DEBUG "-ggdb")
+OPTION(BUILD_DEBUGGING "Compile with debug mode." ON)
+IF (BUILD_DEBUGGING)
+       SET(CMAKE_BUILD_TYPE Debug)
+       SET(CMAKE_CXX_FLAGS_DEBUG "-ggdb")
+ENDIF(BUILD_DEBUGGING)
+
 SET(ANNOYME_EXECUTABLE "annoyme")
 
 SET(CMAKE_CXX_FLAGS "-Wall")
