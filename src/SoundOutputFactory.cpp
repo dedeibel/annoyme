@@ -32,8 +32,16 @@ SoundOutput *SoundOutputFactory::getSoundOutput(const string &name, const string
 {
   if (name == "default")
   {
-    throw InvalidNameException("Sound output unkown", name);
+    /* Chose the first best */
+#ifdef WITH_ALSA
+    return new MixedOutput(new AlsaOutput(param));
+#elif WITH_AO
+    return new AOutput(param);
+#else
+    throw AnnoymeException("No sound ouput available.");
+#endif
   }
+  /* Make all alternatives available */
 #ifdef WITH_ALSA
   else if (name == "alsa")
   {

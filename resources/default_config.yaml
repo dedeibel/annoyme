@@ -1,7 +1,7 @@
 input.reader: xevie
 sample_theme: default
 sound.loader: wav
-sound.output: mixed-alsa
-# or "ao" or "alsa"
+# Sound ouput library: "mixed-alsa", "alsa" or "ao"
+sound.output: default
+# Parameter for alsa output, alternatively: plughw:0,0
 sound.alsa.device: default
-# alt: plughw:0,0

@@ -31,6 +31,8 @@ cd build
 cmake ..
 make
 
+(or run build.sh)
+
 =EXECUTION
 
 ./annoyme
