@@ -31,6 +31,7 @@
 #include "SoundOutput.h"
 
 #include <iostream>
+#include <stdint.h>
 
 typedef unsigned char byte;
 
