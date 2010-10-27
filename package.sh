@@ -1,6 +1,8 @@
 #!/bin/bash
 BUILD=build
 
+MAKE_ARGS="-j2"
+DATE=`date +"%Y-%m-%d"`
 ARCH=`uname -m`
 CMAKE_PARAMS="-DBUILD_DEBUGGING=OFF -DBUILD_TESTING=OFF"
 
@@ -22,7 +24,7 @@ function package() {
   echo "Building $ARCH-$LIB with $CMAKE_PARAMS $CMAKE_PARAMS_ADD"
   
   cmake $CMAKE_PARAMS $CMAKE_PARAMS_ADD ..
-  make
+  make $MAKE_ARGS
   cpack -G TGZ ..
   TARNAME=`ls annoyme-*.tar.gz`
   NEWTAR=${TARNAME/-Linux/-Linux-$ARCH-$LIB}
@@ -30,9 +32,20 @@ function package() {
   cd ..
 }
 
+function package_src() {
+  if [ -d "$BUILD" ]; then
+    rm -r "$BUILD"
+  fi
+  SRCTAR="annoyme-$DATE-src.tar.gz"
+  git archive master | gzip > "$SRCTAR"
+  echo "Created $SRCTAR"
+}
+
 # Echo build with libao
 package "libao" "-DALSA_ENABLED=OFF -DAO_ENABLED=ON"
 
 # Echo build with alsa
 package "alsa" "-DALSA_ENABLED=ON -DAO_ENABLED=OFF"
+
+package_src
 
