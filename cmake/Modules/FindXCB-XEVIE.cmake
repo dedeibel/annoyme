@@ -1,4 +1,10 @@
-# - Try to find XEVIE
+# - Try to find XCB-XEVIE
+#
+#
+# Currently not used, only for experimenting!
+#
+# TODO rename variables to XKB-XEVIE
+#
 # Once done, this will define
 #
 #  XEVIE_FOUND - system has XEVIE
@@ -14,15 +20,15 @@ include(CheckIncludeFile)
 # Dependencies
 libfind_package(XEVIE X11)
 
-libfind_pkg_check_modules(XEVIE_PKGCONF xcb-xevie xevie Xevie)
+libfind_pkg_check_modules(XEVIE_PKGCONF xcb-xevie)
 
 find_path(XEVIE_INCLUDE_DIR
-  NAMES X11/extensions/Xevie.h xcb/xevie.h X11/extensions/Xevie.h
+  NAMES xcb/xevie.h
   PATHS ${XEVIE_PKGCONF_INCLUDE_DIRS}
 )
 
 find_library(XEVIE_LIBRARY
-  NAMES Xevie xcb-xevie xevie
+  NAMES xcb-xevie
   PATHS ${XEVIE_PKGCONF_LIBRARY_DIRS}
 )
 
