@@ -25,34 +25,31 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XKEYMAPMONITOR_H_
-#define XKEYMAPMONITOR_H_
+#include <cstring>
+#include <sstream>
+#include <string>
+
+#include "XKeyMapConstants.h"
+#include "XKeyMapUtil.h"
 
 namespace xutil
 {
 
-class XKeyMapListener;
-class XKeyMapMonitorImpl;
-
-class XKeyMapMonitor
+std::string printKeymap(const char *keys)
 {
-public:
-	XKeyMapMonitor();
-	virtual ~XKeyMapMonitor();
-
-	void connect(const std::string & displayName);
-	void start();
-	void stop();
-	bool isRunning();
-	std::string getDisplayName();
-
-	void addListener(XKeyMapListener *listener);
-	bool removeListener(XKeyMapListener *listener);
-
-private:
-	XKeyMapMonitorImpl *m_pimpl;
-};
-
+	std::stringstream result;
+	for (unsigned char byte = 0; byte < xutil::KEYMAP_SIZE_BYTES; ++byte) {
+		if (byte % 6) {
+			result << ' ';
+		}
+		else if (byte != 0) {
+			result << std::endl;
+		}
+		for (int bit = (sizeof(char) * 8) - 1; bit >= 0; --bit) {
+			result << ((keys[byte] & ((char) 1 << bit)) ? '1' : '0');
+		}
+	}
+	return result.str();
 }
 
-#endif /* XKEYMAPMONITOR_H_ */
+}

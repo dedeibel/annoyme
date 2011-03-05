@@ -25,34 +25,15 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XKEYMAPMONITOR_H_
-#define XKEYMAPMONITOR_H_
 
-namespace xutil
-{
+#ifndef XKEYMAPCONSTANTS_H_
+#define XKEYMAPCONSTANTS_H_
 
-class XKeyMapListener;
-class XKeyMapMonitorImpl;
+namespace xutil {
 
-class XKeyMapMonitor
-{
-public:
-	XKeyMapMonitor();
-	virtual ~XKeyMapMonitor();
-
-	void connect(const std::string & displayName);
-	void start();
-	void stop();
-	bool isRunning();
-	std::string getDisplayName();
-
-	void addListener(XKeyMapListener *listener);
-	bool removeListener(XKeyMapListener *listener);
-
-private:
-	XKeyMapMonitorImpl *m_pimpl;
-};
+/* X keymap size in bytes */
+const size_t KEYMAP_SIZE_BYTES = 32;
 
 }
 
-#endif /* XKEYMAPMONITOR_H_ */
+#endif /* XKEYMAPCONSTANTS_H_ */

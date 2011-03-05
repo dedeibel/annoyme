@@ -21,6 +21,15 @@ FILE(GLOB ConfigSRC
 )
 SET(UnitTestDep_SRCS ${ConfigSRC})
 
+FILE(GLOB CommonTestDependencies
+    ${CMAKE_CURRENT_SOURCE_DIR}/xquerykeymap/IllegalStateException.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/xquerykeymap/XUtilException.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/xquerykeymap/XKeyMapMonitor.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/xquerykeymap/XKeyMapUtil.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/xquerykeymap/XKeyMapSeparatorImpl.cpp
+)
+SET(UnitTestDep_SRCS ${UnitTestDep_SRCS} ${CommonTestDependencies})
+
 # Search for all files ending with Test.cpp
 FILE(GLOB_RECURSE UnitTests_SRCS RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*Test.cpp" )
 # Create the test runner and linking including all the unit tests

@@ -25,34 +25,20 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XKEYMAPMONITOR_H_
-#define XKEYMAPMONITOR_H_
+#ifndef XKEYMAPSEPARATORIMPL_H_
+#define XKEYMAPSEPARATORIMPL_H_
+
+#include "XKeyMapSeparator.h"
 
 namespace xutil
 {
 
-class XKeyMapListener;
-class XKeyMapMonitorImpl;
-
-class XKeyMapMonitor
+class XKeyMapSeparatorImpl: public xutil::XKeyMapSeparator
 {
 public:
-	XKeyMapMonitor();
-	virtual ~XKeyMapMonitor();
-
-	void connect(const std::string & displayName);
-	void start();
-	void stop();
-	bool isRunning();
-	std::string getDisplayName();
-
-	void addListener(XKeyMapListener *listener);
-	bool removeListener(XKeyMapListener *listener);
-
-private:
-	XKeyMapMonitorImpl *m_pimpl;
+	virtual void getKeycodes(char *keymap, std::set<unsigned char> &keys);
+	virtual std::string dump(std::set<unsigned char> &keys);
 };
 
 }
-
-#endif /* XKEYMAPMONITOR_H_ */
+#endif /* XKEYMAPSEPARATORIMPL_H_ */

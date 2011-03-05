@@ -25,34 +25,23 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XKEYMAPMONITOR_H_
-#define XKEYMAPMONITOR_H_
+#ifndef XKEYMAPSEPARATOR_H_
+#define XKEYMAPSEPARATOR_H_
 
 namespace xutil
 {
 
-class XKeyMapListener;
-class XKeyMapMonitorImpl;
-
-class XKeyMapMonitor
+class XKeyMapSeparator
 {
 public:
-	XKeyMapMonitor();
-	virtual ~XKeyMapMonitor();
-
-	void connect(const std::string & displayName);
-	void start();
-	void stop();
-	bool isRunning();
-	std::string getDisplayName();
-
-	void addListener(XKeyMapListener *listener);
-	bool removeListener(XKeyMapListener *listener);
-
-private:
-	XKeyMapMonitorImpl *m_pimpl;
+	/*
+	 * Analyzes the keymap an fills the given set with the currently pressed keys.
+	 */
+	virtual void getKeycodes(char *keymap, std::set<unsigned char> &keys) = 0;
+	/* Simply dump all found key codes  as numbers, comma separated list to the string */
+	virtual std::string dump(std::set<unsigned char> &keys) = 0;
 };
 
 }
 
-#endif /* XKEYMAPMONITOR_H_ */
+#endif /* XKEYMAPSEPARATOR_H_ */

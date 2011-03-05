@@ -28,22 +28,74 @@
 #include <iostream>
 #include <cstdlib>
 
+extern "C"
+{
+#include <signal.h>
+}
+
 #include "XKeyMapMonitor.h"
 #include "XKeyMapListenerPrinter.h"
 
+bool running = true;
+
+void termhandler(int sig)
+{
+	running = false;
+}
+
+void registerSignalListener()
+{
+	struct sigaction sigHupHandler;
+	sigHupHandler.sa_handler = termhandler;
+	sigemptyset(&sigHupHandler.sa_mask);
+	sigHupHandler.sa_flags = 0;
+	sigaction(SIGHUP, &sigHupHandler, NULL);
+
+	struct sigaction sigIntHandler;
+	sigIntHandler.sa_handler = termhandler;
+	sigemptyset(&sigIntHandler.sa_mask);
+	sigIntHandler.sa_flags = 0;
+	sigaction(SIGINT, &sigIntHandler, NULL);
+
+	struct sigaction sigAbrtHandler;
+	sigAbrtHandler.sa_handler = termhandler;
+	sigemptyset(&sigAbrtHandler.sa_mask);
+	sigAbrtHandler.sa_flags = 0;
+	sigaction(SIGABRT, &sigAbrtHandler, NULL);
+
+	struct sigaction sigTermHandler;
+	sigTermHandler.sa_handler = termhandler;
+	sigemptyset(&sigTermHandler.sa_mask);
+	sigTermHandler.sa_flags = 0;
+	sigaction(SIGTERM, &sigTermHandler, NULL);
+
+	struct sigaction sigPipeHandler;
+	sigPipeHandler.sa_handler = termhandler;
+	sigemptyset(&sigPipeHandler.sa_mask);
+	sigPipeHandler.sa_flags = 0;
+	sigaction(SIGPIPE, &sigPipeHandler, NULL);
+
+	struct sigaction sigKillHandler;
+	sigKillHandler.sa_handler = termhandler;
+	sigemptyset(&sigKillHandler.sa_mask);
+	sigKillHandler.sa_flags = 0;
+	sigaction(SIGKILL, &sigKillHandler, NULL);
+}
+
 int main(int argc, char **argv)
 {
+	registerSignalListener();
 
 	xutil::XKeyMapMonitor monitor;
 	xutil::XKeyMapListenerPrinter printer;
 	monitor.addListener(&printer);
 
 	monitor.connect("");
-	std::cout << "starting." << std::endl;
 	monitor.start();
-	usleep(10000000);
-	std::cout << "stopping." << std::endl;
+
+	while (running) {
+		usleep(50000);
+	}
 	monitor.stop();
-	std::cout << "done." << std::endl;
 	return EXIT_SUCCESS;
 }

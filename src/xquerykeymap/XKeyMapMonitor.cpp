@@ -39,6 +39,7 @@ extern "C"
 #include <unistd.h>
 }
 
+#include "XKeyMapConstants.h"
 #include "XKeyMapListener.h"
 #include "IllegalStateException.h"
 #include "XUtilException.h"
@@ -110,8 +111,8 @@ private:
 private:
 	/* variables */
 	Display *m_display;
-	char m_keyMap[XKeyMapMonitor::KEYMAP_SIZE];
-	char m_keyMapPrev[XKeyMapMonitor::KEYMAP_SIZE];
+	char m_keyMap[KEYMAP_SIZE_BYTES];
+	char m_keyMapPrev[KEYMAP_SIZE_BYTES];
 	pthread_t m_thread;
 	pthread_mutex_t m_runStateMutex;
 	RunState m_runState;
@@ -122,8 +123,8 @@ XKeyMapMonitorImpl::XKeyMapMonitorImpl() :
 	m_display(0), m_runState(STOPPED)
 {
 	/* Initialize the keymap with a common value */
-	memset(m_keyMap, 0, XKeyMapMonitor::KEYMAP_SIZE);
-	memset(m_keyMapPrev, 0, XKeyMapMonitor::KEYMAP_SIZE);
+	memset(m_keyMap, 0, KEYMAP_SIZE_BYTES);
+	memset(m_keyMapPrev, 0, KEYMAP_SIZE_BYTES);
 	pthread_mutex_init(&m_runStateMutex, 0);
 }
 
@@ -213,8 +214,8 @@ void XKeyMapMonitorImpl::run()
 
 		XQueryKeymap(m_display, m_keyMap);
 
-		if (memcmp(m_keyMap, m_keyMapPrev, XKeyMapMonitor::KEYMAP_SIZE) != 0) {
-			memcpy(m_keyMapPrev, m_keyMap, XKeyMapMonitor::KEYMAP_SIZE);
+		if (memcmp(m_keyMap, m_keyMapPrev, KEYMAP_SIZE_BYTES) != 0) {
+			memcpy(m_keyMapPrev, m_keyMap, KEYMAP_SIZE_BYTES);
 
 			notifyListeners(m_keyMap, m_keyMapPrev);
 		}

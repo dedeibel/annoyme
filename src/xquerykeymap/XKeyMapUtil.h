@@ -25,34 +25,54 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XKEYMAPMONITOR_H_
-#define XKEYMAPMONITOR_H_
+#ifndef XKEYMAPUTIL_H_
+#define XKEYMAPUTIL_H_
+
+/*
+ * #include <sstream>
+ * #include "xquerykeymap/XKeyMapMonitor.h"
+ */
 
 namespace xutil
 {
 
-class XKeyMapListener;
-class XKeyMapMonitorImpl;
+/*
+ * Prints out the keymap into a string of binary digits, separated at each byte.
+ *
+ * Example with key 22 active:
+ *
+ * 00000000 00000000 01000000 00000000 00000000 00000000 00000000 00000000
+ * 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ * 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ * 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ *
+ */
+std::string printKeymap(const char *keys);
 
-class XKeyMapMonitor
+/*
+ * Sets the keycode, addressed by "key" to 1 or 0.
+ *
+ * Key 22 for example sets the bit 7 in the 3rd byte of the keymap.
+ *
+ * Example with key 22 active:
+ *
+ * 00000000 00000000 01000000 00000000 00000000 00000000 00000000 00000000
+ * 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ * 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ * 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000
+ */
+inline void setKeycode(char *keymap, unsigned char key, bool value)
 {
-public:
-	XKeyMapMonitor();
-	virtual ~XKeyMapMonitor();
-
-	void connect(const std::string & displayName);
-	void start();
-	void stop();
-	bool isRunning();
-	std::string getDisplayName();
-
-	void addListener(XKeyMapListener *listener);
-	bool removeListener(XKeyMapListener *listener);
-
-private:
-	XKeyMapMonitorImpl *m_pimpl;
-};
+	unsigned const char byte = static_cast<unsigned char> (key / (char) 8u);
+	const char bitmask = (char) 1 << (key - (byte * 8));
+	if (value) {
+		keymap[byte] |= bitmask;
+	}
+	else {
+		keymap[byte] &= (char) 0xFFu ^ bitmask;
+	}
+}
 
 }
 
-#endif /* XKEYMAPMONITOR_H_ */
+#endif /* XKEYMAPUTIL_H_ */

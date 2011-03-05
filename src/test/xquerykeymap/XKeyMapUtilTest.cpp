@@ -25,34 +25,48 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XKEYMAPMONITOR_H_
-#define XKEYMAPMONITOR_H_
+#include <cppunit/extensions/HelperMacros.h>
+#include <cppunit/TestFixture.h>
 
-namespace xutil
+#include <set>
+#include <string>
+#include <cstring>
+
+#include "xquerykeymap/XKeyMapConstants.h"
+#include "xquerykeymap/XKeyMapUtil.h"
+
+class XKeyMapUtilTest: public CppUnit::TestFixture
 {
-
-class XKeyMapListener;
-class XKeyMapMonitorImpl;
-
-class XKeyMapMonitor
-{
+CPPUNIT_TEST_SUITE(XKeyMapUtilTest);
+		CPPUNIT_TEST(testSetKeycode);
+	CPPUNIT_TEST_SUITE_END();
 public:
-	XKeyMapMonitor();
-	virtual ~XKeyMapMonitor();
+	void testSetKeycode()
+	{
+		char keymap[xutil::KEYMAP_SIZE_BYTES];
+		memset(keymap, 0, xutil::KEYMAP_SIZE_BYTES);
 
-	void connect(const std::string & displayName);
-	void start();
-	void stop();
-	bool isRunning();
-	std::string getDisplayName();
+		/* set key 22 pressed */
+		xutil::setKeycode(keymap, 22, true);
+		CPPUNIT_ASSERT(keymap[2] == 0x40);
 
-	void addListener(XKeyMapListener *listener);
-	bool removeListener(XKeyMapListener *listener);
+		/* reset to zero */
+		xutil::setKeycode(keymap, 22, false);
+		char nullkeymap[xutil::KEYMAP_SIZE_BYTES] = { 0 };
+		CPPUNIT_ASSERT(memcmp(nullkeymap, keymap, xutil::KEYMAP_SIZE_BYTES) == 0);
 
-private:
-	XKeyMapMonitorImpl *m_pimpl;
+		/* set zero */
+		xutil::setKeycode(keymap, 0, true);
+		CPPUNIT_ASSERT(keymap[0] == 0x01);
+
+		/* clean again */
+		memset(keymap, 0, xutil::KEYMAP_SIZE_BYTES);
+
+		/* set two keys */
+		xutil::setKeycode(keymap, 22, true);
+		xutil::setKeycode(keymap, 33, true);
+		CPPUNIT_ASSERT(keymap[2] == 0x40);
+		CPPUNIT_ASSERT(keymap[4] == 0x02);
+	}
 };
-
-}
-
-#endif /* XKEYMAPMONITOR_H_ */
+CPPUNIT_TEST_SUITE_REGISTRATION(XKeyMapUtilTest);

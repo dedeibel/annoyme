@@ -25,34 +25,41 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XKEYMAPMONITOR_H_
-#define XKEYMAPMONITOR_H_
+#include <set>
+#include <string>
+#include <sstream>
+
+#include "XKeyMapSeparatorImpl.h"
+
+#include "XKeyMapConstants.h"
 
 namespace xutil
 {
 
-class XKeyMapListener;
-class XKeyMapMonitorImpl;
-
-class XKeyMapMonitor
+void XKeyMapSeparatorImpl::getKeycodes(char *keymap,
+		std::set<unsigned char> &keys)
 {
-public:
-	XKeyMapMonitor();
-	virtual ~XKeyMapMonitor();
-
-	void connect(const std::string & displayName);
-	void start();
-	void stop();
-	bool isRunning();
-	std::string getDisplayName();
-
-	void addListener(XKeyMapListener *listener);
-	bool removeListener(XKeyMapListener *listener);
-
-private:
-	XKeyMapMonitorImpl *m_pimpl;
-};
-
+	keys.clear();
+	for (unsigned short byteN = 0; byteN < KEYMAP_SIZE_BYTES; ++byteN) {
+		for (unsigned short bit = 0; bit < 8; ++bit) {
+			if (keymap[byteN] & (char) 1 << bit) {
+				keys.insert(byteN * 8u + bit);
+			}
+		}
+	}
 }
 
-#endif /* XKEYMAPMONITOR_H_ */
+std::string XKeyMapSeparatorImpl::dump(std::set<unsigned char> &keys)
+{
+	std::stringstream s;
+	std::set<unsigned char>::iterator it = keys.begin();
+	while (it != keys.end()) {
+		if (it != keys.begin())
+			s << ", ";
+		s << (unsigned int) (*it) << std::endl;
+		++it;
+	}
+	return s.str();
+}
+
+}

@@ -28,17 +28,62 @@
 #include <cppunit/extensions/HelperMacros.h>
 #include <cppunit/TestFixture.h>
 
-class SampleTest: public CppUnit::TestFixture
+#include <set>
+#include <string>
+#include <cstring>
+
+#include "xquerykeymap/XKeyMapConstants.h"
+#include "xquerykeymap/XKeyMapUtil.h"
+#include "xquerykeymap/XKeyMapSeparator.h"
+#include "xquerykeymap/XKeyMapSeparatorImpl.h"
+
+class XKeyMapSeparatorImplTest: public CppUnit::TestFixture
 {
-	CPPUNIT_TEST_SUITE(SampleTest);
-	CPPUNIT_TEST(testEmpty);
+CPPUNIT_TEST_SUITE(XKeyMapSeparatorImplTest);
+		CPPUNIT_TEST(testEmpty);
+		CPPUNIT_TEST(testSimple);
+		CPPUNIT_TEST(testMultiple);
 	CPPUNIT_TEST_SUITE_END();
 public:
 	void testEmpty()
 	{
-		int i = 5;
-		CPPUNIT_ASSERT(i == 5);
+		xutil::XKeyMapSeparatorImpl separator;
+		std::set<unsigned char> keys;
+		char keymap[xutil::KEYMAP_SIZE_BYTES];
+		memset(keymap, 0, xutil::KEYMAP_SIZE_BYTES);
+		separator.getKeycodes(keymap, keys);
+
+		CPPUNIT_ASSERT(keys.empty());
+	}
+
+	void testSimple()
+	{
+		xutil::XKeyMapSeparatorImpl separator;
+		std::set<unsigned char> keys;
+		char keymap[xutil::KEYMAP_SIZE_BYTES];
+		memset(keymap, 0, xutil::KEYMAP_SIZE_BYTES);
+
+		xutil::setKeycode(keymap, 22, true);
+		separator.getKeycodes(keymap, keys);
+		CPPUNIT_ASSERT(keys.find(22) != keys.end());
+	}
+
+	void testMultiple()
+	{
+		xutil::XKeyMapSeparatorImpl separator;
+		std::set<unsigned char> keys;
+		char keymap[xutil::KEYMAP_SIZE_BYTES];
+		memset(keymap, 0, xutil::KEYMAP_SIZE_BYTES);
+
+		xutil::setKeycode(keymap, 20, true);
+		xutil::setKeycode(keymap, 0, true);
+		xutil::setKeycode(keymap, 240, true);
+
+		separator.getKeycodes(keymap, keys);
+
+		CPPUNIT_ASSERT(keys.find(0) != keys.end());
+		CPPUNIT_ASSERT(keys.find(20) != keys.end());
+		CPPUNIT_ASSERT(keys.find(240) != keys.end());
 	}
 };
-
-CPPUNIT_TEST_SUITE_REGISTRATION(SampleTest);
+CPPUNIT_TEST_SUITE_REGISTRATION(XKeyMapSeparatorImplTest);
