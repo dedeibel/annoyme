@@ -25,20 +25,21 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XKEYMAPSEPARATORIMPL_H_
-#define XKEYMAPSEPARATORIMPL_H_
+#ifndef XKEYLISTENERPRINTER_H_
+#define XKEYLISTENERPRINTER_H_
 
-#include "XKeyMapSeparator.h"
+#include "XKeyListener.h"
 
 namespace xutil
 {
 
-class XKeyMapSeparatorImpl : public xutil::XKeyMapSeparator
+class XKeyListenerPrinter : public XKeyListener
 {
 public:
-	virtual void getKeycodes(char *keymap, std::set<unsigned char> &keys);
-	virtual std::string dump(std::set<unsigned char> &keys);
+	virtual void onKeysPressed(std::set<KeySym> keys);
+	virtual void onKeysReleased(std::set<KeySym> keys);
 };
 
 }
-#endif /* XKEYMAPSEPARATORIMPL_H_ */
+
+#endif /* XKEYLISTENERPRINTER_H_ */

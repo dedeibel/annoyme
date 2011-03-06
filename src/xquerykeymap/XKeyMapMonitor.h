@@ -37,17 +37,15 @@ class XKeyMapMonitorImpl;
 class XKeyMapMonitor
 {
 public:
-	XKeyMapMonitor();
+	XKeyMapMonitor(Display *d);
 	virtual ~XKeyMapMonitor();
 
-	void connect(const std::string & displayName);
 	void start();
 	void stop();
 	bool isRunning();
-	std::string getDisplayName();
 
-	void addListener(XKeyMapListener *listener);
-	bool removeListener(XKeyMapListener *listener);
+	void addKeyMapListener(XKeyMapListener *listener);
+	bool removeKeyMapListener(XKeyMapListener *listener);
 
 private:
 	XKeyMapMonitorImpl *m_pimpl;

@@ -25,20 +25,73 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XKEYMAPSEPARATORIMPL_H_
-#define XKEYMAPSEPARATORIMPL_H_
+extern "C"
+{
+#include <X11/Xlib.h>
+}
 
-#include "XKeyMapSeparator.h"
+#include <string>
+#include <set>
+
+#include "XKeyListener.h"
+#include "XKeyMapDifferenceFilter.h"
+#include "XKeyMapSeparatorImpl.h"
+
+/*
+ * doc: http://tronche.com/gui/x/xlib/input/XGetKeyboardMapping.html
+ */
 
 namespace xutil
 {
 
-class XKeyMapSeparatorImpl : public xutil::XKeyMapSeparator
+XKeyMapDifferenceFilter::XKeyMapDifferenceFilter(Display *d) :
+	m_display(d), m_keyMapSeparator(new XKeyMapSeparatorImpl())
 {
-public:
-	virtual void getKeycodes(char *keymap, std::set<unsigned char> &keys);
-	virtual std::string dump(std::set<unsigned char> &keys);
-};
 
 }
-#endif /* XKEYMAPSEPARATORIMPL_H_ */
+
+XKeyMapDifferenceFilter::~XKeyMapDifferenceFilter()
+{
+
+}
+
+void XKeyMapDifferenceFilter::addKeyListener(XKeyListener *listener)
+{
+	m_listeners.insert(listener);
+}
+
+bool XKeyMapDifferenceFilter::removeKeyListener(XKeyListener *listener)
+{
+	return m_listeners.erase(listener) != 0;;
+}
+
+void XKeyMapDifferenceFilter::onKeyMapChanged(const char *keyMap,
+		const char *keyMapPrev)
+{
+	/* TODO determine difference between the maps, use m_keyMapSeparator to get
+	 * changed codes, convert them to keysyms and call the notifiers */
+	std::set<KeySym> keys;
+	keys.insert(22);
+	keys.insert(40);
+	notifyKeysPressed(keys);
+}
+
+void XKeyMapDifferenceFilter::notifyKeysPressed(std::set<KeySym> keys)
+{
+	std::set<XKeyListener*>::iterator it = m_listeners.begin();
+	while (it != m_listeners.end()) {
+		(*it)->onKeysPressed(keys);
+		++it;
+	}
+}
+
+void XKeyMapDifferenceFilter::notifyKeysReleased(std::set<KeySym> keys)
+{
+	std::set<XKeyListener*>::iterator it = m_listeners.begin();
+	while (it != m_listeners.end()) {
+		(*it)->onKeysReleased(keys);
+		++it;
+	}
+}
+
+}

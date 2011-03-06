@@ -25,20 +25,38 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XKEYMAPSEPARATORIMPL_H_
-#define XKEYMAPSEPARATORIMPL_H_
+#ifndef XKEYMAPDIFFERENCEFILTER_H_
+#define XKEYMAPDIFFERENCEFILTER_H_
 
-#include "XKeyMapSeparator.h"
+#include "XKeyMapListener.h"
 
 namespace xutil
 {
 
-class XKeyMapSeparatorImpl : public xutil::XKeyMapSeparator
+class XKeyListener;
+class XKeyMapSeparator;
+
+class XKeyMapDifferenceFilter: public xutil::XKeyMapListener
 {
 public:
-	virtual void getKeycodes(char *keymap, std::set<unsigned char> &keys);
-	virtual std::string dump(std::set<unsigned char> &keys);
+	XKeyMapDifferenceFilter(Display *d);
+	virtual ~XKeyMapDifferenceFilter();
+	void addKeyListener(XKeyListener *listener);
+	bool removeKeyListener(XKeyListener *listener);
+	virtual void onKeyMapChanged(const char *keyMap, const char *keyMapPrev);
+
+private:
+	/* methods */
+	void notifyKeysPressed(std::set<KeySym> keys);
+	void notifyKeysReleased(std::set<KeySym> keys);
+
+private:
+	/* fields */
+	Display *m_display;
+	XKeyMapSeparator *m_keyMapSeparator;
+	std::set<XKeyListener *> m_listeners;
 };
 
 }
-#endif /* XKEYMAPSEPARATORIMPL_H_ */
+
+#endif /* XKEYMAPDIFFERENCEFILTER_H_ */

@@ -25,20 +25,22 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XKEYMAPSEPARATORIMPL_H_
-#define XKEYMAPSEPARATORIMPL_H_
-
-#include "XKeyMapSeparator.h"
+#ifndef XKEYLISTENER_H_
+#define XKEYLISTENER_H_
 
 namespace xutil
 {
 
-class XKeyMapSeparatorImpl : public xutil::XKeyMapSeparator
+/*
+ * Is called when a key is pressed or released.
+ */
+class XKeyListener
 {
 public:
-	virtual void getKeycodes(char *keymap, std::set<unsigned char> &keys);
-	virtual std::string dump(std::set<unsigned char> &keys);
+	virtual void onKeysPressed(std::set<KeySym> keys) = 0;
+	virtual void onKeysReleased(std::set<KeySym> keys) = 0;
 };
 
 }
-#endif /* XKEYMAPSEPARATORIMPL_H_ */
+
+#endif /* XKEYLISTENER_H_ */

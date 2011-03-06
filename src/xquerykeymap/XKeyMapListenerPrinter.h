@@ -32,7 +32,7 @@
 
 namespace xutil {
 
-class XKeyMapListenerPrinter: public xutil::XKeyMapListener
+class XKeyMapListenerPrinter : public xutil::XKeyMapListener
 {
 public:
 	void onKeyMapChanged(const char* keyMap, const char* keyMapPrev);

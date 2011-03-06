@@ -26,9 +26,6 @@
  */
 
 #include <string>
-
-#include "XKeyMapMonitor.h"
-
 #include <cstring>
 #include <iostream> /* debug */
 #include <set>
@@ -39,10 +36,15 @@ extern "C"
 #include <unistd.h>
 }
 
+#include "XKeyMapMonitor.h"
 #include "XKeyMapConstants.h"
 #include "XKeyMapListener.h"
 #include "IllegalStateException.h"
 #include "XUtilException.h"
+
+/*
+ * doc: http://tronche.com/gui/x/xlib/input/XQueryKeymap.html
+ */
 
 namespace xutil
 {
@@ -62,15 +64,12 @@ namespace xutil
 class XKeyMapMonitorImpl
 {
 public:
-	XKeyMapMonitorImpl();
+	XKeyMapMonitorImpl(Display *d);
 	~XKeyMapMonitorImpl();
 
-	void connect(const std::string &displayName);
-	void disconnect();
 	void start();
 	void stop();
 	bool isRunning();
-	std::string getDisplayName();
 
 	void addListener(XKeyMapListener *listener);
 	bool removeListener(XKeyMapListener *listener);
@@ -119,8 +118,8 @@ private:
 	std::set<XKeyMapListener*> m_listeners;
 };
 
-XKeyMapMonitorImpl::XKeyMapMonitorImpl() :
-	m_display(0), m_runState(STOPPED)
+XKeyMapMonitorImpl::XKeyMapMonitorImpl(Display *d) :
+	m_display(d), m_runState(STOPPED)
 {
 	/* Initialize the keymap with a common value */
 	memset(m_keyMap, 0, KEYMAP_SIZE_BYTES);
@@ -131,41 +130,6 @@ XKeyMapMonitorImpl::XKeyMapMonitorImpl() :
 XKeyMapMonitorImpl::~XKeyMapMonitorImpl()
 {
 	pthread_mutex_destroy(&m_runStateMutex);
-}
-
-void XKeyMapMonitorImpl::connect(const std::string &displayName)
-{
-	if (m_display != 0) {
-		throw IllegalStateException("Already connected, display already open.");
-	}
-	if (getRunState() != STOPPED) {
-		throw IllegalStateException(
-				"Monitoring already running, can't connect afterwards.");
-	}
-
-	const char *displayNameChar = 0;
-	if (!displayName.empty()) {
-		displayNameChar = displayName.c_str();
-	}
-	m_display = XOpenDisplay(displayNameChar);
-}
-
-void XKeyMapMonitorImpl::disconnect()
-{
-	if (m_display != 0) {
-		XFree(m_display);
-		m_display = 0;
-	}
-}
-
-std::string XKeyMapMonitorImpl::getDisplayName()
-{
-	if (!m_display) {
-		throw IllegalStateException(
-				"Not connected yet, no is display set. Use connect first.");
-	}
-
-	return std::string(XDisplayString(m_display));
 }
 
 void XKeyMapMonitorImpl::start()
@@ -273,8 +237,8 @@ void XKeyMapMonitorImpl::notifyListeners(const char *keyMap,
 
 /* public delegation methods */
 
-XKeyMapMonitor::XKeyMapMonitor() :
-	m_pimpl(new XKeyMapMonitorImpl())
+XKeyMapMonitor::XKeyMapMonitor(Display *d) :
+	m_pimpl(new XKeyMapMonitorImpl(d))
 {
 
 }
@@ -282,16 +246,6 @@ XKeyMapMonitor::XKeyMapMonitor() :
 XKeyMapMonitor::~XKeyMapMonitor()
 {
 	delete m_pimpl;
-}
-
-void XKeyMapMonitor::connect(const std::string & displayName)
-{
-	m_pimpl->connect(displayName);
-}
-
-std::string XKeyMapMonitor::getDisplayName()
-{
-	return m_pimpl->getDisplayName();
 }
 
 void XKeyMapMonitor::start()
@@ -309,12 +263,12 @@ bool XKeyMapMonitor::isRunning()
 	return m_pimpl->isRunning();
 }
 
-void XKeyMapMonitor::addListener(XKeyMapListener *listener)
+void XKeyMapMonitor::addKeyMapListener(XKeyMapListener *listener)
 {
 	m_pimpl->addListener(listener);
 }
 
-bool XKeyMapMonitor::removeListener(XKeyMapListener *listener)
+bool XKeyMapMonitor::removeKeyMapListener(XKeyMapListener *listener)
 {
 	return m_pimpl->removeListener(listener);
 }

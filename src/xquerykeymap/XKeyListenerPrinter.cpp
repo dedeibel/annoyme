@@ -26,76 +26,26 @@
  */
 
 #include <iostream>
-#include <cstdlib>
+#include <set>
 
 extern "C"
 {
-#include <signal.h>
+#include <X11/Xlib.h>
 }
 
-#include "XKeyMapMonitor.h"
-#include "XKeyMapListenerPrinter.h"
+#include "XKeyListenerPrinter.h"
 
-bool running = true;
-
-void termhandler(int sig)
+namespace xutil
 {
-	running = false;
+
+void XKeyListenerPrinter::onKeysPressed(std::set<KeySym> keys)
+{
+	std::cout << "pressed: " << keys.size() << std::endl;
 }
 
-void registerSignalListener()
+void XKeyListenerPrinter::onKeysReleased(std::set<KeySym> keys)
 {
-	struct sigaction sigHupHandler;
-	sigHupHandler.sa_handler = termhandler;
-	sigemptyset(&sigHupHandler.sa_mask);
-	sigHupHandler.sa_flags = 0;
-	sigaction(SIGHUP, &sigHupHandler, NULL);
-
-	struct sigaction sigIntHandler;
-	sigIntHandler.sa_handler = termhandler;
-	sigemptyset(&sigIntHandler.sa_mask);
-	sigIntHandler.sa_flags = 0;
-	sigaction(SIGINT, &sigIntHandler, NULL);
-
-	struct sigaction sigAbrtHandler;
-	sigAbrtHandler.sa_handler = termhandler;
-	sigemptyset(&sigAbrtHandler.sa_mask);
-	sigAbrtHandler.sa_flags = 0;
-	sigaction(SIGABRT, &sigAbrtHandler, NULL);
-
-	struct sigaction sigTermHandler;
-	sigTermHandler.sa_handler = termhandler;
-	sigemptyset(&sigTermHandler.sa_mask);
-	sigTermHandler.sa_flags = 0;
-	sigaction(SIGTERM, &sigTermHandler, NULL);
-
-	struct sigaction sigPipeHandler;
-	sigPipeHandler.sa_handler = termhandler;
-	sigemptyset(&sigPipeHandler.sa_mask);
-	sigPipeHandler.sa_flags = 0;
-	sigaction(SIGPIPE, &sigPipeHandler, NULL);
-
-	struct sigaction sigKillHandler;
-	sigKillHandler.sa_handler = termhandler;
-	sigemptyset(&sigKillHandler.sa_mask);
-	sigKillHandler.sa_flags = 0;
-	sigaction(SIGKILL, &sigKillHandler, NULL);
+	std::cout << "released: " << keys.size() << std::endl;
 }
 
-int main(int argc, char **argv)
-{
-	registerSignalListener();
-
-	xutil::XKeyMapMonitor monitor;
-	xutil::XKeyMapListenerPrinter printer;
-	monitor.addListener(&printer);
-
-	monitor.connect("");
-	monitor.start();
-
-	while (running) {
-		usleep(50000);
-	}
-	monitor.stop();
-	return EXIT_SUCCESS;
 }
