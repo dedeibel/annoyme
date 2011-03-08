@@ -179,9 +179,8 @@ void XKeyMapMonitorImpl::run()
 		XQueryKeymap(m_display, m_keyMap);
 
 		if (memcmp(m_keyMap, m_keyMapPrev, KEYMAP_SIZE_BYTES) != 0) {
-			memcpy(m_keyMapPrev, m_keyMap, KEYMAP_SIZE_BYTES);
-
 			notifyListeners(m_keyMap, m_keyMapPrev);
+			memcpy(m_keyMapPrev, m_keyMap, KEYMAP_SIZE_BYTES);
 		}
 		/* no need to copy if nothing changes */
 

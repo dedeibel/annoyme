@@ -4,19 +4,6 @@
 #
 
 #
-# COMMON
-#
-
-OPTION(BUILD_DEBUGGING "Compile with debug mode." ON)
-IF (BUILD_DEBUGGING)
-       SET(CMAKE_BUILD_TYPE Debug)
-       SET(CMAKE_CXX_FLAGS_DEBUG "-ggdb")
-ENDIF(BUILD_DEBUGGING)
-
-SET(CMAKE_CXX_FLAGS "-Wall")
-ADD_DEFINITIONS(-D_REENTRANT)
-
-#
 # Raw keycode printer
 #
 

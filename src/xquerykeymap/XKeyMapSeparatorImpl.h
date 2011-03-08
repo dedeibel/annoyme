@@ -36,7 +36,7 @@ namespace xutil
 class XKeyMapSeparatorImpl : public xutil::XKeyMapSeparator
 {
 public:
-	virtual void getKeycodes(char *keymap, std::set<unsigned char> &keys);
+	virtual void getKeycodes(const char *keymap, std::set<unsigned char> &keys);
 	virtual std::string dump(std::set<unsigned char> &keys);
 };
 

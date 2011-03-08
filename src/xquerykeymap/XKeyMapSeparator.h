@@ -37,7 +37,7 @@ public:
 	/*
 	 * Analyzes the keymap an fills the given set with the currently pressed keys.
 	 */
-	virtual void getKeycodes(char *keymap, std::set<unsigned char> &keys) = 0;
+	virtual void getKeycodes(const char *keymap, std::set<unsigned char> &keys) = 0;
 	/* Simply dump all found key codes  as numbers, comma separated list to the string */
 	virtual std::string dump(std::set<unsigned char> &keys) = 0;
 };

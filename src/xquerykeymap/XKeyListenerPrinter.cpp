@@ -40,12 +40,27 @@ namespace xutil
 
 void XKeyListenerPrinter::onKeysPressed(std::set<KeySym> keys)
 {
-	std::cout << "pressed: " << keys.size() << std::endl;
+	/* TODO find / write generic join method */
+	std::cout << "pressed: ";
+	for (std::set<KeySym>::const_iterator it = keys.begin(); it != keys.end(); ++it) {
+		if (it != keys.begin()) {
+			std::cout << ", ";
+		}
+		std::cout << *it;
+	}
+	std::cout << std::endl;
 }
 
 void XKeyListenerPrinter::onKeysReleased(std::set<KeySym> keys)
 {
-	std::cout << "released: " << keys.size() << std::endl;
+	std::cout << "released: ";
+	for (std::set<KeySym>::const_iterator it = keys.begin(); it != keys.end(); ++it) {
+		if (it != keys.begin()) {
+			std::cout << ", ";
+		}
+		std::cout << *it;
+	}
+	std::cout << std::endl;
 }
 
 }

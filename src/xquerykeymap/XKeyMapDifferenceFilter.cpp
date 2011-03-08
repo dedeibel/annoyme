@@ -32,6 +32,10 @@ extern "C"
 
 #include <string>
 #include <set>
+#include <algorithm>
+#include <vector>
+
+#include <iostream> // debug
 
 #include "XKeyListener.h"
 #include "XKeyMapDifferenceFilter.h"
@@ -65,15 +69,45 @@ bool XKeyMapDifferenceFilter::removeKeyListener(XKeyListener *listener)
 	return m_listeners.erase(listener) != 0;;
 }
 
+KeySym convert(unsigned char keycode)
+{
+	/* TODO propper converting */
+	return (KeySym) keycode;
+}
+
 void XKeyMapDifferenceFilter::onKeyMapChanged(const char *keyMap,
 		const char *keyMapPrev)
 {
-	/* TODO determine difference between the maps, use m_keyMapSeparator to get
-	 * changed codes, convert them to keysyms and call the notifiers */
-	std::set<KeySym> keys;
-	keys.insert(22);
-	keys.insert(40);
-	notifyKeysPressed(keys);
+	/* TODO cleanup? */
+	std::set<unsigned char> keysPrev;
+	m_keyMapSeparator->getKeycodes(keyMapPrev, keysPrev);
+
+	std::set<unsigned char> keys;
+	m_keyMapSeparator->getKeycodes(keyMap, keys);
+
+	/* Calculate what keys were pressed and released by comparing the currently
+	 * active keys.
+	 */
+	std::vector<unsigned char> keysReleased;
+	std::set_difference(keysPrev.begin(), keysPrev.end(), keys.begin(),
+			keys.end(), std::inserter(keysReleased, keysReleased.begin()));
+
+	std::vector<unsigned char> keysPressed;
+	std::set_difference(keys.begin(), keys.end(), keysPrev.begin(),
+			keysPrev.end(), std::inserter(keysPressed, keysPressed.begin()));
+
+	/* Convert the keycodes to keysyms */
+	std::set<KeySym> keysReleasedSet;
+	std::transform(keysReleased.begin(), keysReleased.end(), std::inserter(
+			keysReleasedSet, keysReleasedSet.begin()), convert);
+
+	std::set<KeySym> keysPressedSet;
+	std::transform(keysPressed.begin(), keysPressed.end(), std::inserter(
+			keysPressedSet, keysPressedSet.begin()), convert);
+
+	/* Notify the listeners */
+	notifyKeysReleased(keysReleasedSet);
+	notifyKeysPressed(keysPressedSet);
 }
 
 void XKeyMapDifferenceFilter::notifyKeysPressed(std::set<KeySym> keys)

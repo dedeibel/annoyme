@@ -36,7 +36,7 @@
 namespace xutil
 {
 
-void XKeyMapSeparatorImpl::getKeycodes(char *keymap,
+void XKeyMapSeparatorImpl::getKeycodes(const char *keymap,
 		std::set<unsigned char> &keys)
 {
 	keys.clear();
