@@ -25,53 +25,54 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <iostream>
-#include <set>
-#include <cctype>
-
-extern "C"
-{
-#include <X11/Xlib.h>
-}
-
-#include "XKeyListenerPrinter.h"
+#ifndef XKEYSYMUTIL_H_
+#define XKEYSYMUTIL_H_
 
 namespace xutil
 {
 
-void XKeyListenerPrinter::onKeysPressed(std::set<KeySym> keys)
+class XKeySymUtil
 {
-	/* TODO find / write generic join method */
-	std::cout << "pressed: ";
-	for (std::set<KeySym>::const_iterator it = keys.begin(); it != keys.end(); ++it) {
-		if (it != keys.begin()) {
-			std::cout << ", ";
-		}
-		if (isprint((char) *it)) {
-			std::cout << (char) *it;
-		}
-		else {
-			std::cout << *it;
-		}
+public:
+	/*
+	 * first_keycode + keycode_count - 1 = maxKeyCode according to
+	 * http://tronche.com/gui/x/xlib/input/XGetKeyboardMapping.html
+	 */
+	static inline int keyCodeCount(int minKeyCodes,
+			int maxKeyCodes)
+	{
+		return maxKeyCodes - minKeyCodes + 1;
 	}
-	std::cout << std::endl;
+
+	/*
+	 * The number of elements in the KeySyms list.
+	 *
+	 * keycode_count * keysyms_per_keycode_return
+	 */
+	static inline int keySymListSize(int minKeyCodes,
+			int maxKeyCodes, int keySymsPerKeyCode)
+	{
+		return keyCodeCount(minKeyCodes, maxKeyCodes) * keySymsPerKeyCode;
+	}
+
+	static inline int keySymIndex(char keyCode,
+			int minKeyCodes, int keySymsPerKeyCode, int keySymNumber)
+	{
+		return (keyCode - minKeyCodes) * keySymsPerKeyCode + keySymNumber;
+	}
+
+	static inline int keySymIndex(char keyCode,
+			int minKeyCodes, int keySymsPerKeyCode)
+	{
+		return keySymIndex(keyCode, minKeyCodes, keySymsPerKeyCode, 0);
+	}
+
+	static inline KeySym getKeySym(KeySym *keySymMap,
+			int keySymIndex)
+	{
+		return keySymMap[keySymIndex];
+	}
+};
 }
 
-void XKeyListenerPrinter::onKeysReleased(std::set<KeySym> keys)
-{
-	std::cout << "released: ";
-	for (std::set<KeySym>::const_iterator it = keys.begin(); it != keys.end(); ++it) {
-		if (it != keys.begin()) {
-			std::cout << ", ";
-		}
-		if (isprint((char) *it)) {
-			std::cout << (char) *it;
-		}
-		else {
-			std::cout << *it;
-		}
-	}
-	std::cout << std::endl;
-}
-
-}
+#endif /* ! XKEYSYMUTIL_H_ */

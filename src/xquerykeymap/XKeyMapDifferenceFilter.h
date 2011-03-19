@@ -50,11 +50,31 @@ private:
 	void notifyKeysPressed(std::set<KeySym> keys);
 	void notifyKeysReleased(std::set<KeySym> keys);
 
+	bool isInitialized();
+	void init();
+	virtual KeySym convert(unsigned char keyCode);
+
+	template <class ForwardIterator, class OutputIterator>
+	void convertAll(
+			ForwardIterator begin,
+			ForwardIterator end,
+			OutputIterator insert)
+	{
+		for (ForwardIterator c = begin; c != end; ++c) {
+			*insert++ = convert(*c);
+		}
+	}
+
 private:
 	/* fields */
 	Display *m_display;
 	XKeyMapSeparator *m_keyMapSeparator;
 	std::set<XKeyListener *> m_listeners;
+
+	KeySym *m_keySymMap;
+	int m_minKeyCodes;
+	int m_maxKeyCodes;
+	int m_keySymsPerKeyCode;
 };
 
 }

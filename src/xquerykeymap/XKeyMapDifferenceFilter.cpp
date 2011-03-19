@@ -28,18 +28,20 @@
 extern "C"
 {
 #include <X11/Xlib.h>
+#include <unistd.h>
 }
 
 #include <string>
 #include <set>
 #include <algorithm>
 #include <vector>
+#include <functional>
 
 #include <iostream> // debug
-
 #include "XKeyListener.h"
 #include "XKeyMapDifferenceFilter.h"
 #include "XKeyMapSeparatorImpl.h"
+#include "XKeySymUtil.h"
 
 /*
  * doc: http://tronche.com/gui/x/xlib/input/XGetKeyboardMapping.html
@@ -49,7 +51,7 @@ namespace xutil
 {
 
 XKeyMapDifferenceFilter::XKeyMapDifferenceFilter(Display *d) :
-	m_display(d), m_keyMapSeparator(new XKeyMapSeparatorImpl())
+	m_display(d), m_keyMapSeparator(new XKeyMapSeparatorImpl()), m_keySymMap(0)
 {
 
 }
@@ -69,16 +71,19 @@ bool XKeyMapDifferenceFilter::removeKeyListener(XKeyListener *listener)
 	return m_listeners.erase(listener) != 0;;
 }
 
-KeySym convert(unsigned char keycode)
+KeySym XKeyMapDifferenceFilter::convert(unsigned char keyCode)
 {
-	/* TODO propper converting */
-	return (KeySym) keycode;
+	return XKeySymUtil::getKeySym(m_keySymMap,
+			XKeySymUtil::keySymIndex(keyCode, m_minKeyCodes, m_keySymsPerKeyCode));
 }
 
 void XKeyMapDifferenceFilter::onKeyMapChanged(const char *keyMap,
 		const char *keyMapPrev)
 {
-	/* TODO cleanup? */
+	if (!isInitialized()) {
+		init();
+	}
+
 	std::set<unsigned char> keysPrev;
 	m_keyMapSeparator->getKeycodes(keyMapPrev, keysPrev);
 
@@ -96,14 +101,17 @@ void XKeyMapDifferenceFilter::onKeyMapChanged(const char *keyMap,
 	std::set_difference(keys.begin(), keys.end(), keysPrev.begin(),
 			keysPrev.end(), std::inserter(keysPressed, keysPressed.begin()));
 
-	/* Convert the keycodes to keysyms */
 	std::set<KeySym> keysReleasedSet;
-	std::transform(keysReleased.begin(), keysReleased.end(), std::inserter(
-			keysReleasedSet, keysReleasedSet.begin()), convert);
+	std::insert_iterator<std::set<KeySym> > releasedInserter(keysReleasedSet,
+			keysReleasedSet.begin());
+
+	convertAll(keysReleased.begin(), keysReleased.end(), releasedInserter);
 
 	std::set<KeySym> keysPressedSet;
-	std::transform(keysPressed.begin(), keysPressed.end(), std::inserter(
-			keysPressedSet, keysPressedSet.begin()), convert);
+	std::insert_iterator<std::set<KeySym> > pressedInserter(keysPressedSet,
+			keysPressedSet.begin());
+
+	convertAll(keysPressed.begin(), keysPressed.end(), pressedInserter);
 
 	/* Notify the listeners */
 	notifyKeysReleased(keysReleasedSet);
@@ -126,6 +134,19 @@ void XKeyMapDifferenceFilter::notifyKeysReleased(std::set<KeySym> keys)
 		(*it)->onKeysReleased(keys);
 		++it;
 	}
+}
+
+bool XKeyMapDifferenceFilter::isInitialized()
+{
+	return m_keySymMap != 0;
+}
+
+void XKeyMapDifferenceFilter::init()
+{
+	/* doc: http://tronche.com/gui/x/xlib/input/XDisplayKeycodes.html */
+	XDisplayKeycodes(m_display, &m_minKeyCodes, &m_maxKeyCodes);
+	m_keySymMap = XGetKeyboardMapping(m_display, m_minKeyCodes,
+			XKeySymUtil::keyCodeCount(m_minKeyCodes, m_maxKeyCodes), &m_keySymsPerKeyCode);
 }
 
 }

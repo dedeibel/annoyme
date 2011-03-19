@@ -28,6 +28,7 @@
 #include <iostream>
 #include <cstdlib>
 #include <set>
+#include <vector>
 
 extern "C"
 {
