@@ -38,6 +38,23 @@ class XKeyListenerPrinter : public XKeyListener
 public:
 	virtual void onKeysPressed(std::set<KeySym> keys);
 	virtual void onKeysReleased(std::set<KeySym> keys);
+
+private:
+
+	template <class ostream, class forward_iterator>
+	static void printJoined(ostream &stream, forward_iterator begin, forward_iterator end, const std::string &sep) {
+		for (forward_iterator it = begin; it != end; ++it) {
+			if (it != begin) {
+				stream << sep;
+			}
+			if (isprint((char) *it)) {
+				stream << (char) *it;
+			}
+			else {
+				stream << *it;
+			}
+		}
+	}
 };
 
 }

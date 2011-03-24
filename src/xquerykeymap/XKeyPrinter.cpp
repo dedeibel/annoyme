@@ -48,48 +48,27 @@ void termhandler(int sig)
 	running = false;
 }
 
-void registerSignalListener()
-{
+void registerHandler(int signum) {
 	struct sigaction sigHupHandler;
 	sigHupHandler.sa_handler = termhandler;
 	sigemptyset(&sigHupHandler.sa_mask);
 	sigHupHandler.sa_flags = 0;
-	sigaction(SIGHUP, &sigHupHandler, NULL);
+	sigaction(signum, &sigHupHandler, NULL);
+}
 
-	struct sigaction sigIntHandler;
-	sigIntHandler.sa_handler = termhandler;
-	sigemptyset(&sigIntHandler.sa_mask);
-	sigIntHandler.sa_flags = 0;
-	sigaction(SIGINT, &sigIntHandler, NULL);
-
-	struct sigaction sigAbrtHandler;
-	sigAbrtHandler.sa_handler = termhandler;
-	sigemptyset(&sigAbrtHandler.sa_mask);
-	sigAbrtHandler.sa_flags = 0;
-	sigaction(SIGABRT, &sigAbrtHandler, NULL);
-
-	struct sigaction sigTermHandler;
-	sigTermHandler.sa_handler = termhandler;
-	sigemptyset(&sigTermHandler.sa_mask);
-	sigTermHandler.sa_flags = 0;
-	sigaction(SIGTERM, &sigTermHandler, NULL);
-
-	struct sigaction sigPipeHandler;
-	sigPipeHandler.sa_handler = termhandler;
-	sigemptyset(&sigPipeHandler.sa_mask);
-	sigPipeHandler.sa_flags = 0;
-	sigaction(SIGPIPE, &sigPipeHandler, NULL);
-
-	struct sigaction sigKillHandler;
-	sigKillHandler.sa_handler = termhandler;
-	sigemptyset(&sigKillHandler.sa_mask);
-	sigKillHandler.sa_flags = 0;
-	sigaction(SIGKILL, &sigKillHandler, NULL);
+void registerSignalHandlers()
+{
+	registerHandler(SIGHUP);
+	registerHandler(SIGINT);
+	registerHandler(SIGABRT);
+	registerHandler(SIGTERM);
+	registerHandler(SIGPIPE);
+	registerHandler(SIGKILL);
 }
 
 int main(int argc, char **argv)
 {
-	registerSignalListener();
+	registerSignalHandlers();
 
 	xutil::XKeyListenerBuilder builder;
 	builder.connect();
