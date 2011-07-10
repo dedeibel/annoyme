@@ -106,7 +106,7 @@ void MixedOutput::run()
   Sample s;
   while (m_running) {
     bytes_fetched = m_mixer->fetch(buffer, buffsize);
-    s.setSize(buffsize);
+    s.setSize(bytes_fetched);
     s.setData(reinterpret_cast<char*>(buffer));
     m_soundOutput->playSound(&s);
 

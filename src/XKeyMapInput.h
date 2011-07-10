@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Benjamin Peter <BenjaminPeter@arcor.de>
+ * Copyright (c) 2011, Benjamin Peter <BenjaminPeter@arcor.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,30 +25,36 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XEVIEINPUT_H
-#define XEVIEINPUT_H
+#ifndef XKEYMAPINPUT_H_
+#define XKEYMAPINPUT_H_
+
+namespace xutil {
+	class XKeyListenerBuilder;
+	class XKeyMapMonitor;
+	class XKeyMapDifferenceFilter;
+	class XKeyBufferingListener;
+}
 
 #include "InputEventReader.h"
 
-class XevieInput: virtual public InputEventReader
+class XKeyMapInput : virtual public InputEventReader
 {
 public:
-	XevieInput();
-	virtual ~XevieInput();
+	XKeyMapInput();
+	virtual ~XKeyMapInput();
 	virtual void open();
 	virtual void close();
 	virtual bool getNextEvent(Event &event);
-private:
-	void fillEventFromXEvent(Event &event, XEvent &xevent);
-	void fillEventFromXKeyEvent(Event &event, XEvent &xevent, bool pressed);
 
 private:
-	Display *m_display;
-	int m_xevieVersionMinor;
-	int m_xevieVersionMajor;
-	XEvent m_event;
-	XClientMessageEvent *m_xcme;
-	bool m_xevieStarted;
+	bool fillEvent(Event &event, std::set<KeySym> *keys);
+
+private:
+	bool running;
+	xutil::XKeyListenerBuilder *builder;
+	xutil::XKeyMapMonitor *monitor;
+	xutil::XKeyMapDifferenceFilter *filter;
+  xutil::XKeyBufferingListener *listener;
 };
 
-#endif // XEVIEINPUT_H
+#endif /* XKEYMAPINPUT_H_ */

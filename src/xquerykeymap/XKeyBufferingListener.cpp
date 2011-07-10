@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Benjamin Peter <BenjaminPeter@arcor.de>
+ * Copyright (c) 2011, Benjamin Peter <BenjaminPeter@arcor.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,30 +25,44 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XEVIEINPUT_H
-#define XEVIEINPUT_H
+#include <cctype>
 
-#include "InputEventReader.h"
-
-class XevieInput: virtual public InputEventReader
+extern "C"
 {
-public:
-	XevieInput();
-	virtual ~XevieInput();
-	virtual void open();
-	virtual void close();
-	virtual bool getNextEvent(Event &event);
-private:
-	void fillEventFromXEvent(Event &event, XEvent &xevent);
-	void fillEventFromXKeyEvent(Event &event, XEvent &xevent, bool pressed);
+#include <X11/Xlib.h>
+}
 
-private:
-	Display *m_display;
-	int m_xevieVersionMinor;
-	int m_xevieVersionMajor;
-	XEvent m_event;
-	XClientMessageEvent *m_xcme;
-	bool m_xevieStarted;
-};
+#include <set>
+#include <queue>
+#include "XKeyBufferingListener.h"
 
-#endif // XEVIEINPUT_H
+namespace xutil {
+
+XKeyBufferingListener::XKeyBufferingListener()
+{
+
+}
+
+XKeyBufferingListener::~XKeyBufferingListener()
+{
+}
+
+std::set<KeySym>* XKeyBufferingListener::pop() {
+	if (entries.empty()) {
+		return 0;
+	}
+	std::set<KeySym>* val = entries.front();
+	entries.pop();
+	return val;
+}
+
+void XKeyBufferingListener::onKeysPressed(std::set<KeySym> keys)
+{
+	entries.push(new std::set<KeySym>(keys));
+}
+
+void XKeyBufferingListener::onKeysReleased(std::set<KeySym> keys)
+{
+}
+
+}

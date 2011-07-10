@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2008, Benjamin Peter <BenjaminPeter@arcor.de>
+ * Copyright (c) 2011, Benjamin Peter <BenjaminPeter@arcor.de>
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -25,30 +25,27 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XEVIEINPUT_H
-#define XEVIEINPUT_H
+#ifndef XKEYBUFFERINGLISTENER_H_
+#define XKEYBUFFERINGLISTENER_H_
 
-#include "InputEventReader.h"
+#include "XKeyListener.h"
 
-class XevieInput: virtual public InputEventReader
+namespace xutil {
+
+class XKeyBufferingListener: public xutil::XKeyListener
 {
 public:
-	XevieInput();
-	virtual ~XevieInput();
-	virtual void open();
-	virtual void close();
-	virtual bool getNextEvent(Event &event);
-private:
-	void fillEventFromXEvent(Event &event, XEvent &xevent);
-	void fillEventFromXKeyEvent(Event &event, XEvent &xevent, bool pressed);
+	XKeyBufferingListener();
+	virtual ~XKeyBufferingListener();
+
+	virtual void onKeysPressed(std::set<KeySym> keys);
+	virtual void onKeysReleased(std::set<KeySym> keys);
+	std::set<KeySym>* pop();
 
 private:
-	Display *m_display;
-	int m_xevieVersionMinor;
-	int m_xevieVersionMajor;
-	XEvent m_event;
-	XClientMessageEvent *m_xcme;
-	bool m_xevieStarted;
+	std::queue<std::set<KeySym>*> entries;
 };
 
-#endif // XEVIEINPUT_H
+}
+
+#endif /* XKEYBUFFERINGLISTENER_H_ */

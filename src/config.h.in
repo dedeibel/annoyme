@@ -5,6 +5,9 @@
 #cmakedefine WITH_ALSA 1
 #cmakedefine WITH_AO 1
 
+#cmakedefine WITH_XKEYMAP 1
+#cmakedefine WITH_XEVIE 1
+
 /* Application name, usually annoyme */
 #cmakedefine ANNOYME_PROJECT_NAME		  "@ANNOYME_PROJECT_NAME@"
 /* Complete path to the shared resources directory e.g. "/usr/local/share/annoyme" */

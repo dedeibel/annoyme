@@ -1,4 +1,5 @@
-input.reader: xevie
+# "XKEYMAP" ("default") or "XEVIE"
+input.reader: default
 sample_theme: default
 sound.loader: wav
 # Sound ouput library: "mixed-alsa", "alsa" or "ao"
