@@ -30,25 +30,35 @@
 
 #include "XKeyListener.h"
 
+extern "C"
+{
+#include "X11/keysym.h"
+}
+
 namespace xutil
 {
 
-class XKeyListenerPrinter : public XKeyListener
+class XKeyListenerPrinter: public XKeyListener
 {
 public:
 	virtual void onKeysPressed(std::set<KeySym> keys);
 	virtual void onKeysReleased(std::set<KeySym> keys);
 
 private:
+	static bool isSpecial(KeySym keySym);
+	static std::string getSpecial(KeySym keySym);
 
-	template <class ostream, class forward_iterator>
-	static void printJoined(ostream &stream, forward_iterator begin, forward_iterator end, const std::string &sep) {
+	template<class ostream, class forward_iterator>
+	static void printJoined(ostream &stream, forward_iterator begin,
+			forward_iterator end, const std::string &sep)
+	{
 		for (forward_iterator it = begin; it != end; ++it) {
 			if (it != begin) {
 				stream << sep;
 			}
-			if (isprint((char) *it)) {
-				stream << (char) *it;
+			char *symString = XKeysymToString(*it);
+			if (symString != NoSymbol) {
+				stream << symString;
 			}
 			else {
 				stream << *it;
