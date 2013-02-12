@@ -1,5 +1,1 @@
-*.d
-annoyme
-*.o
-*.swp
-build/*
+test/querykeymap-spike

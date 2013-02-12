@@ -41,13 +41,19 @@ namespace xutil
 
 void XKeyListenerPrinter::onKeysPressed(std::set<KeySym> keys)
 {
-	std::cout << "pressed: ";
+  if (keys.size() == 0) {
+    return;
+  }
+	std::cout << "pressed : ";
 	printJoined(std::cout, keys.begin(), keys.end(), ", ");
 	std::cout << std::endl;
 }
 
 void XKeyListenerPrinter::onKeysReleased(std::set<KeySym> keys)
 {
+  if (keys.size() == 0) {
+    return;
+  }
 	std::cout << "released: ";
 	printJoined(std::cout, keys.begin(), keys.end(), ", ");
 	std::cout << std::endl;

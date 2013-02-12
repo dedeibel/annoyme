@@ -17,12 +17,14 @@ Adds beautiful typewriter sounds to your X
 =DEPENDENCIES
 
 - CMake is required to build the project.
-- XEvIE       - http://www.freedesktop.org/wiki/Software/XEvIE
 - yaml-cpp    - http://code.google.com/p/yaml-cpp
 - cppunit     - May be disabled using cmake BUILD_TESTING = false
 - One of the following sound output libraries:
  * alsa
  * ao
+
+Optional
+- XEvIE       - http://www.freedesktop.org/wiki/Software/XEvIE
 
 =INSTALLATION
 
@@ -44,7 +46,7 @@ build annoyme
 
 make test
 
-APPENDIX A - Activating XEvIE
+APPENDIX A - Activating XEvIE (optional)
 
 In case you want to use the XEvIE input and get a message like the following,
 you will have to active it in your X Server configuration first.
